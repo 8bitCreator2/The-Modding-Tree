@@ -36,6 +36,10 @@ function getStartPoints(){
 function canGenPoints(){
 	return true
 }
+function getGainMult(){
+	let gain = decimalOne
+	if (hasUpgrade('p', 11)) gain = gain.times(2)
+}
 
 // Calculate points/sec!
 function getPointGen() {
