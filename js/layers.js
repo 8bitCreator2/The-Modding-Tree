@@ -16,7 +16,7 @@ addLayer("p", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         return mult
-        if (hasUpgrade('p', 12)) mult = mult.times("2")
+        if (hasUpgrade('p', 12)) mult = mult.times(2)
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
@@ -36,7 +36,7 @@ addLayer("p", {
     },
      12: {
         title: "2x Prestige Points",
-        description: "Read Desc",
+        description: "Read TITLE",
         cost: new Decimal(3),
         unlocked() { return hasUpgrade('p', 11)
         
