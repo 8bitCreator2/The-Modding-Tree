@@ -15,9 +15,9 @@ addLayer("p", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
-        if (hasUpgrade('p',12)) mult = mult.times(2)
+        if (hasUpgrade('p', 15)) mult = mult.times("2")
+            if (hasMilestone('p', 0)) mult = mult.times("3")
         return mult
-       
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
@@ -37,35 +37,27 @@ addLayer("p", {
     },
      12: {
         title: "2x Prestige Points",
-        description: "Read Desc",
+        description: "And also get a lot of milestone to complete",
         cost: new Decimal(3),
         unlocked() { return hasUpgrade('p', 11)
         
     },
-}
 },
-buyables: {
-    11: {
-            title: "Point multiplier 2x",
-            unlocked() {
-                return hasUpgrade('p', 12)
-            },
-            cost(x) {
-                return new Decimal(2).pow(x)
-            },
-            display() {
-                let amount = getBuyableAmount('p', 11)
-            },
-            canAfford() {
-                return player.points.gte(this.cost())
-            },
-            buy() {
-                player.points = player.points.sub(this.cost())
-                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
-            },
-            effect(x) {
-                return Decimal.pow(2, x)
-            },
-        },
-    }
+},
+milestones: {
+    0: {
+        requirementDescription: "10 Points",
+        effectDescription: "Multiply prestige gain by 3x.",
+        done() { return player.points.gte(new Decimal(1)) },
+        unlocked() { return hasUpgrade('p', 12)
+    },
+},
+1: {
+    requirementDescription: "20 Prestiges",
+    effectDescription: "Multiply Point gain by 10x.",
+    done() { return player[this.layer].points.gte(new Decimal(20)) },
+    unlocked() { return hasUpgrade('p', 12)
+},
+}
+}
 })
