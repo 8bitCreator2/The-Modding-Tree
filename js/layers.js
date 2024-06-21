@@ -38,8 +38,9 @@ addLayer("p", {
         title: "2x Prestige Points",
         description: "Read Desc",
         cost: new Decimal(3),
-        unlocked() { return hasUpgrade('p', 11) || hasMilestone('p', 0)},
+        unlocked() { return hasUpgrade('p', 11)
         
     },
+}
 }
 })
