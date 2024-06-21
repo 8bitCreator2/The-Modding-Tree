@@ -17,7 +17,7 @@ addLayer("p", {
         mult = new Decimal(1)
         if (hasUpgrade('p',12)) mult = mult.times(2)
         return mult
-        
+       
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
@@ -37,11 +37,35 @@ addLayer("p", {
     },
      12: {
         title: "2x Prestige Points",
-        description: "Read TITLE",
+        description: "Read Desc",
         cost: new Decimal(3),
         unlocked() { return hasUpgrade('p', 11)
         
     },
 }
-}
+},
+buyables: {
+    11: {
+            title: "Point multiplier 2x",
+            unlocked() {
+                return hasUpgrade('p', 12)
+            },
+            cost(x) {
+                return new Decimal(2).pow(x)
+            },
+            display() {
+                let amount = getBuyableAmount('p', 11)
+            },
+            canAfford() {
+                return player.points.gte(this.cost())
+            },
+            buy() {
+                player.points = player.points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            effect(x) {
+                return Decimal.pow(2, x)
+            },
+        },
+    }
 })
