@@ -37,7 +37,7 @@ function canGenPoints(){
 	return true
 }
 function getGainMult(){
-	let gain = decimalOne
+	let gain = new Decimal (1)
 	if (hasUpgrade('p', 11)) gain = gain.times(2)
 }
 
