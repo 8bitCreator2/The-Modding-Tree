@@ -16,7 +16,7 @@ addLayer("p", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         if (hasUpgrade('p', 12)) mult = mult.times("2")
-            if (hasMilestone('p', 1)) gain = gain.times(milestoneEffect('p', 1))	
+            	
             
 
         return mult
