@@ -1,7 +1,7 @@
 let modInfo = {
-	name: "The Mega Tree",
+	name: "The ??? Tree",
 	id: "mymod",
-	author: "Freezy",
+	author: "nobody",
 	pointsName: "points",
 	modFiles: ["layers.js", "tree.js"],
 
@@ -43,8 +43,6 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
-	if (hasUpgrade('p', 11)) gain = gain.times(2)
-		
 	return gain
 }
 

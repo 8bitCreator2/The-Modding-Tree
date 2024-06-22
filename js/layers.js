@@ -15,9 +15,6 @@ addLayer("p", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
-        if (hasUpgrade('p', 15)) mult = mult.times("2")
-            
-
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -27,45 +24,5 @@ addLayer("p", {
     hotkeys: [
         {key: "p", description: "P: Reset for prestige points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){return true},
-    upgrades: {    
-         11: {
-            title: "2x!",
-            description: "Double your point gain.",
-            cost: new Decimal(1),
-            
-
-    },
-     12: {
-        title: "2x Prestige Points",
-        description: "And also get a lot of milestone to complete",
-        cost: new Decimal(3),
-        unlocked() { return hasUpgrade('p', 11)
-        
-    },
-},
-},
-milestones: {
-    0: {
-        requirementDescription: "100 Points",
-        effectDescription: "Points boost Prestiges",
-        done() { return player.points.gte(new Decimal(1)) },
-        effect() {
-            return player.points.add(1).pow(0.20)
-        },
-        unlocked() { return hasUpgrade('p', 12)
-    },
-},
-1: {
-    requirementDescription: "30 Prestiges",
-    effectDescription: "Prestige boost Points",
-    done() { return player[this.layer].points.gte(new Decimal(20)) },
-    effect() {
-        return player[this.layer].points.add(1).pow(0.10)
-    },
-    
-    unlocked() { return hasUpgrade('p', 12)
-},
-}
-}
+    layerShown(){return true}
 })
