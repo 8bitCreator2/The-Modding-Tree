@@ -8,7 +8,6 @@ addLayer("l", {
             points: new Decimal(0),
             level: new Decimal(0),
             essence: new Decimal(0),
-            essenceBaseMultiplier: new Decimal(1), // Track the base multiplier for Level Essence
         }
     },
     color: "#008CFF",
@@ -75,10 +74,10 @@ addLayer("l", {
             description: "Boost player points based on your total level points (at a reduced rate).",
             cost: new Decimal(15),
             unlocked() {
-                return player.l.level.gte(6); // Unlocked at level 6
+                return player.l.level.gte(6);
             },
             effect() {
-                return player.l.points.add(1).log10().add(1); // Direct logarithmic scaling
+                return player.l.points.add(1).log10().add(1);
             },
             effectDisplay() {
                 return "x" + format(this.effect());
@@ -89,10 +88,10 @@ addLayer("l", {
             description: "Reduce the level requirement based on your Level Essence (at a reduced rate).",
             cost: new Decimal(20),
             unlocked() {
-                return player.l.level.gte(7); // Unlocked at level 7
+                return player.l.level.gte(7);
             },
             effect() {
-                return player.l.essence.add(1).log10().add(1).pow(0.5); // Scales with the square root of log essence
+                return player.l.essence.add(1).log10().add(1).pow(0.5);
             },
             effectDisplay() {
                 return "÷" + format(this.effect());
@@ -103,39 +102,13 @@ addLayer("l", {
             description: "Upgrade 12 (Point Synergy) is now based on level^0.8.",
             cost: new Decimal(25),
             unlocked() {
-                return player.l.level.gte(8); // Unlocked at level 8
+                return player.l.level.gte(8);
             },
             effect() {
-                return player.l.level.add(1).pow(0.8); // Scales with level^0.8
+                return player.l.level.add(1).pow(0.8);
             },
             effectDisplay() {
                 return "^" + format(this.effect());
-            },
-        },
-    },
-
-    buyables: {
-        11: {
-            title: "Base Level Essence Boost",
-            description: "Increase the base Level Essence gain multiplier.",
-            cost() {
-                return new Decimal(100).pow(player.l.buyables[11].add(1)); // Increasing cost each time
-            },
-            effect() {
-                return new Decimal(1.5).pow(player.l.buyables[11]); // Multiplies the base Level Essence by 1.5 per buyable level
-            },
-            effectDisplay() {
-                return "x" + format(this.effect()) + " to Level Essence Base";
-            },
-            unlocked() {
-                return player.l.level.gte(11); // Unlocks at level 11
-            },
-            canAfford() {
-                return player.l.points.gte(this.cost());
-            },
-            buy() {
-                player.l.points = player.l.points.sub(this.cost());
-                setBuyableAmount("l", 11, getBuyableAmount("l", 11).add(1));
             },
         },
     },
@@ -163,18 +136,12 @@ addLayer("l", {
         // Gain Level Essence (unlocks at level 5)
         if (player.l.level.gte(5)) {
             let essenceGain = player.l.level.mul(player.l.points).pow(0.5);
-            essenceGain = essenceGain.mul(player.l.essenceBaseMultiplier); // Apply base multiplier to essence gain
             player.l.essence = player.l.essence.add(essenceGain.mul(diff));
-        }
-
-        // Apply Buyable 11 effect to increase base Level Essence multiplier
-        if (player.l.buyables[11] > 0) {
-            player.l.essenceBaseMultiplier = player.l.buyables[11].effect();
         }
 
         // At level 9, Level Essence boosts row 2 upgrades
         if (player.l.level.gte(9)) {
-            let essenceBoost2 = player.l.essence.add(1).log10().add(1).pow(0.5); // Boost factor based on essence
+            let essenceBoost2 = player.l.essence.add(1).log10().add(1).pow(0.5);
             for (let i = 21; i <= 23; i++) {
                 if (hasUpgrade("l", i)) {
                     let upgradeEffectVal = upgradeEffect("l", i);
@@ -185,8 +152,7 @@ addLayer("l", {
 
         // New feature at level 10
         if (player.l.level.gte(10)) {
-            // Increase Level Essence gain based on total points
-            let bonusEssence = player.points.add(1).log10().add(1).pow(0.2); // Small boost based on total points
+            let bonusEssence = player.points.add(1).log10().add(1).pow(0.2);
             player.l.essence = player.l.essence.add(bonusEssence.mul(diff));
         }
     },
@@ -198,7 +164,6 @@ addLayer("l", {
                 "main-display",
                 "resource-display",
                 "upgrades",
-                "buyables", // Include buyables in the tab format
                 ["display-text", function() {
                     let levelReduction = hasUpgrade("l", 22) ? upgradeEffect("l", 22) : new Decimal(1);
                     let levelReq = new Decimal(5).pow(player.l.level.add(1)).div(levelReduction);
@@ -215,7 +180,6 @@ addLayer("l", {
                         <br>
                         <h4>Level Essence: ${format(player.l.essence)}</h4>
                         <p>Level Essence Boost: x${format(essenceBoost)}</p>
-                        <h4>Base Level Essence Multiplier: x${format(player.l.essenceBaseMultiplier)}</h4>
                     `;
                 }],
             ],
