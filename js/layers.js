@@ -7,7 +7,7 @@ addLayer("l", {
             unlocked: true,
             points: new Decimal(0),
             level: new Decimal(0),
-            essence: new Decimal(0), // New resource: Level Essence
+            essence: new Decimal(0),
         }
     },
     color: "#008CFF",
@@ -33,7 +33,7 @@ addLayer("l", {
                 let baseBoost = player[this.layer].level.add(1).pow(0.75);
                 if (hasUpgrade("l", 13)) {
                     let levelBoost = player[this.layer].level.add(1);
-                    baseBoost = baseBoost.mul(levelBoost); // Boost effect by level
+                    baseBoost = baseBoost.mul(levelBoost);
                 }
                 return baseBoost;
             },
@@ -69,15 +69,27 @@ addLayer("l", {
                 return "x" + format(this.effect()) + " to Upgrade 11 effect";
             },
         },
+        21: {
+            title: "Level Point Power",
+            description: "Boost player points based on your total level points (at a reduced rate).",
+            cost: new Decimal(15),
+            unlocked() {
+                return player.l.level.gte(6); // Unlocked at level 6
+            },
+            effect() {
+                return player.l.points.add(1).log10().add(1); // Direct logarithmic scaling
+            },
+            effectDisplay() {
+                return "x" + format(this.effect());
+            },
+        },
     },
 
-    // Add Level Essence mechanics
+    // Update Level Essence and Player Point Boosts
     update(diff) {
         // Apply level multipliers
         let levelBoost = hasUpgrade("l", 11) ? upgradeEffect("l", 11) : new Decimal(1);
         let pointBoost = hasUpgrade("l", 12) ? upgradeEffect("l", 12) : new Decimal(1);
-
-        // Include Level Essence boost (unlocks at level 5)
         let essenceBoost = player.l.level.gte(5) 
             ? player.l.essence.add(1).log10().add(1) 
             : new Decimal(1);
@@ -88,18 +100,24 @@ addLayer("l", {
         // Check if the player can level up
         let levelReq = new Decimal(5).pow(player.l.level.add(1));
         if (player.l.points.gte(levelReq)) {
-            player.l.points = player.l.points.sub(levelReq); // Subtract points required
-            player.l.level = player.l.level.add(1); // Increment level
+            player.l.points = player.l.points.sub(levelReq);
+            player.l.level = player.l.level.add(1);
         }
 
-        // Gain Level Essence passively (unlocks at level 5)
+        // Gain Level Essence (unlocks at level 5)
         if (player.l.level.gte(5)) {
             let essenceGain = player.l.level.mul(player.l.points).pow(0.5);
             player.l.essence = player.l.essence.add(essenceGain.mul(diff));
         }
+
+        // Apply Upgrade 21 effect to boost player points
+        if (hasUpgrade("l", 21)) {
+            let levelPointBoost = upgradeEffect("l", 21);
+            player.points = player.points.add(diff.mul(levelPointBoost));
+        }
     },
 
-    // Display Level Essence in the Main Tab
+    // Display Level Essence and Level Point Boost
     tabFormat: {
         "Main": {
             content: [
@@ -121,6 +139,7 @@ addLayer("l", {
                         <br>
                         <h4>Level Essence: ${format(player.l.essence)}</h4>
                         <p>Level Essence Boost: x${format(essenceBoost)}</p>
+                        <h4>Player Points Boost (Upgrade 21): ${hasUpgrade("l", 21) ? "x" + format(upgradeEffect("l", 21)) : "N/A"}</h4>
                     `;
                 }],
             ],
