@@ -44,7 +44,7 @@ addLayer("l", {
         12: {
             title: "Point Synergy",
             description: "Boost level points based on your total points.",
-            cost: new Decimal(5),
+            cost: new Decimal(25),
             unlocked() {
                 return player.l.level.gte(2);
             },
@@ -58,7 +58,7 @@ addLayer("l", {
         13: {
             title: "Level Synergy",
             description: "Boost the effect of the first upgrade based on your level.",
-            cost: new Decimal(10),
+            cost: new Decimal(100),
             unlocked() {
                 return player.l.level.gte(3);
             },
@@ -72,7 +72,7 @@ addLayer("l", {
         21: {
             title: "Level Point Power",
             description: "Boost player points based on your total level points (at a reduced rate).",
-            cost: new Decimal(15),
+            cost: new Decimal(150),
             unlocked() {
                 return player.l.level.gte(6);
             },
@@ -86,7 +86,7 @@ addLayer("l", {
         22: {
             title: "Essence Efficiency",
             description: "Reduce the level requirement based on your Level Essence (at a reduced rate).",
-            cost: new Decimal(20),
+            cost: new Decimal(2000),
             unlocked() {
                 return player.l.level.gte(7);
             },
@@ -100,7 +100,7 @@ addLayer("l", {
         23: {
             title: "Level Synergized Points",
             description: "Upgrade 12 (Point Synergy) is now based on level^0.8.",
-            cost: new Decimal(25),
+            cost: new Decimal(2500),
             unlocked() {
                 return player.l.level.gte(8);
             },
