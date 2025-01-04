@@ -215,28 +215,44 @@ addLayer("l", {
         },
     },
 
-    clickables: {
-        rankUp: {
-            title: "Rank Up",
-            display() {
-                let rankCost = new Decimal(10).mul(player.l.rank.add(1));
-                return `Reset everything to gain 1 rank.<br>Cost: ${format(rankCost)} level points`;
-            },
-            canClick() {
-                let rankCost = new Decimal(10).mul(player.l.rank.add(1));
-                return player.l.points.gte(rankCost);
-            },
-            onClick() {
-                let rankCost = new Decimal(10).mul(player.l.rank.add(1));
-                if (player.l.points.gte(rankCost)) {
-                    player.l.rank = player.l.rank.add(1);
-                    player.l.points = new Decimal(0);
-                    player.l.level = new Decimal(0);
-                    player.l.essence = new Decimal(0);
-                }
-            },
+   clickables: {
+    rankUp: {
+        title: "Rank Up",
+        display() {
+            let rankCost = new Decimal(10).mul(player.l.rank.add(1));
+            return `Reset everything to gain 1 rank.<br>Cost: ${format(rankCost)} level points`;
+        },
+        canClick() {
+            let rankCost = new Decimal(10).mul(player.l.rank.add(1));
+            // Ensure the player has enough level points
+            return player.l.points.gte(rankCost);
+        },
+        onClick() {
+            let rankCost = new Decimal(10).mul(player.l.rank.add(1));
+            // Double-check the player meets the rank-up requirement
+            if (player.l.points.gte(rankCost)) {
+                player.l.rank = player.l.rank.add(1); // Increase rank
+                // Reset progress
+                player.l.points = new Decimal(0);
+                player.l.level = new Decimal(0);
+                player.l.essence = new Decimal(0);
+            } else {
+                console.warn("Player attempted to rank up without meeting the requirements.");
+            }
+        },
+        style() {
+            let rankCost = new Decimal(10).mul(player.l.rank.add(1));
+            return {
+                "background-color": player.l.points.gte(rankCost) ? "green" : "gray",
+                "color": "white",
+                "border": "1px solid black",
+                "border-radius": "10px",
+                "padding": "5px",
+                "cursor": player.l.points.gte(rankCost) ? "pointer" : "not-allowed",
+            };
         },
     },
+},
 
     doReset(resettingLayer) {
         if (layers[resettingLayer]?.row > this.row) {
