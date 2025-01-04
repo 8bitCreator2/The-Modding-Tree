@@ -8,6 +8,7 @@ addLayer("l", {
             points: new Decimal(0),
             level: new Decimal(0),
             essence: new Decimal(0),
+            essenceBaseMultiplier: new Decimal(1), // Track the base multiplier for Level Essence
         }
     },
     color: "#008CFF",
@@ -49,12 +50,7 @@ addLayer("l", {
                 return player.l.level.gte(2);
             },
             effect() {
-                let baseEffect = player.points.add(1).log10().add(1).pow(1.2);
-                if (hasUpgrade("l", 23)) {
-                    let levelBoost = player.l.level.add(1).pow(0.8); // Effect from Upgrade 23
-                    baseEffect = baseEffect.mul(levelBoost);
-                }
-                return baseEffect;
+                return player.points.add(1).log10().add(1).pow(1.2);
             },
             effectDisplay() { 
                 return "x" + format(this.effect());
@@ -118,6 +114,25 @@ addLayer("l", {
         },
     },
 
+    buyables: {
+        11: {
+            title: "Base Level Essence Boost",
+            description: "Increase the base Level Essence gain multiplier.",
+            cost() {
+                return new Decimal(100).pow(player.l.buyables[11].add(1)); // Increasing cost each time
+            },
+            effect() {
+                return new Decimal(1.5).pow(player.l.buyables[11]); // Multiplies the base Level Essence by 1.5 per buyable level
+            },
+            effectDisplay() {
+                return "x" + format(this.effect()) + " to Level Essence Base";
+            },
+            unlocked() {
+                return player.l.level.gte(11); // Unlocks at level 11
+            },
+        },
+    },
+
     // Update Level Essence and Player Point Boosts
     update(diff) {
         // Apply level multipliers
@@ -141,7 +156,30 @@ addLayer("l", {
         // Gain Level Essence (unlocks at level 5)
         if (player.l.level.gte(5)) {
             let essenceGain = player.l.level.mul(player.l.points).pow(0.5);
+            essenceGain = essenceGain.mul(player.l.essenceBaseMultiplier); // Apply base multiplier to essence gain
             player.l.essence = player.l.essence.add(essenceGain.mul(diff));
+        }
+
+        // Apply Buyable 11 effect to increase base Level Essence multiplier
+        if (player.l.buyables[11] > 0) {
+            player.l.essenceBaseMultiplier = player.l.buyables[11].effect();
+        }
+
+        // At level 9, Level Essence boosts row 2 upgrades
+        if (player.l.level.gte(9)) {
+            let essenceBoost2 = player.l.essence.add(1).log10().add(1).pow(0.5); // Boost factor based on essence
+            for (let i = 21; i <= 23; i++) {
+                if (hasUpgrade("l", i)) {
+                    upgradeEffect("l", i).mul(essenceBoost2);
+                }
+            }
+        }
+
+        // New feature at level 10
+        if (player.l.level.gte(10)) {
+            // Increase Level Essence gain based on total points
+            let bonusEssence = player.points.add(1).log10().add(1).pow(0.2); // Small boost based on total points
+            player.l.essence = player.l.essence.add(bonusEssence.mul(diff));
         }
     },
 
@@ -152,6 +190,7 @@ addLayer("l", {
                 "main-display",
                 "resource-display",
                 "upgrades",
+                "buyables", // Include buyables in the tab format
                 ["display-text", function() {
                     let levelReduction = hasUpgrade("l", 22) ? upgradeEffect("l", 22) : new Decimal(1);
                     let levelReq = new Decimal(5).pow(player.l.level.add(1)).div(levelReduction);
@@ -168,7 +207,7 @@ addLayer("l", {
                         <br>
                         <h4>Level Essence: ${format(player.l.essence)}</h4>
                         <p>Level Essence Boost: x${format(essenceBoost)}</p>
-                        <h4>Player Points Boost (Upgrade 21): ${hasUpgrade("l", 21) ? "x" + format(upgradeEffect("l", 21)) : "N/A"}</h4>
+                        <h4>Base Level Essence Multiplier: x${format(player.l.essenceBaseMultiplier)}</h4>
                     `;
                 }],
             ],
