@@ -54,6 +54,9 @@ addLayer("l", {
             },
             effect() {
                 let boost = player.points.add(1).log10().add(1).pow(1.2);
+                if (hasUpgrade("l", 23)) {
+                    boost = boost.mul(upgradeEffect("l", 23)); // Rank boost
+                }
                 if (player.l.rank.gte(1)) {
                     boost = boost.mul(10); // Rank boost
                 }
