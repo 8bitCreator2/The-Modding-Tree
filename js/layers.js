@@ -83,6 +83,35 @@ addLayer("l", {
                 return "x" + format(this.effect());
             },
         },
+                22: {
+            title: "Essence Efficiency",
+            description: "Reduce the level requirement based on your Level Essence (at a reduced rate).",
+            cost: new Decimal(20),
+            unlocked() {
+                return player.l.level.gte(7); // Unlocked at level 7
+            },
+            effect() {
+                return player.l.essence.add(1).log10().add(1).pow(0.5); // Scales with the square root of log essence
+            },
+            effectDisplay() {
+                return "÷" + format(this.effect());
+            },
+        },
+        23: {
+            title: "Level Synergized Points",
+            description: "Upgrade 12 (Point Synergy) is now based on level^0.8.",
+            cost: new Decimal(25),
+            unlocked() {
+                return player.l.level.gte(8); // Unlocked at level 8
+            },
+            effect() {
+                return player.l.level.add(1).pow(0.8); // Scales with level^0.8
+            },
+            effectDisplay() {
+                return "^" + format(this.effect());
+            },
+        },
+
     },
 
     // Update Level Essence and Player Point Boosts
@@ -98,7 +127,8 @@ addLayer("l", {
         player.l.points = player.l.points.add(diff * levelBoost * pointBoost * essenceBoost);
 
         // Check if the player can level up
-        let levelReq = new Decimal(5).pow(player.l.level.add(1));
+        let levelReduction = hasUpgrade("l", 22) ? upgradeEffect("l", 22) : new Decimal(1);
+        let levelReq = new Decimal(5).pow(player.l.level.add(1)).div(levelReduction);
         if (player.l.points.gte(levelReq)) {
             player.l.points = player.l.points.sub(levelReq);
             player.l.level = player.l.level.add(1);
