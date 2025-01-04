@@ -111,10 +111,7 @@ addLayer("l", {
         }
 
         // Apply Upgrade 21 effect to boost player points
-        if (hasUpgrade("l", 21)) {
-            let levelPointBoost = upgradeEffect("l", 21);
-            player.points = player.points.add(diff.mul(levelPointBoost));
-        }
+      
     },
 
     // Display Level Essence and Level Point Boost
