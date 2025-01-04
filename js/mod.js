@@ -39,16 +39,20 @@ function canGenPoints(){
 
 // Calculate points/sec!
 function getPointGen() {
-	if(!canGenPoints())
-		return new Decimal(0)
+	if (!canGenPoints())
+		return new Decimal(0);
 
-	let gain = new Decimal(1)
-	 if (hasUpgrade("l", 21)) {
-            let gain = upgradeEffect("l", 21);
-            
-        }
-	return gain
+	let gain = new Decimal(1); // Base gain for points/sec
+
+	// Check if Upgrade 21 is purchased and apply its effect
+	if (hasUpgrade("l", 21)) {
+		let levelPointBoost = upgradeEffect("l", 21);
+		gain = gain.mul(levelPointBoost); // Multiply gain by Upgrade 21's effect
+	}
+
+	return gain;
 }
+
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
