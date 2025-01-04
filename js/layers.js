@@ -13,11 +13,11 @@ addLayer("l", {
     resource: "level points",               // Level points are the resource of this layer
     baseResource: "points",                 // Resource required to advance in this layer
     baseAmount() { return player.points },  // Base amount of points required for this layer
-    type: "none",                         // Static layer
+    type: "none",                          // No static layer
     requires: new Decimal(5),               // First level requires 5 level points
     exponent: 1.2,                          // Exponent for scaling level progression
-    row: 1,                                 // Position in the tree (can move it down in future layers)
-    layerShown() { return true },           // This layer is always visible
+    row: 1,                                 // Position in the tree
+    layerShown() { return true },           // Make sure layer is shown
 
     upgrades: {
         11: {
@@ -76,6 +76,7 @@ addLayer("l", {
         }
     },
 
+    // Correctly format the tab to show level display
     tabFormat: {
         "Main Tab": {
             content: [
@@ -85,5 +86,21 @@ addLayer("l", {
                 "upgrades",  // Show the available upgrades
             ],
         },
+        "Level Tab": { 
+            content: [
+                "main-display", // Show main display in the level tab
+                () => {
+                    return `
+                    <h3>Level: ${format(player.l.level)}</h3>
+                    <p>Level Points: ${format(player.l.points)} / ${format(new Decimal(5).pow(player.l.level))} required for next level.</p>
+                    <div style="width: 100%; height: 20px; background-color: lightgray; border: 1px solid #000;">
+                        <div style="width: ${player.l.points.div(new Decimal(5).pow(player.l.level)).mul(100)}%; height: 100%; background-color: green;"></div>
+                    </div>
+                    <br>
+                    <h4>Level Multiplier: x${format(Decimal.pow(2, player.l.level))}</h4>
+                    `;
+                }
+            ],
+        }
     },
 });
