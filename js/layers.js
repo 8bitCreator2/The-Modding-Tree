@@ -184,15 +184,17 @@ addLayer("l", {
                 }],
             ],
         },
-        "Rank": {
+       "Rank": {
             unlocked() {
                 return player.l.level.gte(10);
             },
             content: [
                 ["display-text", function() {
+                    let rankCost = new Decimal(10).mul(player.l.rank.add(1));
                     return `
                         <h3>Rank: ${format(player.l.rank)}</h3>
                         <p>Ranks reset all progress but provide significant boosts to level points and essence.</p>
+                        <p>Next Rank Cost: ${format(rankCost)} level points</p>
                         <p>Current Boost: x10 to level points and essence</p>
                     `;
                 }],
@@ -205,16 +207,21 @@ addLayer("l", {
         rankUp: {
             title: "Rank Up",
             display() {
-                return "Reset everything to gain 1 rank.";
+                let rankCost = new Decimal(10).mul(player.l.rank.add(1));
+                return `Reset everything to gain 1 rank.<br>Cost: ${format(rankCost)} level points`;
             },
             canClick() {
-                return player.l.level.gte(10);
+                let rankCost = new Decimal(10).mul(player.l.rank.add(1));
+                return player.l.points.gte(rankCost);
             },
             onClick() {
-                player.l.rank = player.l.rank.add(1);
-                player.l.points = new Decimal(0);
-                player.l.level = new Decimal(0);
-                player.l.essence = new Decimal(0);
+                let rankCost = new Decimal(10).mul(player.l.rank.add(1));
+                if (player.l.points.gte(rankCost)) {
+                    player.l.rank = player.l.rank.add(1);
+                    player.l.points = new Decimal(0);
+                    player.l.level = new Decimal(0);
+                    player.l.essence = new Decimal(0);
+                }
             },
         },
     },
