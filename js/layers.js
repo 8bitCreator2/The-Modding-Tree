@@ -25,7 +25,7 @@ addLayer("l", {
             description: "Increase level points gained based on current level.",
             cost: new Decimal(1),           // Cost for this upgrade
             effect() {
-                return player[this.layer].level.add(1).pow(0.75);
+                return player[this.layer].level.add(1).pow(0.75);  // Effect of the upgrade
             },
             effectDisplay() { 
                 return "x" + format(this.effect()) + " to level points"; 
@@ -33,14 +33,20 @@ addLayer("l", {
         },
     },
 
-    gainMult() {
-        let mult = new Decimal(1);            // Base multiplier
-        if (hasUpgrade("l", 11)) mult = mult.mul(upgradeEffect("l", 11));  // Apply Level Boost upgrade
-        return mult;
-    },
+    // Update method to include level points multiplier based on upgrades
+    update(diff) {
+        // Apply the level multiplier based on upgrade 11
+        let levelBoost = hasUpgrade("l", 11) ? upgradeEffect("l", 11) : new Decimal(1);
 
-    gainExp() {
-        return new Decimal(1);                // No additional scaling for experience
+        // Increase level points over time or through actions, and apply multiplier
+        player.l.points = player.l.points.add(diff.mul(levelBoost)); 
+
+        // Check if the player has enough level points to level up
+        let levelReq = new Decimal(5).pow(player.l.level); // 5^level is the requirement
+        if (player.l.points.gte(levelReq)) {
+            player.l.level = player.l.level.add(1);  // Level up
+            player.l.points = new Decimal(0);  // Reset level points after leveling up
+        }
     },
 
     // Display level bar and level points requirements
@@ -58,17 +64,7 @@ addLayer("l", {
         `;
     },
 
-    update(diff) {
-        // Increase level points over time or through actions
-        player.l.points = player.l.points.add(diff);
-        // Check if the player has enough level points to level up
-        let levelReq = new Decimal(5).pow(player.l.level);
-        if (player.l.points.gte(levelReq)) {
-            player.l.level = player.l.level.add(1);  // Level up
-            player.l.points = new Decimal(0);  // Reset level points after leveling up
-        }
-    },
-
+    // Reset functionality - reset level points but not level
     doReset(resettingLayer) {
         if (resettingLayer >= this.row) {
             // Reset only level points, keep the level
@@ -76,7 +72,7 @@ addLayer("l", {
         }
     },
 
-    // Correctly format the tab to show level display
+    // Tab format: Display the level and progress in the Level Tab
     tabFormat: {
         "Main Tab": {
             content: [
@@ -90,11 +86,13 @@ addLayer("l", {
             content: [
                 "main-display", // Show main display in the level tab
                 () => {
+                    let levelReq = new Decimal(5).pow(player.l.level);
+                    let progress = player.l.points.div(levelReq).mul(100);  // Calculate progress for the bar
                     return `
                     <h3>Level: ${format(player.l.level)}</h3>
-                    <p>Level Points: ${format(player.l.points)} / ${format(new Decimal(5).pow(player.l.level))} required for next level.</p>
+                    <p>Level Points: ${format(player.l.points)} / ${format(levelReq)} required for next level.</p>
                     <div style="width: 100%; height: 20px; background-color: lightgray; border: 1px solid #000;">
-                        <div style="width: ${player.l.points.div(new Decimal(5).pow(player.l.level)).mul(100)}%; height: 100%; background-color: green;"></div>
+                        <div style="width: ${progress}%; height: 100%; background-color: green;"></div>
                     </div>
                     <br>
                     <h4>Level Multiplier: x${format(Decimal.pow(2, player.l.level))}</h4>
