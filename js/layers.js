@@ -8,9 +8,10 @@ addLayer("l", {
             points: new Decimal(0),
             level: new Decimal(0),
             essence: new Decimal(0),
+            levelRebirth: new Decimal(0),  // Track level rebirth count
         }
     },
-    color: "#008CFF",
+    color: "#8A2BE2", // Purple color for the layer (Level Rebirth)
     resource: "level points",
     baseResource: "points",
     baseAmount() { return player.points },
@@ -19,7 +20,7 @@ addLayer("l", {
     layerShown() { return true },
 
     tabStyle: {
-        background: "#008CFF",
+        background: "#8A2BE2", // Purple background for the tab
         borderRadius: "50%",
         color: "white",
     },
@@ -116,6 +117,20 @@ addLayer("l", {
                 return "x" + format(this.effect());
             },
         },
+        31: {
+            title: "Upgrade Booster",
+            description: "Boost the first upgrade's effect by a factor of 2 per Upgrade Booster.",
+            cost: new Decimal(30),
+            unlocked() {
+                return player.l.level.gte(9); // Unlocked at level 9
+            },
+            effect() {
+                return new Decimal(2).pow(player.l.levelRebirth);
+            },
+            effectDisplay() {
+                return "x" + format(this.effect()) + " to Upgrade 11 effect";
+            },
+        },
     },
 
     // Update Level Essence and Player Point Boosts
@@ -133,6 +148,10 @@ addLayer("l", {
         // Check if the player can level up
         let levelReduction = hasUpgrade("l", 22) ? upgradeEffect("l", 22) : new Decimal(1);
         let levelReq = new Decimal(5).pow(player.l.level.add(1)).div(levelReduction);
+        if (player.l.level.gte(10)) {  // At level 10, apply level cap and rebirth
+            levelReq = new Decimal(5).pow(player.l.levelRebirth.add(1));
+            player.l.level = new Decimal(10);
+        }
         if (player.l.points.gte(levelReq)) {
             player.l.points = player.l.points.sub(levelReq);
             player.l.level = player.l.level.add(1);
@@ -159,6 +178,7 @@ addLayer("l", {
                     let essenceBoost = player.l.level.gte(5) 
                         ? player.l.essence.add(1).log10().add(1) 
                         : new Decimal(1);
+                    let rebirthProgress = player.l.level.gte(10) ? `Level Cap Reached! Rebirth to progress further.` : '';
                     return `
                         <h3>Level: ${format(player.l.level)}</h3>
                         <p>Level Points: ${format(player.l.points)} / ${format(levelReq)}</p>
@@ -169,6 +189,8 @@ addLayer("l", {
                         <h4>Level Essence: ${format(player.l.essence)}</h4>
                         <p>Level Essence Boost: x${format(essenceBoost)}</p>
                         <h4>Player Points Boost (Upgrade 21): ${hasUpgrade("l", 21) ? "x" + format(upgradeEffect("l", 21)) : "N/A"}</h4>
+                        <br>
+                        <h4>Rebirth Progress: ${rebirthProgress}</h4>
                     `;
                 }],
             ],
@@ -177,7 +199,7 @@ addLayer("l", {
 
     doReset(resettingLayer) {
         if (layers[resettingLayer]?.row > this.row) {
-            layerDataReset("l", ["level", "essence"]);
+            layerDataReset("l", ["level", "essence", "levelRebirth"]);
         }
     },
 });
