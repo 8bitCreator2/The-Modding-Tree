@@ -102,7 +102,7 @@ addLayer("l", {
                 return player.l.level.gte(7);
             },
             effect() {
-                return player.l.essence.add(1).log10().add(1).pow(0.5);
+                return player.l.essence.add(1).log10().add(1).pow(0.76);
             },
             effectDisplay() {
                 return "÷" + format(this.effect());
