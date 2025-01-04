@@ -113,7 +113,7 @@ addLayer("l", {
                 return player.l.level.add(1).pow(0.8); // Scales with level^0.8
             },
             effectDisplay() {
-                return "^" + format(this.effect());
+                return "x" + format(this.effect());
             },
         },
     },
