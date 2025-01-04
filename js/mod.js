@@ -43,6 +43,10 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
+	 if (hasUpgrade("l", 21)) {
+            let gain = upgradeEffect("l", 21);
+            
+        }
 	return gain
 }
 
