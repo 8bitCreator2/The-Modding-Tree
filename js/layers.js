@@ -130,6 +130,13 @@ addLayer("l", {
             unlocked() {
                 return player.l.level.gte(11); // Unlocks at level 11
             },
+            canAfford() {
+                return player.l.points.gte(this.cost());
+            },
+            buy() {
+                player.l.points = player.l.points.sub(this.cost());
+                setBuyableAmount("l", 11, getBuyableAmount("l", 11).add(1));
+            },
         },
     },
 
@@ -170,6 +177,7 @@ addLayer("l", {
             let essenceBoost2 = player.l.essence.add(1).log10().add(1).pow(0.5); // Boost factor based on essence
             for (let i = 21; i <= 23; i++) {
                 if (hasUpgrade("l", i)) {
+                    let upgradeEffectVal = upgradeEffect("l", i);
                     upgradeEffect("l", i).mul(essenceBoost2);
                 }
             }
