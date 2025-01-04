@@ -49,10 +49,12 @@ addLayer("l", {
         }
     },
 
-    // Display level bar and level points requirements
+    // Display level bar and level points requirements in the Main Tab
     display() {
         let levelReq = new Decimal(5).pow(player.l.level);  // Level requirements are 5^level
         let progress = player.l.points.div(levelReq).mul(100);  // Progress bar percentage
+
+        // Display the level information in the Main Tab
         return `
             <h3>Level: ${format(player.l.level)}</h3>
             <p>Level Points: ${format(player.l.points)} / ${format(levelReq)} required for next level.</p>
@@ -72,30 +74,24 @@ addLayer("l", {
         }
     },
 
-    // Tab format: Display the level and progress in the Level Tab
+    // Tab format: Display the level and progress in the Main Tab
     tabFormat: {
         "Main Tab": {
             content: [
-                "main-display",
-                "prestige-button",
-                "resource-display",
-                "upgrades",  // Show the available upgrades
-            ],
-        },
-        "Level Tab": { 
-            content: [
-                "main-display", // Show main display in the level tab
-                () => {
-                    let levelReq = new Decimal(5).pow(player.l.level);
-                    let progress = player.l.points.div(levelReq).mul(100);  // Calculate progress for the bar
+                "main-display",         // Show main display in the main tab
+                "prestige-button",      // Show prestige button
+                "resource-display",     // Show resource display
+                "upgrades",             // Show the available upgrades
+                function() {
+                    // Display the content of the `display()` function here in the main tab
                     return `
-                    <h3>Level: ${format(player.l.level)}</h3>
-                    <p>Level Points: ${format(player.l.points)} / ${format(levelReq)} required for next level.</p>
-                    <div style="width: 100%; height: 20px; background-color: lightgray; border: 1px solid #000;">
-                        <div style="width: ${progress}%; height: 100%; background-color: green;"></div>
-                    </div>
-                    <br>
-                    <h4>Level Multiplier: x${format(Decimal.pow(2, player.l.level))}</h4>
+                        <h3>Level: ${format(player.l.level)}</h3>
+                        <p>Level Points: ${format(player.l.points)} / ${format(new Decimal(5).pow(player.l.level))} required for next level.</p>
+                        <div style="width: 100%; height: 20px; background-color: lightgray; border: 1px solid #000;">
+                            <div style="width: ${player.l.points.div(new Decimal(5).pow(player.l.level)).mul(100)}%; height: 100%; background-color: green;"></div>
+                        </div>
+                        <br>
+                        <h4>Level Multiplier: x${format(Decimal.pow(2, player.l.level))}</h4>
                     `;
                 }
             ],
