@@ -9,6 +9,7 @@ addLayer("l", {
             level: new Decimal(0),
             essence: new Decimal(0),
             levelRebirth: new Decimal(0),  // Track level rebirth count
+            rebirthUnlocked: false, // Track if rebirth is unlocked
         }
     },
     color: "#8A2BE2", // Purple color for the layer (Level Rebirth)
@@ -145,14 +146,16 @@ addLayer("l", {
         // Gain level points passively
         player.l.points = player.l.points.add(diff * levelBoost * pointBoost * essenceBoost);
 
-        // Check if the player can level up
+        // Check if the player can level up (level cap enforced at 10)
         let levelReduction = hasUpgrade("l", 22) ? upgradeEffect("l", 22) : new Decimal(1);
         let levelReq = new Decimal(5).pow(player.l.level.add(1)).div(levelReduction);
-        if (player.l.level.gte(10)) {  // At level 10, apply level cap and rebirth
-            levelReq = new Decimal(5).pow(player.l.levelRebirth.add(1));
-            player.l.level = new Decimal(10);
+
+        if (player.l.level.gte(10 + player.l.levelRebirth)) {  // Hard cap at Level 10 + rebirths
+            levelReq = new Decimal(5).pow(10 + player.l.levelRebirth);  // Set the level requirement for cap
+            player.l.level = new Decimal(10 + player.l.levelRebirth);  // Set cap at 10 + rebirths
         }
-        if (player.l.points.gte(levelReq)) {
+
+        if (player.l.points.gte(levelReq) && player.l.level.lt(10 + player.l.levelRebirth)) {
             player.l.points = player.l.points.sub(levelReq);
             player.l.level = player.l.level.add(1);
         }
@@ -178,7 +181,7 @@ addLayer("l", {
                     let essenceBoost = player.l.level.gte(5) 
                         ? player.l.essence.add(1).log10().add(1) 
                         : new Decimal(1);
-                    let rebirthProgress = player.l.level.gte(10) ? `Level Cap Reached! Rebirth to progress further.` : '';
+                    let rebirthProgress = player.l.level.gte(10 + player.l.levelRebirth) ? `Level Cap Reached! Rebirth to progress further.` : '';
                     return `
                         <h3>Level: ${format(player.l.level)}</h3>
                         <p>Level Points: ${format(player.l.points)} / ${format(levelReq)}</p>
@@ -191,6 +194,7 @@ addLayer("l", {
                         <h4>Player Points Boost (Upgrade 21): ${hasUpgrade("l", 21) ? "x" + format(upgradeEffect("l", 21)) : "N/A"}</h4>
                         <br>
                         <h4>Rebirth Progress: ${rebirthProgress}</h4>
+                        ${player.l.rebirthUnlocked ? `<button onclick="performRebirth()">Rebirth for Power</button>` : ''}
                     `;
                 }],
             ],
@@ -200,6 +204,16 @@ addLayer("l", {
     doReset(resettingLayer) {
         if (layers[resettingLayer]?.row > this.row) {
             layerDataReset("l", ["level", "essence", "levelRebirth"]);
+        }
+    },
+
+    performRebirth() {
+        if (player.l.level.gte(10 + player.l.levelRebirth)) {
+            player.l.levelRebirth = player.l.levelRebirth.add(1);
+            player.l.level = new Decimal(1); // Reset level to 1 after rebirth
+            player.l.points = new Decimal(0); // Reset points after rebirth
+            player.l.essence = new Decimal(0); // Reset essence after rebirth
+            player.l.rebirthUnlocked = true; // Unlock rebirth button after performing a rebirth
         }
     },
 });
