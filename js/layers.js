@@ -49,7 +49,12 @@ addLayer("l", {
                 return player.l.level.gte(2);
             },
             effect() {
-                return player.points.add(1).log10().add(1).pow(1.2);
+                let baseEffect = player.points.add(1).log10().add(1).pow(1.2);
+                if (hasUpgrade("l", 23)) {
+                    let levelBoost = player.l.level.add(1).pow(0.8); // Effect from Upgrade 23
+                    baseEffect = baseEffect.mul(levelBoost);
+                }
+                return baseEffect;
             },
             effectDisplay() { 
                 return "x" + format(this.effect());
@@ -83,7 +88,7 @@ addLayer("l", {
                 return "x" + format(this.effect());
             },
         },
-                22: {
+        22: {
             title: "Essence Efficiency",
             description: "Reduce the level requirement based on your Level Essence (at a reduced rate).",
             cost: new Decimal(20),
@@ -111,7 +116,6 @@ addLayer("l", {
                 return "^" + format(this.effect());
             },
         },
-
     },
 
     // Update Level Essence and Player Point Boosts
@@ -139,9 +143,6 @@ addLayer("l", {
             let essenceGain = player.l.level.mul(player.l.points).pow(0.5);
             player.l.essence = player.l.essence.add(essenceGain.mul(diff));
         }
-
-        // Apply Upgrade 21 effect to boost player points
-      
     },
 
     // Display Level Essence and Level Point Boost
@@ -152,7 +153,8 @@ addLayer("l", {
                 "resource-display",
                 "upgrades",
                 ["display-text", function() {
-                    let levelReq = new Decimal(5).pow(player.l.level.add(1));
+                    let levelReduction = hasUpgrade("l", 22) ? upgradeEffect("l", 22) : new Decimal(1);
+                    let levelReq = new Decimal(5).pow(player.l.level.add(1)).div(levelReduction);
                     let progress = player.l.points.div(levelReq).mul(100);
                     let essenceBoost = player.l.level.gte(5) 
                         ? player.l.essence.add(1).log10().add(1) 
