@@ -20,7 +20,7 @@ addLayer("l", {
     // Custom tab style: round and blue
     tabStyle: {
         background: "#008CFF",
-        borderRadius: "50%", // Makes the tab round
+        borderRadius: "50%",
         color: "white",
     },
 
@@ -30,7 +30,12 @@ addLayer("l", {
             description: "Increase level points gained based on current level.",
             cost: new Decimal(1),
             effect() {
-                return player[this.layer].level.add(1).pow(0.75);
+                let baseBoost = player[this.layer].level.add(1).pow(0.75);
+                if (hasUpgrade("l", 13)) {
+                    let levelBoost = player[this.layer].level.add(1);
+                    baseBoost = baseBoost.mul(levelBoost); // Boost effect by level
+                }
+                return baseBoost;
             },
             effectDisplay() { 
                 return "x" + format(this.effect());
@@ -48,6 +53,20 @@ addLayer("l", {
             },
             effectDisplay() { 
                 return "x" + format(this.effect());
+            },
+        },
+        13: {
+            title: "Level Synergy",
+            description: "Boost the effect of the first upgrade based on your level.",
+            cost: new Decimal(10),
+            unlocked() {
+                return player.l.level.gte(3); // Unlocks at level 3
+            },
+            effect() {
+                return player.l.level.add(1);
+            },
+            effectDisplay() {
+                return "x" + format(this.effect()) + " to Upgrade 11 effect";
             },
         },
     },
