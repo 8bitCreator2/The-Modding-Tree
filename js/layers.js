@@ -13,7 +13,7 @@ addLayer("l", {
     resource: "level points",               // Level points are the resource of this layer
     baseResource: "points",                 // Resource required to advance in this layer
     baseAmount() { return player.points },  // Base amount of points required for this layer
-    type: "static",                         // Static layer
+    type: "none",                         // Static layer
     requires: new Decimal(5),               // First level requires 5 level points
     exponent: 1.2,                          // Exponent for scaling level progression
     row: 1,                                 // Position in the tree (can move it down in future layers)
