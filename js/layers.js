@@ -48,7 +48,7 @@ addLayer("l", {
         12: {
             title: "Point Synergy",
             description: "Boost level points based on your total points.",
-            cost: new Decimal(5),
+            cost: new Decimal(10),
             unlocked() {
                 return player.l.level.gte(2);
             },
@@ -63,7 +63,62 @@ addLayer("l", {
                 return "x" + format(this.effect());
             },
         },
-        // Other upgrades remain unchanged...
+        13: {
+            title: "Level Synergy",
+            description: "Boost the effect of the first upgrade based on your level.",
+            cost: new Decimal(30),
+            unlocked() {
+                return player.l.level.gte(3);
+            },
+            effect() {
+                return player.l.level.add(1);
+            },
+            effectDisplay() {
+                return "x" + format(this.effect()) + " to Upgrade 11 effect";
+            },
+        },
+        21: {
+            title: "Level Point Power",
+            description: "Boost player points based on your total level points (at a reduced rate).",
+            cost: new Decimal(150),
+            unlocked() {
+                return player.l.level.gte(6);
+            },
+            effect() {
+                return player.l.points.add(1).log10().add(1);
+            },
+            effectDisplay() {
+                return "x" + format(this.effect());
+            },
+        },
+        22: {
+            title: "Essence Efficiency",
+            description: "Reduce the level requirement based on your Level Essence (at a reduced rate).",
+            cost: new Decimal(1000),
+            unlocked() {
+                return player.l.level.gte(7);
+            },
+            effect() {
+                return player.l.essence.add(1).log10().add(1).pow(0.5);
+            },
+            effectDisplay() {
+                return "÷" + format(this.effect());
+            },
+        },
+        23: {
+            title: "Level Synergized Points",
+            description: "Upgrade 12 (Point Synergy) is now based on level^0.8.",
+            cost: new Decimal(2500),
+            unlocked() {
+                return player.l.level.gte(8);
+            },
+            effect() {
+                return player.l.level.add(1).pow(0.8);
+            },
+            effectDisplay() {
+                return "^" + format(this.effect());
+            },
+        },
     },
 
     // Update Level Essence and Player Point Boosts
