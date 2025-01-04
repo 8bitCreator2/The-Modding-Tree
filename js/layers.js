@@ -153,7 +153,7 @@ addLayer("l", {
         // New feature at level 10
         if (player.l.level.gte(10)) {
             let bonusEssence = player.points.add(1).log10().add(1).pow(0.2);
-            player.l.essence = player.l.essence.add(bonusEssence.mul(diff));
+            player.l.essence = player.l.essence.mul(bonusEssence.mul(diff));
         }
     },
 
