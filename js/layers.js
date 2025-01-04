@@ -17,6 +17,13 @@ addLayer("l", {
     row: 1,
     layerShown() { return true },
 
+    // Custom tab style: round and blue
+    tabStyle: {
+        background: "#008CFF",
+        borderRadius: "50%", // Makes the tab round
+        color: "white",
+    },
+
     upgrades: {
         11: {
             title: "Level Boost",
@@ -29,14 +36,29 @@ addLayer("l", {
                 return "x" + format(this.effect());
             },
         },
+        12: {
+            title: "Point Synergy",
+            description: "Boost level points based on your total points.",
+            cost: new Decimal(5),
+            unlocked() {
+                return player.l.level.gte(2); // Unlocks at level 2
+            },
+            effect() {
+                return player.points.add(1).log10().add(1).pow(1.2);
+            },
+            effectDisplay() { 
+                return "x" + format(this.effect());
+            },
+        },
     },
 
     update(diff) {
-        // Apply level multiplier if upgrade is purchased
+        // Apply level multiplier if upgrades are purchased
         let levelBoost = hasUpgrade("l", 11) ? upgradeEffect("l", 11) : new Decimal(1);
+        let pointBoost = hasUpgrade("l", 12) ? upgradeEffect("l", 12) : new Decimal(1);
 
         // Gain level points passively
-        player.l.points = player.l.points.add(diff * levelBoost);
+        player.l.points = player.l.points.add(diff * levelBoost * pointBoost);
 
         // Check if the player can level up
         let levelReq = new Decimal(5).pow(player.l.level.add(1));
