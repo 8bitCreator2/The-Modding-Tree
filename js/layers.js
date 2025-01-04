@@ -44,7 +44,7 @@ addLayer("l", {
         12: {
             title: "Point Synergy",
             description: "Boost level points based on your total points.",
-            cost: new Decimal(5),
+            cost: new Decimal(25),
             unlocked() {
                 return player.l.level.gte(2); // Unlocks at level 2
             },
@@ -58,7 +58,7 @@ addLayer("l", {
         13: {
             title: "Level Synergy",
             description: "Boost the effect of the first upgrade based on your level.",
-            cost: new Decimal(10),
+            cost: new Decimal(125),
             unlocked() {
                 return player.l.level.gte(3); // Unlocks at level 3
             },
