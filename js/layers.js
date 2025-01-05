@@ -137,28 +137,44 @@ addLayer("l", {
     },
 
     clickables: {
-        rankUp: {
-            title: "Rank Up",
-            display() {
-                let rankCost = new Decimal(10).mul(player.l.rank.add(1));
-                return `Reset everything to gain 1 rank.<br>Cost: ${format(rankCost)} level points`;
-            },
-            canClick() {
-                let rankCost = new Decimal(10).mul(player.l.rank.add(1));
-                return player.l.points.gte(rankCost);
-            },
-            onClick() {
-                let rankCost = new Decimal(10).mul(player.l.rank.add(1));
-                if (player.l.points.gte(rankCost)) {
-                    player.l.rank = player.l.rank.add(1); // Increase rank
-                    player.l.points = new Decimal(0);
-                    player.l.level = new Decimal(0);
-                    player.l.essence = new Decimal(0);
-                    // Reset all upgrades
-                    player.l.upgrades = [];
-                } else {
-                    console.warn("Player attempted to rank up without meeting the requirements.");
-                }
+    rankUp: {
+        title: "Rank Up",
+        display() {
+            let nextRankLevel = player.l.rank.add(1).mul(10); // Rank is earned every 10 levels
+            return `Reset everything to gain 1 rank.<br>Requirement: Level ${format(nextRankLevel)}`;
+        },
+        canClick() {
+            let nextRankLevel = player.l.rank.add(1).mul(10);
+            // Player can rank up only if their level is >= the next rank level
+            return player.l.level.gte(nextRankLevel);
+        },
+        onClick() {
+            let nextRankLevel = player.l.rank.add(1).mul(10);
+            // Double-check if player meets the rank-up level requirement
+            if (player.l.level.gte(nextRankLevel)) {
+                player.l.rank = player.l.rank.add(1); // Increase rank
+                // Reset progress
+                player.l.points = new Decimal(0);
+                player.l.level = new Decimal(0);
+                player.l.essence = new Decimal(0);
+            } else {
+                console.warn("Player attempted to rank up without meeting the level requirement.");
+            }
+        },
+        style() {
+            let nextRankLevel = player.l.rank.add(1).mul(10);
+            return {
+                "background-color": player.l.level.gte(nextRankLevel) ? "green" : "gray",
+                "color": "white",
+                "border": "1px solid black",
+                "border-radius": "10px",
+                "padding": "5px",
+                "cursor": player.l.level.gte(nextRankLevel) ? "pointer" : "not-allowed",
+            };
+        },
+    },
+},
+
             },
             style() {
                 let rankCost = new Decimal(10).mul(player.l.rank.add(1));
