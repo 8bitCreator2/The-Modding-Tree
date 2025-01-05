@@ -127,7 +127,7 @@ addLayer("l", {
                 return player.l.rank.gte(1);
             },
             effect() {
-                return player.points.add(1).pow(0.3).recip();
+                return player.points.add(1).pow(0.75).recip();
             },
             effectDisplay() {
                 return "÷" + format(this.effect());
@@ -163,7 +163,9 @@ addLayer("l", {
         player.l.points = player.l.points.add(diff * levelBoost * pointBoost * essenceBoost);
 
         // Check if the player can level up
-        let levelReduction = hasUpgrade("l", 22) ? upgradeEffect("l", 22) : new Decimal(1);
+       let levelReduction = new Decimal(1);
+if (hasUpgrade("l", 22)) levelReduction = levelReduction.mul(upgradeEffect("l", 22));
+if (hasUpgrade("l", 31)) levelReduction = levelReduction.mul(upgradeEffect("l", 31));
         let levelReq = new Decimal(5).pow(player.l.level.add(1)).div(levelReduction);
         if (player.l.points.gte(levelReq)) {
             player.l.points = player.l.points.sub(levelReq);
