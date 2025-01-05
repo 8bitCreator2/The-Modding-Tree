@@ -121,19 +121,15 @@ addLayer("l", {
         },
     },
 
-    update(diff) {
-        // Level multipliers
+       update(diff) {
+        // Existing logic for levels, essence, etc.
         let levelBoost = hasUpgrade("l", 11) ? upgradeEffect("l", 11) : new Decimal(1);
         let pointBoost = hasUpgrade("l", 12) ? upgradeEffect("l", 12) : new Decimal(1);
-
-        // Essence Boost (unlocks at level 5)
         let essenceBoost = player.l.level.gte(5) ? player.l.essence.add(1).log10().add(1) : new Decimal(1);
-        if (player.l.rank.gte(1)) essenceBoost = essenceBoost.mul(10); // Rank multiplier
+        if (player.l.rank.gte(1)) essenceBoost = essenceBoost.mul(10);
 
-        // Passive Level Point gain
         player.l.points = player.l.points.add(diff * levelBoost * pointBoost * essenceBoost);
 
-        // Level up logic
         let levelReduction = new Decimal(1);
         if (hasUpgrade("l", 22)) levelReduction = levelReduction.mul(upgradeEffect("l", 22));
         if (hasUpgrade("l", 31)) levelReduction = levelReduction.mul(upgradeEffect("l", 31));
@@ -144,13 +140,21 @@ addLayer("l", {
             player.l.level = player.l.level.add(1);
         }
 
-        // Level Essence generation
         if (player.l.level.gte(5)) {
             let baseEssence = player.l.level.mul(player.l.points).pow(0.5);
             if (player.l.rank.gte(2)) {
                 baseEssence = baseEssence.mul(player.points.add(1).pow(0.3));
             }
             player.l.essence = player.l.essence.add(baseEssence.mul(diff));
+        }
+
+        // Logic for Level Essence Ranking (unlocks at level 13)
+        if (player.l.level.gte(13)) {
+            let essenceRankReq = Decimal.pow(1e9, 1.5).mul(player.l.essenceRank.add(1));
+            if (player.l.essence.gte(essenceRankReq)) {
+                player.l.essence = player.l.essence.sub(essenceRankReq);
+                player.l.essenceRank = player.l.essenceRank.add(1);
+            }
         }
     },
 
@@ -177,6 +181,23 @@ addLayer("l", {
                         <br>
                         <h4>Level Essence: ${format(player.l.essence)}</h4>
                     `;
+                }],
+                ["display-text", function() {
+                    if (player.l.level.gte(13)) {
+                        let essenceRankReq = Decimal.pow(1e7, 1.125).mul(player.l.essenceRank.add(1));
+                        let progress = player.l.essence.div(essenceRankReq).mul(100);
+
+                        return `
+                            <h3>Level Essence Rank: ${format(player.l.essenceRank)}</h3>
+                            <p>Essence Progress: ${format(player.l.essence)} / ${format(essenceRankReq)}</p>
+                            <div style="width: 100%; height: 20px; background-color: lightgray; border: 1px solid black;">
+                                <div style="width: ${progress.toFixed(2)}%; height: 100%; background-color: blue;"></div>
+                            </div>
+                            <br>
+                            <p>Reward: ${format(player.l.essenceRank.mul(10))}x Level Essence</p>
+                        `;
+                    }
+                    return "";
                 }],
             ],
         },
@@ -213,6 +234,7 @@ addLayer("l", {
                     player.l.points = new Decimal(0);
                     player.l.level = new Decimal(0);
                     player.l.essence = new Decimal(0);
+                    player.l.essenceRank = new Decimal(0); // Reset Essence Rank too
                 }
             },
         },
