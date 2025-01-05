@@ -48,6 +48,10 @@ function getPointGen() {
 	if (hasUpgrade("l", 21)) {
 		let levelPointBoost = upgradeEffect("l", 21);
 		gain = gain.mul(levelPointBoost); // Multiply gain by Upgrade 21's effect
+	},
+	if (hasMilestone("l", 1)) {
+		
+		gain = gain.pow(2) // Multiply gain by Upgrade 21's effect
 	}
 
 	return gain;
