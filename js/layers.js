@@ -54,9 +54,6 @@ addLayer("l", {
             },
             effect() {
                 let boost = player.points.add(1).log10().add(1).pow(1.2);
-                if (player.l.rank.gte(1)) {
-                    boost = boost.mul(10); // Rank boost
-                };
 if (hasUpgrade("l", 23)) {
 boost = boost.mul(upgradeEffect("l", 23)) }
                 return boost;
@@ -192,7 +189,7 @@ boost = boost.mul(upgradeEffect("l", 23)) }
                     return `
                         <h3>Rank: ${format(player.l.rank)}</h3>
                         <p>Ranks reset all progress but provide significant boosts to level points and essence.</p>
-                        <p>Current Boost: x10 to level points and essence</p>
+                        
                     `;
                 }],
                 ["row", [["clickable", "rankUp"]]],
