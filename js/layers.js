@@ -180,50 +180,51 @@ addLayer("l", {
         }
     },
 
-    tabFormat: {
-        "Main": {
-            content: [
-                "main-display",
-                "resource-display",
-                "upgrades",
-                ["display-text", function() {
-                    let levelReduction = hasUpgrade("l", 22) ? upgradeEffect("l", 22) : new Decimal(1);
-                    let levelReq = new Decimal(5).pow(player.l.level.add(1)).div(levelReduction);
-                    let progress = player.l.points.div(levelReq).mul(100);
-                    let essenceBoost = player.l.level.gte(5) 
-                        ? player.l.essence.add(1).log10().add(1) 
-                        : new Decimal(1);
-                    if (player.l.rank.gte(1)) {
-                        essenceBoost = essenceBoost.mul(10); // Rank boost
-                    }
-                    return `
-                        <h3>Level: ${format(player.l.level)}</h3>
-                        <p>Level Points: ${format(player.l.points)} / ${format(levelReq)}</p>
-                        <div style="width: 100%; height: 20px; background-color: lightgray; border: 1px solid black;">
-                            <div style="width: ${progress.toFixed(2)}%; height: 100%; background-color: green;"></div>
-                        </div>
-                        <br>
-                        <h4>Level Essence: ${format(player.l.essence)}</h4>
-                        <p>Level Essence Boost: x${format(essenceBoost)}</p>
-                    `;
-                }],
-            ],
-        },
-        "Rank": {
-            unlocked() {
-                return player.l.level.gte(10);
-            },
-            content: [
-                ["display-text", function() {
-                    return `
-                        <h3>Rank: ${format(player.l.rank)}</h3>
-                        <p>Ranks reset all progress but provide significant boosts to level points and essence.</p>
-                    `;
-                }],
-                ["row", [["clickable", "rankUp"]]],
-            ],
-        },
+   tabFormat: {
+    "Main": {
+        content: [
+            "main-display",
+            "resource-display",
+            "upgrades",
+            ["display-text", function() {
+                let levelReduction = hasUpgrade("l", 22) ? upgradeEffect("l", 22) : new Decimal(1);
+                let levelReq = new Decimal(5).pow(player.l.level.add(1)).div(levelReduction);
+                let progress = player.l.points.div(levelReq).mul(100);
+                let essenceBoost = player.l.level.gte(5) 
+                    ? player.l.essence.add(1).log10().add(1) 
+                    : new Decimal(1);
+                if (player.l.rank.gte(1)) {
+                    essenceBoost = essenceBoost.mul(10); // Rank boost
+                }
+                return `
+                    <h3>Level: ${format(player.l.level)}</h3>
+                    <p>Level Points: ${format(player.l.points)} / ${format(levelReq)}</p>
+                    <div style="width: 100%; height: 20px; background-color: lightgray; border: 1px solid black;">
+                        <div style="width: ${progress.toFixed(2)}%; height: 100%; background-color: green;"></div>
+                    </div>
+                    <br>
+                    <h4>Level Essence: ${format(player.l.essence)}</h4>
+                    <p>Level Essence Boost: x${format(essenceBoost)}</p>
+                `;
+            }],
+        ],
     },
+    "Rank": {
+        unlocked() {
+            return player.l.level.gte(10);
+        },
+        content: [
+            ["display-text", function() {
+                return `
+                    <h3>Rank: ${format(player.l.rank)}</h3>
+                    <p>Ranks reset all progress but provide significant boosts to level points and essence.</p>
+                `;
+            }],
+            ["row", [["clickable", "rankUp"]]],
+            "milestones", // Add milestones to display in the Rank tab
+        ],
+    },
+},
 
     clickables: {
         rankUp: {
