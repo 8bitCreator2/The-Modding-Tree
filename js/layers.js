@@ -184,7 +184,7 @@ addLayer("l", {
                 }],
                 ["display-text", function() {
                     if (player.l.level.gte(13)) {
-                        let essenceRankReq = Decimal.pow(1e7, 1.125).mul(player.l.essenceRank.add(1));
+                        let essenceRankReq = Decimal.pow(1e6, player.l.essenceRank.add(1));
                         let progress = player.l.essence.div(essenceRankReq).mul(100);
 
                         return `
