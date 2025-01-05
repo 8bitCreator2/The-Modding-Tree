@@ -109,16 +109,16 @@ boost = boost.mul(upgradeEffect("l", 23)) }
         },
         23: {
             title: "Level Synergized Points",
-            description: "Upgrade 12 (Point Synergy) is now based on level^0.8.",
+            description: "Upgrade 12 (Point Synergy) is now based on level^1.5.",
             cost: new Decimal(25),
             unlocked() {
                 return player.l.level.gte(8);
             },
             effect() {
-                return player.l.level.add(1).pow(0.8);
+                return player.l.level.add(1).pow(1.5);
             },
             effectDisplay() {
-                return "^" + format(this.effect());
+                return "x" + format(this.effect());
             },
         },
     },
