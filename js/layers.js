@@ -8,7 +8,8 @@ addLayer("l", {
             points: new Decimal(0),
             level: new Decimal(0),
             essence: new Decimal(0),
-        };
+            rank: new Decimal(0), // Added rank
+        }
     },
     color: "#008CFF",
     resource: "level points",
@@ -35,6 +36,9 @@ addLayer("l", {
                     let levelBoost = player[this.layer].level.add(1);
                     baseBoost = baseBoost.mul(levelBoost);
                 }
+                if (player.l.rank.gte(1)) {
+                    baseBoost = baseBoost.mul(10); // Rank boost
+                }
                 return baseBoost;
             },
             effectDisplay() { 
@@ -49,7 +53,11 @@ addLayer("l", {
                 return player.l.level.gte(2);
             },
             effect() {
-                return player.points.add(1).log10().add(1).pow(1.2);
+                let boost = player.points.add(1).log10().add(1).pow(1.2);
+                if (player.l.rank.gte(1)) {
+                    boost = boost.mul(10); // Rank boost
+                }
+                return boost;
             },
             effectDisplay() { 
                 return "x" + format(this.effect());
@@ -69,22 +77,68 @@ addLayer("l", {
                 return "x" + format(this.effect()) + " to Upgrade 11 effect";
             },
         },
+        21: {
+            title: "Level Point Power",
+            description: "Boost player points based on your total level points (at a reduced rate).",
+            cost: new Decimal(15),
+            unlocked() {
+                return player.l.level.gte(6);
+            },
+            effect() {
+                return player.l.points.add(1).log10().add(1);
+            },
+            effectDisplay() {
+                return "x" + format(this.effect());
+            },
+        },
+        22: {
+            title: "Essence Efficiency",
+            description: "Reduce the level requirement based on your Level Essence (at a reduced rate).",
+            cost: new Decimal(20),
+            unlocked() {
+                return player.l.level.gte(7);
+            },
+            effect() {
+                return player.l.essence.add(1).log10().add(1).pow(0.5);
+            },
+            effectDisplay() {
+                return "÷" + format(this.effect());
+            },
+        },
+        23: {
+            title: "Level Synergized Points",
+            description: "Upgrade 12 (Point Synergy) is now based on level^0.8.",
+            cost: new Decimal(25),
+            unlocked() {
+                return player.l.level.gte(8);
+            },
+            effect() {
+                return player.l.level.add(1).pow(0.8);
+            },
+            effectDisplay() {
+                return "^" + format(this.effect());
+            },
+        },
     },
 
     // Update Level Essence and Player Point Boosts
     update(diff) {
-        let rankBoost = hasUpgrade("r", 11) ? player.r.rank.mul(10) : new Decimal(1); // Rank multiplier
+        // Apply level multipliers
         let levelBoost = hasUpgrade("l", 11) ? upgradeEffect("l", 11) : new Decimal(1);
         let pointBoost = hasUpgrade("l", 12) ? upgradeEffect("l", 12) : new Decimal(1);
         let essenceBoost = player.l.level.gte(5) 
             ? player.l.essence.add(1).log10().add(1) 
             : new Decimal(1);
+        if (player.l.rank.gte(1)) {
+            essenceBoost = essenceBoost.mul(10); // Rank boost
+        }
 
         // Gain level points passively
-        player.l.points = player.l.points.add(diff * levelBoost * pointBoost * essenceBoost * rankBoost);
+        player.l.points = player.l.points.add(diff * levelBoost * pointBoost * essenceBoost);
 
         // Check if the player can level up
-        let levelReq = new Decimal(5).pow(player.l.level.add(1));
+        let levelReduction = hasUpgrade("l", 22) ? upgradeEffect("l", 22) : new Decimal(1);
+        let levelReq = new Decimal(5).pow(player.l.level.add(1)).div(levelReduction);
         if (player.l.points.gte(levelReq)) {
             player.l.points = player.l.points.sub(levelReq);
             player.l.level = player.l.level.add(1);
@@ -97,6 +151,7 @@ addLayer("l", {
         }
     },
 
+    // Display Level Essence and Level Point Boost
     tabFormat: {
         "Main": {
             content: [
@@ -104,11 +159,15 @@ addLayer("l", {
                 "resource-display",
                 "upgrades",
                 ["display-text", function() {
-                    let levelReq = new Decimal(5).pow(player.l.level.add(1));
+                    let levelReduction = hasUpgrade("l", 22) ? upgradeEffect("l", 22) : new Decimal(1);
+                    let levelReq = new Decimal(5).pow(player.l.level.add(1)).div(levelReduction);
                     let progress = player.l.points.div(levelReq).mul(100);
                     let essenceBoost = player.l.level.gte(5) 
                         ? player.l.essence.add(1).log10().add(1) 
                         : new Decimal(1);
+                    if (player.l.rank.gte(1)) {
+                        essenceBoost = essenceBoost.mul(10); // Rank boost
+                    }
                     return `
                         <h3>Level: ${format(player.l.level)}</h3>
                         <p>Level Points: ${format(player.l.points)} / ${format(levelReq)}</p>
@@ -122,88 +181,50 @@ addLayer("l", {
                 }],
             ],
         },
-    },
-
-    doReset(resettingLayer) {
-        if (layers[resettingLayer]?.row > this.row) {
-            layerDataReset("l", ["level", "essence"]);
-        }
-    },
-});
-
-addLayer("r", {
-    name: "Ranks",
-    symbol: "R",
-    position: 1,
-    startData() {
-        return {
-            unlocked: false,
-            rank: new Decimal(1), // Track rank
-        };
-    },
-    color: "#FF4500",
-    resource: "rank",
-    row: 1,
-    layerShown() { 
-        return player.l.level.gte(10) || player.r.unlocked; // Unlocks at level 10 permanently
-    },
-
-    tabStyle: {
-        background: "#FF4500",
-        borderRadius: "50%",
-        color: "white",
+        "Rank": {
+            unlocked() {
+                return player.l.level.gte(10);
+            },
+            content: [
+                ["display-text", function() {
+                    return `
+                        <h3>Rank: ${format(player.l.rank)}</h3>
+                        <p>Ranks reset all progress but provide significant boosts to level points and essence.</p>
+                        <p>Current Boost: x10 to level points and essence</p>
+                    `;
+                }],
+                ["row", [["clickable", "rankUp"]]],
+            ],
+        },
     },
 
     clickables: {
-        11: {
-            title: "Rank Up",
-            display() {
-                let requirement = player.r.rank.mul(10);
-                return `Rank up to increase multipliers for level points and level essence! 
-                <br>Requirement: Level ${requirement}
-                <br>Current Rank: ${player.r.rank}`;
-            },
-            canClick() {
-                return player.l.level.gte(player.r.rank.mul(10));
-            },
-            onClick() {
-                if (this.canClick()) {
-                    player.r.rank = player.r.rank.add(1); // Increase rank
-                    player.l.points = new Decimal(0); // Reset level points
-                    player.l.level = new Decimal(0); // Reset level
-                    player.l.essence = new Decimal(0); // Reset essence
-                }
-            },
+    rankUp: {
+        title: "Rank Up",
+        display() {
+            let requiredLevel = player.l.rank.add(1).mul(10);
+            return `Reset everything to gain 1 rank.<br>
+                    Requires: Level ${format(requiredLevel)}`;
+        },
+        canClick() {
+            let requiredLevel = player.l.rank.add(1).mul(10);
+            return player.l.level.gte(requiredLevel);
+        },
+        onClick() {
+            if (this.canClick()) {
+                player.l.rank = player.l.rank.add(1);
+                player.l.points = new Decimal(0);
+                player.l.level = new Decimal(0);
+                player.l.essence = new Decimal(0);
+            }
         },
     },
+},
 
-    upgrades: {
-        11: {
-            title: "Rank Multiplier",
-            description: "Increase the effect of rank boosts by 10x.",
-            cost: new Decimal(1),
-            effect() {
-                return player.r.rank.mul(10);
-            },
-            effectDisplay() {
-                return "x" + format(this.effect());
-            },
-        },
-    },
 
-    tabFormat: {
-        "Rank Up": {
-            content: [
-                "main-display",
-                "clickables",
-                "upgrades",
-                ["display-text", function() {
-                    return `
-                        <h3>Current Rank: ${format(player.r.rank)}</h3>
-                        <p>Each rank increases level-related boosts by 10x.</p>
-                    `;
-                }],
-            ],
-        },
+    doReset(resettingLayer) {
+        if (layers[resettingLayer]?.row > this.row) {
+            layerDataReset("l", ["rank"]);
+        }
     },
 });
