@@ -59,9 +59,6 @@ addLayer("l", {
             },
             effect() {
                 let boost = player.points.add(1).log10().add(1).pow(1.2);
-                if (hasUpgrade("l", 23)) {
-                    boost = boost.mul(upgradeEffect("l", 23));
-                }
                 return boost;
             },
             effectDisplay() { 
@@ -99,6 +96,12 @@ addLayer("l", {
             player.l.points = player.l.points.sub(levelReq);
             player.l.level = player.l.level.add(1);
         }
+
+        // Gain Level Essence if the level is greater than or equal to 5
+        if (player.l.level.gte(5)) {
+            let essenceGain = player.l.level.pow(0.5).mul(diff);
+            player.l.essence = player.l.essence.add(essenceGain);
+        }
     },
 
     tabFormat: {
@@ -116,6 +119,8 @@ addLayer("l", {
                         <div style="width: 100%; height: 20px; background-color: lightgray; border: 1px solid black;">
                             <div style="width: ${progress.toFixed(2)}%; height: 100%; background-color: green;"></div>
                         </div>
+                        <br>
+                        <h4>Level Essence: ${format(player.l.essence)}</h4>
                     `;
                 }],
             ],
@@ -124,11 +129,11 @@ addLayer("l", {
             unlocked() { return player.l.level.gte(10); },
             content: [
                 ["display-text", function() {
-                    let rankCost = new Decimal(10).mul(player.l.rank.add(1));
+                    let nextRankLevel = player.l.rank.add(1).mul(10);
                     return `
                         <h3>Rank: ${format(player.l.rank)}</h3>
-                        <p>Ranks reset all progress but provide significant boosts to level points.</p>
-                        <p>Next Rank Cost: ${format(rankCost)} level points</p>
+                        <p>Ranks reset all progress but provide significant boosts to level points and essence gain.</p>
+                        <p>Requirement for next rank: Level ${format(nextRankLevel)}</p>
                     `;
                 }],
                 ["row", [["clickable", "rankUp"]]],
@@ -137,60 +142,41 @@ addLayer("l", {
     },
 
     clickables: {
-    rankUp: {
-        title: "Rank Up",
-        display() {
-            let nextRankLevel = player.l.rank.add(1).mul(10); // Rank is earned every 10 levels
-            return `Reset everything to gain 1 rank.<br>Requirement: Level ${format(nextRankLevel)}`;
-        },
-        canClick() {
-            let nextRankLevel = player.l.rank.add(1).mul(10);
-            // Player can rank up only if their level is >= the next rank level
-            return player.l.level.gte(nextRankLevel);
-        },
-        onClick() {
-            let nextRankLevel = player.l.rank.add(1).mul(10);
-            // Double-check if player meets the rank-up level requirement
-            if (player.l.level.gte(nextRankLevel)) {
-                player.l.rank = player.l.rank.add(1); // Increase rank
-                // Reset progress
-                player.l.points = new Decimal(0);
-                player.l.level = new Decimal(0);
-                player.l.essence = new Decimal(0);
-            } else {
-                console.warn("Player attempted to rank up without meeting the level requirement.");
-            }
-        },
-        style() {
-            let nextRankLevel = player.l.rank.add(1).mul(10);
-            return {
-                "background-color": player.l.level.gte(nextRankLevel) ? "green" : "gray",
-                "color": "white",
-                "border": "1px solid black",
-                "border-radius": "10px",
-                "padding": "5px",
-                "cursor": player.l.level.gte(nextRankLevel) ? "pointer" : "not-allowed",
-            };
-        },
-    },
-},
-
+        rankUp: {
+            title: "Rank Up",
+            display() {
+                let nextRankLevel = player.l.rank.add(1).mul(10); // Rank is earned every 10 levels
+                return `Reset everything to gain 1 rank.<br>Requirement: Level ${format(nextRankLevel)}`;
+            },
+            canClick() {
+                let nextRankLevel = player.l.rank.add(1).mul(10);
+                return player.l.level.gte(nextRankLevel);
+            },
+            onClick() {
+                let nextRankLevel = player.l.rank.add(1).mul(10);
+                if (player.l.level.gte(nextRankLevel)) {
+                    player.l.rank = player.l.rank.add(1);
+                    // Reset progress
+                    player.l.points = new Decimal(0);
+                    player.l.level = new Decimal(0);
+                    player.l.essence = new Decimal(0);
+                }
             },
             style() {
-                let rankCost = new Decimal(10).mul(player.l.rank.add(1));
+                let nextRankLevel = player.l.rank.add(1).mul(10);
                 return {
-                    "background-color": player.l.points.gte(rankCost) ? "green" : "gray",
+                    "background-color": player.l.level.gte(nextRankLevel) ? "green" : "gray",
                     "color": "white",
                     "border": "1px solid black",
                     "border-radius": "10px",
                     "padding": "5px",
-                    "cursor": player.l.points.gte(rankCost) ? "pointer" : "not-allowed",
+                    "cursor": player.l.level.gte(nextRankLevel) ? "pointer" : "not-allowed",
                 };
             },
         },
     },
 
-    doReset(resettingLayer) {
+    doReset(resettingLayer) { 
         if (layers[resettingLayer]?.row > this.row) {
             layerDataReset("l", ["rank"]);
         }
