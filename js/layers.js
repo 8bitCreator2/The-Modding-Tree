@@ -125,7 +125,7 @@ addLayer("l", {
     update(diff) {
         // Essence Rank scaling logic
         if (player.l.level.gte(13)) {
-            let essenceRankReq = Decimal.pow(1e7, player.l.essenceRank.add(1).pow(1.5));
+            let essenceRankReq = Decimal.pow(1e6, player.l.essenceRank.add(1).pow(1.1));
             if (player.l.essence.gte(essenceRankReq)) {
                 player.l.essence = player.l.essence.sub(essenceRankReq);
                 player.l.essenceRank = player.l.essenceRank.add(1);
