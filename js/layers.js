@@ -190,24 +190,25 @@ addLayer("l", {
                         <h4>Level Essence: ${format(player.l.essence)}</h4>
                     `;
                 }],
-                ["display-text", function() {
-                    if (player.l.level.gte(13)) {
-                        let essenceRankReq = Decimal.pow(1e7, player.l.essenceRank.add(1).pow(1.5));
-                        let progress = player.l.essence.div(essenceRankReq).mul(100);
-                        let essenceRankEffect = player.l.essenceRank.add(1).pow(0.5);
+              ["display-text", function() { 
+    if (player.l.level.gte(13)) {
+        // Corrected essenceRankReq with easier scaling
+        let essenceRankReq = Decimal.pow(1e6, player.l.essenceRank.add(1).pow(1.1));
+        let progress = player.l.essence.div(essenceRankReq).mul(100).min(100); // Cap at 100%
+        let essenceRankEffect = player.l.essenceRank.add(1).pow(0.5); // Essence Rank Effect
 
-                        return `
-                            <h3>Level Essence Rank: ${format(player.l.essenceRank)}</h3>
-                            <p>Essence Progress: ${format(player.l.essence)} / ${format(essenceRankReq)}</p>
-                            <div style="width: 100%; height: 20px; background-color: lightgray; border: 1px solid black;">
-                                <div style="width: ${progress.toFixed(2)}%; height: 100%; background-color: blue;"></div>
-                            </div>
-                            <br>
-                            <p>Effect: ${format(essenceRankEffect)}x boost to Level Essence gain</p>
-                        `;
-                    }
-                    return "";
-                }],
+        return `
+            <h3>Level Essence Rank: ${format(player.l.essenceRank)}</h3>
+            <p>Essence Progress: ${format(player.l.essence)} / ${format(essenceRankReq)}</p>
+            <div style="width: 100%; height: 20px; background-color: lightgray; border: 1px solid black;">
+                <div style="width: ${progress.toFixed(2)}%; height: 100%; background-color: blue;"></div>
+            </div>
+            <br>
+            <p>Effect: ${format(essenceRankEffect)}x boost to Level Essence gain</p>
+        `;
+    }
+    return ""; // Return empty if Level < 13
+}],
             ],
         },
         "Rank": {
