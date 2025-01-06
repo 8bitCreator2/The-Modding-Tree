@@ -72,12 +72,12 @@ addLayer("l", {
             description: "Boost points based on total level points (reduced rate).",
             cost: new Decimal(2000),
             unlocked() { return player.l.level.gte(6); },
-            effect() { let boost = player.l.points.add(1).log10().add(1.5);
+            effect() { 
+                let boost = player.l.points.add(1).log10().add(1.5);
                 if (player.l.level.gte(17)) {
-let boost = boost.mul(player.l.essenceRank.add(1).pow(2)); 
-
-}
-                return boost
+                    boost = boost.mul(player.l.essenceRank.add(1).pow(2));
+                }
+                return boost;
             },
             effectDisplay() { return "x" + format(this.effect()); },
         },
@@ -127,20 +127,19 @@ let boost = boost.mul(player.l.essenceRank.add(1).pow(2));
     },
 
     update(diff) {
-        // Essence Rank scaling logic
-        if (player.l.level.gte(13)) {
-            let essenceRankReq = Decimal.pow(1e6, player.l.essenceRank.add(1).pow(1.01));
-            if (player.l.essence.gte(essenceRankReq)) {
-                player.l.essence = player.l.essence.sub(essenceRankReq);
-                player.l.essenceRank = player.l.essenceRank.add(1);
-            }
+        // Essence Rank Scaling
+        let essenceRankReq = Decimal.pow(1e6, player.l.essenceRank.add(1).pow(1.01));
+        if (player.l.level.gte(15)) {
+            essenceRankReq = essenceRankReq.div(1000); // Reduced scaling at Level 15
         }
- if (player.l.level.gte(15)) {
-     let essenceRankReq = essenceRankReq.div(1000) }
-        // Calculate Essence Rank Effect (e.g., boosts essence gain)
+        if (player.l.essence.gte(essenceRankReq)) {
+            player.l.essence = player.l.essence.sub(essenceRankReq);
+            player.l.essenceRank = player.l.essenceRank.add(1);
+        }
+
         let essenceRankEffect = player.l.essenceRank.add(1).pow(3);
 
-        // Existing level and essence updates
+        // Point, Level, and Essence Gain
         let levelBoost = hasUpgrade("l", 11) ? upgradeEffect("l", 11) : new Decimal(1);
         let pointBoost = hasUpgrade("l", 12) ? upgradeEffect("l", 12) : new Decimal(1);
         let essenceBoost = player.l.level.gte(5)
@@ -164,71 +163,12 @@ let boost = boost.mul(player.l.essenceRank.add(1).pow(2));
             let baseEssence = player.l.level.mul(player.l.points).pow(0.5);
             if (player.l.rank.gte(2)) {
                 baseEssence = baseEssence.mul(player.points.add(1).pow(0.3));
-            };
-            if (player.l.essenceRank.gte(1)) { 
-                baseEssence = baseEssence.mul(essenceRankEffect)  };
+            }
+            if (player.l.essenceRank.gte(1)) {
+                baseEssence = baseEssence.mul(essenceRankEffect);
+            }
             player.l.essence = player.l.essence.add(baseEssence.mul(diff));
         }
-    },
-
-    tabFormat: {
-        "Main": {
-            content: [
-                "main-display",
-                "resource-display",
-                "upgrades",
-                ["display-text", function() {
-                    let levelReduction = new Decimal(1);
-                    if (hasUpgrade("l", 22)) levelReduction = levelReduction.mul(upgradeEffect("l", 22));
-                    if (hasUpgrade("l", 31)) levelReduction = levelReduction.mul(upgradeEffect("l", 31));
-
-                    let levelReq = Decimal.pow(5, player.l.level.add(1)).div(levelReduction);
-                    let progress = player.l.points.div(levelReq).mul(100);
-
-                    return `
-                        <h3>Level: ${format(player.l.level)}</h3>
-                        <p>Level Points: ${format(player.l.points)} / ${format(levelReq)}</p>
-                        <div style="width: 100%; height: 20px; background-color: lightgray; border: 1px solid black;">
-                            <div style="width: ${progress.toFixed(2)}%; height: 100%; background-color: green;"></div>
-                        </div>
-                        <br>
-                        <h4>Level Essence: ${format(player.l.essence)}</h4>
-                    `;
-                }],
-              ["display-text", function() { 
-    if (player.l.level.gte(13)) {
-        // Corrected essenceRankReq with easier scaling
-        let essenceRankReq = Decimal.pow(1e6, player.l.essenceRank.add(1).pow(1.01));
-        let progress = player.l.essence.div(essenceRankReq).mul(100).min(100); // Cap at 100%
-        let essenceRankEffect = player.l.essenceRank.add(1).pow(3); // Essence Rank Effect
-
-        return `
-            <h3>Level Essence Rank: ${format(player.l.essenceRank)}</h3>
-            <p>Essence Progress: ${format(player.l.essence)} / ${format(essenceRankReq)}</p>
-            <div style="width: 100%; height: 20px; background-color: lightgray; border: 1px solid black;">
-                <div style="width: ${progress.toFixed(2)}%; height: 100%; background-color: blue;"></div>
-            </div>
-            <br>
-            <p>Effect: ${format(essenceRankEffect)}x boost to Level Essence gain</p>
-        `;
-    }
-    return ""; // Return empty if Level < 13
-}],
-            ],
-        },
-        "Rank": {
-            unlocked() { return player.l.level.gte(10); },
-            content: [
-                ["display-text", function() {
-                    return `
-                        <h3>Rank: ${format(player.l.rank)}</h3>
-                        <p>Ranks reset progress but boost level points and essence.</p>
-                    `;
-                }],
-                ["row", [["clickable", "rankUp"]]],
-                "milestones",
-            ],
-        },
     },
 
     clickables: {
