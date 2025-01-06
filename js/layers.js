@@ -153,58 +153,59 @@ addLayer("l", {
         }
 
         // Essence Rank logic
-        if (player.l.level.gte(13)) {
-            let essenceRankReq = Decimal.pow(1e9, 1.5).mul(player.l.essenceRank.add(1));
-            if (player.l.essence.gte(essenceRankReq)) {
-                player.l.essence = player.l.essence.sub(essenceRankReq);
-                player.l.essenceRank = player.l.essenceRank.add(1);
-            }
+       if (player.l.level.gte(13)) {
+        // First essence rank requirement starts at 1e7 and scales 1.5x
+        let essenceRankReq = Decimal.pow(1e7, player.l.essenceRank.add(1).pow(1.5));
+        if (player.l.essence.gte(essenceRankReq)) {
+            player.l.essence = player.l.essence.sub(essenceRankReq);
+            player.l.essenceRank = player.l.essenceRank.add(1);
         }
+    }
     },
 
     tabFormat: {
-        "Main": {
-            content: [
-                "main-display",
-                "resource-display",
-                "upgrades",
-                ["display-text", function() {
-                    let levelReduction = new Decimal(1);
-                    if (hasUpgrade("l", 22)) levelReduction = levelReduction.mul(upgradeEffect("l", 22));
-                    if (hasUpgrade("l", 31)) levelReduction = levelReduction.mul(upgradeEffect("l", 31));
+    "Main": {
+        content: [
+            "main-display",
+            "resource-display",
+            "upgrades",
+            ["display-text", function() {
+                let levelReduction = new Decimal(1);
+                if (hasUpgrade("l", 22)) levelReduction = levelReduction.mul(upgradeEffect("l", 22));
+                if (hasUpgrade("l", 31)) levelReduction = levelReduction.mul(upgradeEffect("l", 31));
 
-                    let levelReq = Decimal.pow(5, player.l.level.add(1)).div(levelReduction);
-                    let progress = player.l.points.div(levelReq).mul(100);
+                let levelReq = Decimal.pow(5, player.l.level.add(1)).div(levelReduction);
+                let progress = player.l.points.div(levelReq).mul(100);
+
+                return `
+                    <h3>Level: ${format(player.l.level)}</h3>
+                    <p>Level Points: ${format(player.l.points)} / ${format(levelReq)}</p>
+                    <div style="width: 100%; height: 20px; background-color: lightgray; border: 1px solid black;">
+                        <div style="width: ${progress.toFixed(2)}%; height: 100%; background-color: green;"></div>
+                    </div>
+                    <br>
+                    <h4>Level Essence: ${format(player.l.essence)}</h4>
+                `;
+            }],
+            ["display-text", function() {
+                if (player.l.level.gte(13)) {
+                    let essenceRankReq = Decimal.pow(1e7, player.l.essenceRank.add(1).pow(1.5));
+                    let progress = player.l.essence.div(essenceRankReq).mul(100);
 
                     return `
-                        <h3>Level: ${format(player.l.level)}</h3>
-                        <p>Level Points: ${format(player.l.points)} / ${format(levelReq)}</p>
+                        <h3>Level Essence Rank: ${format(player.l.essenceRank)}</h3>
+                        <p>Essence Progress: ${format(player.l.essence)} / ${format(essenceRankReq)}</p>
                         <div style="width: 100%; height: 20px; background-color: lightgray; border: 1px solid black;">
-                            <div style="width: ${progress.toFixed(2)}%; height: 100%; background-color: green;"></div>
+                            <div style="width: ${progress.toFixed(2)}%; height: 100%; background-color: blue;"></div>
                         </div>
                         <br>
-                        <h4>Level Essence: ${format(player.l.essence)}</h4>
+                        <p>Reward: ${format(player.l.essenceRank.mul(10))}x Level Essence</p>
                     `;
-                }],
-                ["display-text", function() {
-                    if (player.l.level.gte(13)) {
-                        let essenceRankReq = Decimal.pow(1e9, 1.5).mul(player.l.essenceRank.add(1));
-                        let progress = player.l.essence.div(essenceRankReq).mul(100);
-
-                        return `
-                            <h3>Level Essence Rank: ${format(player.l.essenceRank)}</h3>
-                            <p>Essence Progress: ${format(player.l.essence)} / ${format(essenceRankReq)}</p>
-                            <div style="width: 100%; height: 20px; background-color: lightgray; border: 1px solid black;">
-                                <div style="width: ${progress.toFixed(2)}%; height: 100%; background-color: blue;"></div>
-                            </div>
-                            <br>
-                            <p>Reward: ${format(player.l.essenceRank.mul(10))}x Level Essence</p>
-                        `;
-                    }
-                    return "";
-                }],
-            ],
-        },
+                }
+                return "";
+            }],
+        ],
+    },
         "Rank": {
             unlocked() { return player.l.level.gte(10); },
             content: [
