@@ -72,8 +72,12 @@ addLayer("l", {
             description: "Boost points based on total level points (reduced rate).",
             cost: new Decimal(2000),
             unlocked() { return player.l.level.gte(6); },
-            effect() {
-                return player.l.points.add(1).log10().add(1.5);
+            effect() { let boost = player.l.points.add(1).log10().add(1.5);
+                if (player.l.level.gte(17)) {
+let boost = boost.mul(player.l.essenceRank.add(1).pow(2)); 
+
+}
+                return boost
             },
             effectDisplay() { return "x" + format(this.effect()); },
         },
@@ -131,7 +135,8 @@ addLayer("l", {
                 player.l.essenceRank = player.l.essenceRank.add(1);
             }
         }
-
+ if (player.l.level.gte(15)) {
+     let essenceRankReq = essenceRankReq.div(1000) }
         // Calculate Essence Rank Effect (e.g., boosts essence gain)
         let essenceRankEffect = player.l.essenceRank.add(1).pow(3);
 
