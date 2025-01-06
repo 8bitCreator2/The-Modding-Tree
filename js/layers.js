@@ -133,7 +133,7 @@ addLayer("l", {
         }
 
         // Calculate Essence Rank Effect (e.g., boosts essence gain)
-        let essenceRankEffect = player.l.essenceRank.add(1).pow(0.5);
+        let essenceRankEffect = player.l.essenceRank.add(1).pow(3);
 
         // Existing level and essence updates
         let levelBoost = hasUpgrade("l", 11) ? upgradeEffect("l", 11) : new Decimal(1);
@@ -195,7 +195,7 @@ addLayer("l", {
         // Corrected essenceRankReq with easier scaling
         let essenceRankReq = Decimal.pow(1e6, player.l.essenceRank.add(1).pow(1.1));
         let progress = player.l.essence.div(essenceRankReq).mul(100).min(100); // Cap at 100%
-        let essenceRankEffect = player.l.essenceRank.add(1).pow(0.5); // Essence Rank Effect
+        let essenceRankEffect = player.l.essenceRank.add(1).pow(3); // Essence Rank Effect
 
         return `
             <h3>Level Essence Rank: ${format(player.l.essenceRank)}</h3>
