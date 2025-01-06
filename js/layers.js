@@ -159,7 +159,9 @@ addLayer("l", {
             let baseEssence = player.l.level.mul(player.l.points).pow(0.5);
             if (player.l.rank.gte(2)) {
                 baseEssence = baseEssence.mul(player.points.add(1).pow(0.3));
-            }
+            };
+            if (player.l.essenceRank.gte(1)) { 
+                baseEssence = baseEssence.mul(essenceRankEffect)  };
             player.l.essence = player.l.essence.add(baseEssence.mul(diff));
         }
     },
