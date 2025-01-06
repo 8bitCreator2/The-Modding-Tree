@@ -73,14 +73,14 @@ addLayer("l", {
             cost: new Decimal(2000),
             unlocked() { return player.l.level.gte(6); },
             effect() {
-                return player.l.points.add(1).log10().add(1);
+                return player.l.points.add(1).log10().add(1.5);
             },
             effectDisplay() { return "x" + format(this.effect()); },
         },
         22: {
             title: "Essence Efficiency",
             description: "Reduce the level requirement based on Level Essence.",
-            cost: new Decimal(20000),
+            cost: new Decimal(10000),
             unlocked() { return player.l.level.gte(7); },
             effect() {
                 return player.l.essence.add(1).log10().add(1).pow(0.85);
@@ -90,7 +90,7 @@ addLayer("l", {
         23: {
             title: "Level Synergized Points",
             description: "Upgrade 12 is multiplied by level^1.5.",
-            cost: new Decimal(2e5),
+            cost: new Decimal(25000),
             unlocked() { return player.l.level.gte(8); },
             effect() {
                 return player.l.level.add(1).pow(1.5);
