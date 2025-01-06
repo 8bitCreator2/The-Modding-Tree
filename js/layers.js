@@ -202,7 +202,7 @@ addLayer("l", {
                         let essenceRankReq = Decimal.pow(1e6, player.l.essenceRank.add(1).pow(1.01));
                          if (player.l.level.gte(15)) {
             let essenceRankReq = Decimal.pow(1e6, player.l.essenceRank.add(1).pow(1.01)).div(1000);
-        }
+        };
                         let progress = player.l.essence.div(essenceRankReq).mul(100).min(100); // Cap at 100%
                         let essenceRankEffect = player.l.essenceRank.add(1).pow(3); // Essence Rank Effect
 
