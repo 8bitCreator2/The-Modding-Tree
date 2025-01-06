@@ -125,7 +125,7 @@ addLayer("l", {
     update(diff) {
         // Essence Rank scaling logic
         if (player.l.level.gte(13)) {
-            let essenceRankReq = Decimal.pow(1e6, player.l.essenceRank.add(1).pow(1.1));
+            let essenceRankReq = Decimal.pow(1e6, player.l.essenceRank.add(1).pow(1.01));
             if (player.l.essence.gte(essenceRankReq)) {
                 player.l.essence = player.l.essence.sub(essenceRankReq);
                 player.l.essenceRank = player.l.essenceRank.add(1);
@@ -193,7 +193,7 @@ addLayer("l", {
               ["display-text", function() { 
     if (player.l.level.gte(13)) {
         // Corrected essenceRankReq with easier scaling
-        let essenceRankReq = Decimal.pow(1e6, player.l.essenceRank.add(1).pow(1.1));
+        let essenceRankReq = Decimal.pow(1e6, player.l.essenceRank.add(1).pow(1.01));
         let progress = player.l.essence.div(essenceRankReq).mul(100).min(100); // Cap at 100%
         let essenceRankEffect = player.l.essenceRank.add(1).pow(3); // Essence Rank Effect
 
