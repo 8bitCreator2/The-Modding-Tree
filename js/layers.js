@@ -139,6 +139,21 @@ addLayer("l", {
         },
         effectDisplay() { return "x" + format(this.effect()); },
     },
+        33: {
+    title: "Essence Rank Reduction",
+    description: "Divide points gained by the Essence Rank requirement.",
+    cost: new Decimal(5e8),
+    unlocked() { return player.l.level.gte(17); }, // Unlock condition
+    effect() {
+        // Essence Rank Requirement formula
+        let Divide = player.points.add(1).log10().add(1).pow(2)
+        return Divide;
+    },
+    effectDisplay() { 
+        let effect = this.effect();
+        return "÷" + format(effect); 
+    },
+},
     },
 
     milestones: {
@@ -162,6 +177,11 @@ update(diff) {
             player.l.essenceRank = player.l.essenceRank.add(1);
         }
     }
+    if (hasUpgrade("l", 33)) {
+    let essenceRankReq = essenceRankReq.div(upgradeEffect("l", 33));
+    // Divide by Essence Rank Requirement
+};
+
     
     // Calculate Essence Rank Effect (Boosts Essence Gain)
     let essenceRankEffect = player.l.essenceRank.add(1).pow(3); // Adjustable scaling
