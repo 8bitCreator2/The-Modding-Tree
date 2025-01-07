@@ -111,6 +111,34 @@ addLayer("l", {
             },
             effectDisplay() { return "÷" + format(this.effect()); },
         },
+        
+    32: {
+        title: "Ultimate Synergy",
+        description: "Boost points based on Level Essence, Level Points, Level, Essence Rank, and Rank, but with diminishing returns.",
+        cost: new Decimal(1e8),
+        unlocked() { return player.l.level.gte(16); },
+        effect() {
+            
+            let levelEffect = player.l.level.add(1).pow(0.8); // Boost from levels
+            let levelPointsEffect = player.l.points.add(1).log10().add(1).pow(0.6); // Boost from level points
+            let essenceEffect = player.l.essence.add(1).log10().add(1).pow(0.7); // Boost from level essence
+            let essenceRankEffect = player.l.essenceRank.add(1).pow(0.5); // Boost from essence rank
+            let rankEffect = player.l.rank.add(1).pow(0.3); // Boost from rank
+
+            
+            let totalBoost = levelEffect
+                .mul(levelPointsEffect)
+                .mul(essenceEffect)
+                .mul(essenceRankEffect)
+                .mul(rankEffect);
+
+            // Apply reduction scaling
+            totalBoost = totalBoost.pow(0.9); // Apply diminishing returns to reduce power
+
+            return totalBoost;
+        },
+        effectDisplay() { return "x" + format(this.effect()); },
+    },
     },
 
     milestones: {
