@@ -55,6 +55,11 @@ function getPointGen() {
         gain = gain.pow(2); // Square the gain if Milestone 1 is active
     }
 
+	 if (hasUpgrade("l", 32)) {
+        let tBoost = upgradeEffect("l", 32);
+        gain = gain.mul(Boost); // Multiply gain by Upgrade 21's effect
+    }
+
     return gain;
 }
 
