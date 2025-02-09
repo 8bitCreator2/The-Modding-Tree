@@ -45,22 +45,7 @@ function getPointGen() {
     let gain = new Decimal(1); // Base gain for points/sec
 
     // Apply Upgrade 21 effect if purchased
-    if (hasUpgrade("l", 21)) {
-        let levelPointBoost = upgradeEffect("l", 21);
-        gain = gain.mul(levelPointBoost); // Multiply gain by Upgrade 21's effect
-    }
-
-    // Apply Milestone 1 effect if achieved
-    if (hasMilestone("l", 1)) {
-        gain = gain.pow(2); // Square the gain if Milestone 1 is active
-    }
-
-    // Apply Upgrade 32 effect if purchased
-    if (hasUpgrade("l", 32)) {
-        let tBoost = upgradeEffect("l", 32);
-        gain = gain.mul(tBoost); // Multiply gain by Upgrade 32's effect
-    }
-
+ 
     return gain;
 }
 
