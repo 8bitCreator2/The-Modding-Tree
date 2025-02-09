@@ -1,311 +1,132 @@
-addLayer("l", {
-    name: "Levels",
-    symbol: "L",
-    position: 0,
-    startData() {
-        return {
-            unlocked: true,
-            points: new Decimal(0),
-            level: new Decimal(0),
-            essence: new Decimal(0),
-            essenceRank: new Decimal(0),
-            rank: new Decimal(0),
-        };
-    },
-    color: "#008CFF",
-    resource: "level points",
-    baseResource: "points",
-    baseAmount() { return player.points; },
-    type: "none",
-    row: 1,
-    layerShown() { return true; },
+addLayer("e", {
+    name: "Element Tree",       
+    symbol: "E",                
+    position: 0,                
+    startData() { return { 
+        unlocked: true,        
+        points: new Decimal(0),  // Layer points: "Elements"
+        elements: {             
+            H: new Decimal(1),   // Hydrogen (H)
+            He: new Decimal(0),  // Helium (He)
+            C: new Decimal(0),   // Carbon (C)
+            O: new Decimal(0),   // Oxygen (O)
+            N: new Decimal(0),   // Nitrogen (N)
+            H2O: new Decimal(0), // Water (H₂O)
+            NH3: new Decimal(0), // Ammonia (NH₃)
+            HNO3: new Decimal(0), // Nitric Acid (HNO₃)
+        },
+    }},
+    color: "#FFAA00",          
+    resource: "Elements",      
+    baseResource: "points",    
+    baseAmount() { return player.points }, 
+    type: "none",              
+    row: 1,                   
+    layerShown() { return true },
 
-    tabStyle: {
-        background: "#008CFF",
-        borderRadius: "50%",
-        color: "white",
-    },
-
-    upgrades: {
-        11: {
-            title: "Level Boost",
-            description: "Increase level points gained based on current level.",
-            cost: new Decimal(1),
-            effect() {
-                let boost = player[this.layer].level.add(1).pow(0.75);
-                if (hasUpgrade("l", 13)) {
-                    boost = boost.mul(player[this.layer].level.add(1));
-                }
-                if (player.l.rank.gte(1)) {
-                    boost = boost.mul(10); // Rank multiplier
-                }
-                return boost;
-            },
-            effectDisplay() { return "x" + format(this.effect()); },
-        },
-        12: {
-            title: "Point Synergy",
-            description: "Boost level points based on your total points.",
-            cost: new Decimal(25),
-            unlocked() { return player.l.level.gte(2); },
-            effect() {
-                let boost = player.points.add(1).log10().add(1).pow(1.2);
-                if (hasUpgrade("l", 23)) {
-                    boost = boost.mul(upgradeEffect("l", 23));
-                }
-                return boost;
-            },
-            effectDisplay() { return "x" + format(this.effect()); },
-        },
-        13: {
-            title: "Level Synergy",
-            description: "Boost the effect of Upgrade 11 based on your level.",
-            cost: new Decimal(75),
-            unlocked() { return player.l.level.gte(3); },
-            effect() {
-                return player.l.level.add(1);
-            },
-            effectDisplay() { return "x" + format(this.effect()); },
-        },
-        21: {
-            title: "Level Point Power",
-            description: "Boost points based on total level points (reduced rate).",
-            cost: new Decimal(2000),
-            unlocked() { return player.l.level.gte(6); },
-            effect() { 
-                let boost = player.l.points.add(1).log10().add(1.5);
-                if (player.l.level.gte(17)) {
-                    boost = boost.mul(player.l.essenceRank.add(1).pow(2)); 
-                }
-                return boost;
-            },
-            effectDisplay() { return "x" + format(this.effect()); },
-        },
-        22: {
-            title: "Essence Efficiency",
-            description: "Reduce the level requirement based on Level Essence.",
-            cost: new Decimal(10000),
-            unlocked() { return player.l.level.gte(7); },
-            effect() {
-                return player.l.essence.add(1).log10().add(1).pow(0.85);
-            },
-            effectDisplay() { return "÷" + format(this.effect()); },
-        },
-        23: {
-            title: "Level Synergized Points",
-            description: "Upgrade 12 is multiplied by level^1.5.",
-            cost: new Decimal(25000),
-            unlocked() { return player.l.level.gte(8); },
-            effect() {
-                return player.l.level.add(1).pow(1.5);
-            },
-            effectDisplay() { return "x" + format(this.effect()); },
-        },
-        31: {
-            title: "Level Divide Points",
-            description: "Reduce level requirement scaling based on points.",
-            cost: new Decimal(2e7),
-            unlocked() { return player.l.rank.gte(1); },
-            effect() {
-                return player.points.add(1).log10().add(1).pow(0.25);
-            },
-            effectDisplay() { return "÷" + format(this.effect()); },
-        },
-        
-    32: {
-        title: "Ultimate Synergy",
-        description: "Boost points based on Level Essence, Level Points, Level, Essence Rank, and Rank, but with diminishing returns.",
-        cost: new Decimal(1e8),
-        unlocked() { return player.l.level.gte(16); },
-        effect() {
-            
-            let levelEffect = player.l.level.add(1).pow(0.8); // Boost from levels
-            let levelPointsEffect = player.l.points.add(1).log10().add(1).pow(0.6); // Boost from level points
-            let essenceEffect = player.l.essence.add(1).log10().add(1).pow(0.7); // Boost from level essence
-            let essenceRankEffect = player.l.essenceRank.add(1).pow(0.5); // Boost from essence rank
-            let rankEffect = player.l.rank.add(1).pow(0.3); // Boost from rank
-
-            
-            let totalBoost = levelEffect
-                .mul(levelPointsEffect)
-                .mul(essenceEffect)
-                .mul(essenceRankEffect)
-                .mul(rankEffect);
-
-            // Apply reduction scaling
-            totalBoost = totalBoost.pow(0.9); // Apply diminishing returns to reduce power
-
-            return totalBoost;
-        },
-        effectDisplay() { return "x" + format(this.effect()); },
-    },
-        33: {
-    title: "Essence Rank Reduction",
-    description: "Divide points gained by the Essence Rank requirement.",
-    cost: new Decimal(5e8),
-    unlocked() { return player.l.level.gte(17); }, // Unlock condition
-    effect() {
-        // Essence Rank Requirement formula
-        let Divide = player.points.add(1).log10().add(1).pow(2)
-        return Divide;
-    },
-    effectDisplay() { 
-        let effect = this.effect();
-        return "÷" + format(effect); 
-    },
-},
+    // Function to Gain Layer Points on Fusion
+    gainOnFusion(fusedElement) {
+        let gain = new Decimal(0);
+        if (fusedElement == "He") gain = new Decimal(1);  
+        if (fusedElement == "C") gain = new Decimal(3);  
+        if (fusedElement == "O") gain = new Decimal(5);
+        if (fusedElement == "N") gain = new Decimal(7);
+        if (fusedElement == "H2O") gain = new Decimal(6);
+        if (fusedElement == "NH3") gain = new Decimal(8);
+        if (fusedElement == "HNO3") gain = new Decimal(12);
+        player.e.points = player.e.points.add(gain);
     },
 
-    milestones: {
-        1: {
-            requirementDescription: "1 Rank",
-            effectDescription: "Boost point gain by ^2 and unlock a new upgrade.",
-            done() { return player.l.rank.gte(1); },
-        },
-        2: {
-            requirementDescription: "2 Ranks",
-            effectDescription: "Change Level Essence formula to include points^0.3.",
-            done() { return player.l.rank.gte(2); },
-        },
-    },
-update(diff) {
-    // Essence Rank Scaling Logic
-    if (player.l.level.gte(13)) {
-        let essenceRankReq = Decimal.pow(1e6, player.l.essenceRank.add(1).pow(1.01));
-        if (player.l.essence.gte(essenceRankReq)) {
-            player.l.essence = player.l.essence.sub(essenceRankReq);
-            player.l.essenceRank = player.l.essenceRank.add(1);
-        }
-    }
-    if (hasUpgrade("l", 33)) {
-    let essenceRankReq = essenceRankReq.div(upgradeEffect("l", 33));
-    // Divide by Essence Rank Requirement
-};
-
-    
-    // Calculate Essence Rank Effect (Boosts Essence Gain)
-    let essenceRankEffect = player.l.essenceRank.add(1).pow(3); // Adjustable scaling
-    
-    // Update Level Points with Boosts
-    let levelBoost = hasUpgrade("l", 11) ? upgradeEffect("l", 11) : new Decimal(1);
-    let pointBoost = hasUpgrade("l", 12) ? upgradeEffect("l", 12) : new Decimal(1);
-    let essenceBoost = player.l.level.gte(5)
-        ? player.l.essence.add(1).log10().add(1).mul(essenceRankEffect)
-        : new Decimal(1);
-    if (player.l.rank.gte(1)) essenceBoost = essenceBoost.mul(10); // Rank multiplier
-
-    player.l.points = player.l.points.add(diff * levelBoost * pointBoost * essenceBoost);
-
-    // Level Requirement Scaling with Reduction
-    let levelReduction = new Decimal(1);
-    if (hasUpgrade("l", 22)) levelReduction = levelReduction.mul(upgradeEffect("l", 22));
-    if (hasUpgrade("l", 31)) levelReduction = levelReduction.mul(upgradeEffect("l", 31));
-    let levelReq = Decimal.pow(5, player.l.level.add(1)).div(levelReduction);
-
-    // Level Up Logic
-    if (player.l.points.gte(levelReq)) {
-        player.l.points = player.l.points.sub(levelReq);
-        player.l.level = player.l.level.add(1);
-    }
-
-    // Level Essence Gain
-    if (player.l.level.gte(5)) {
-        let baseEssence = player.l.level.mul(player.l.points).pow(0.5);
-        if (player.l.rank.gte(2)) {
-            baseEssence = baseEssence.mul(player.points.add(1).pow(0.3));
-        }
-        if (player.l.essenceRank.gte(1)) {
-            baseEssence = baseEssence.mul(essenceRankEffect);
-        }
-        player.l.essence = player.l.essence.add(baseEssence.mul(diff));
-    }
-},
-
-    tabFormat: {
-        "Main": {
-            content: [
-                "main-display",
-                "resource-display",
-                "upgrades",
-                ["display-text", function() {
-                    let levelReduction = new Decimal(1);
-                    if (hasUpgrade("l", 22)) levelReduction = levelReduction.mul(upgradeEffect("l", 22));
-                    if (hasUpgrade("l", 31)) levelReduction = levelReduction.mul(upgradeEffect("l", 31));
-
-                    let levelReq = Decimal.pow(5, player.l.level.add(1)).div(levelReduction);
-                    let progress = player.l.points.div(levelReq).mul(100);
-
-                    return `
-                        <h3>Level: ${format(player.l.level)}</h3>
-                        <p>Level Points: ${format(player.l.points)} / ${format(levelReq)}</p>
-                        <div style="width: 100%; height: 20px; background-color: lightgray; border: 1px solid black;">
-                            <div style="width: ${progress.toFixed(2)}%; height: 100%; background-color: green;"></div>
-                        </div>
-                        <br>
-                        <h4>Level Essence: ${format(player.l.essence)}</h4>
-                    `;
-                }],
-                ["display-text", function() { 
-    if (player.l.level.gte(13)) {
-        let essenceRankReq = Decimal.pow(1e6, player.l.essenceRank.add(1).pow(1.01));
-        let progress = player.l.essence.div(essenceRankReq).mul(100).min(100); // Cap at 100%
-        let essenceRankEffect = player.l.essenceRank.add(1).pow(3); // Essence Rank Effect
-
-        return `
-            <h3>Level Essence Rank: ${format(player.l.essenceRank)}</h3>
-            <p>Essence Progress: ${format(player.l.essence)} / ${format(essenceRankReq)}</p>
-            <div style="width: 100%; height: 20px; background-color: lightgray; border: 1px solid black;">
-                <div style="width: ${progress.toFixed(2)}%; height: 100%; background-color: blue;"></div>
-            </div>
-            <br>
-            <p>Effect: ${format(essenceRankEffect)}x boost to Level Essence gain</p>
-        `;
-    }
-    return ""; // Return empty if Level < 13
-}],
-            ],
-        },
-        "Rank": {
-            unlocked() { return player.l.level.gte(10); },
-            content: [
-                ["display-text", function() {
-                    return `
-                        <h3>Rank: ${format(player.l.rank)}</h3>
-                        <p>Ranks reset progress but boost level points and essence.</p>
-                    `;
-                }],
-                ["row", [["clickable", "rankUp"]]],
-                "milestones",
-            ],
-        },
-    },
-
+    // Clickables for Fusion
     clickables: {
-        rankUp: {
-            title: "Rank Up",
-            display() {
-                let requiredLevel = player.l.rank.add(1).mul(10);
-                return `Reset everything to gain 1 rank.<br>Requires: Level ${format(requiredLevel)}`;
-            },
-            canClick() {
-                let requiredLevel = player.l.rank.add(1).mul(10);
-                return player.l.level.gte(requiredLevel);
-            },
+        11: {  // 2 H → Helium
+            title: "Fuse 2H → He",
+            display() { return `Fuse 2H → He (${player.e.elements.H.gte(2) ? "Available" : "Need More"})`; },
+            canClick() { return player.e.elements.H.gte(2); },
             onClick() {
-                if (this.canClick()) {
-                    player.l.rank = player.l.rank.add(1);
-                    player.l.points = new Decimal(0);
-                    player.l.level = new Decimal(0);
-                    player.l.essence = new Decimal(0);
-                    player.l.essenceRank = new Decimal(0); // Reset Essence Rank too
-                }
+                player.e.elements.H = player.e.elements.H.sub(2);
+                player.e.elements.He = player.e.elements.He.add(1);
+                layers.e.gainOnFusion("He");
+            },
+        },
+        12: {  // 6 H → Carbon
+            title: "Fuse 6H → C",
+            display() { return `Fuse 6H → C (${player.e.elements.H.gte(6) ? "Available" : "Need More"})`; },
+            canClick() { return player.e.elements.H.gte(6); },
+            onClick() {
+                player.e.elements.H = player.e.elements.H.sub(6);
+                player.e.elements.C = player.e.elements.C.add(1);
+                layers.e.gainOnFusion("C");
+            },
+        },
+        13: {  // 8 H → Oxygen
+            title: "Fuse 8H → O",
+            display() { return `Fuse 8H → O (${player.e.elements.H.gte(8) ? "Available" : "Need More"})`; },
+            canClick() { return player.e.elements.H.gte(8); },
+            onClick() {
+                player.e.elements.H = player.e.elements.H.sub(8);
+                player.e.elements.O = player.e.elements.O.add(1);
+                layers.e.gainOnFusion("O");
+            },
+        },
+        14: {  // 7 H → Nitrogen
+            title: "Fuse 7H → N",
+            display() { return `Fuse 7H → N (${player.e.elements.H.gte(7) ? "Available" : "Need More"})`; },
+            canClick() { return player.e.elements.H.gte(7); },
+            onClick() {
+                player.e.elements.H = player.e.elements.H.sub(7);
+                player.e.elements.N = player.e.elements.N.add(1);
+                layers.e.gainOnFusion("N");
+            },
+        },
+        15: {  // Water (H₂O): 2 H + 1 O → H₂O
+            title: "Fuse 2H + 1O → H₂O",
+            display() { return `Fuse 2H + 1O → H₂O (${player.e.elements.H.gte(2) && player.e.elements.O.gte(1) ? "Available" : "Need More"})`; },
+            canClick() { return player.e.elements.H.gte(2) && player.e.elements.O.gte(1); },
+            onClick() {
+                player.e.elements.H = player.e.elements.H.sub(2);
+                player.e.elements.O = player.e.elements.O.sub(1);
+                player.e.elements.H2O = player.e.elements.H2O.add(1);
+                layers.e.gainOnFusion("H2O");
+            },
+        },
+        16: {  // Ammonia (NH₃): 1 N + 3 H → NH₃
+            title: "Fuse 1N + 3H → NH₃",
+            display() { return `Fuse 1N + 3H → NH₃ (${player.e.elements.N.gte(1) && player.e.elements.H.gte(3) ? "Available" : "Need More"})`; },
+            canClick() { return player.e.elements.N.gte(1) && player.e.elements.H.gte(3); },
+            onClick() {
+                player.e.elements.N = player.e.elements.N.sub(1);
+                player.e.elements.H = player.e.elements.H.sub(3);
+                player.e.elements.NH3 = player.e.elements.NH3.add(1);
+                layers.e.gainOnFusion("NH3");
+            },
+        },
+        17: {  // Nitric Acid (HNO₃): 1 H + 1 N + 3 O → HNO₃
+            title: "Fuse 1H + 1N + 3O → HNO₃",
+            display() { return `Fuse 1H + 1N + 3O → HNO₃ (${player.e.elements.H.gte(1) && player.e.elements.N.gte(1) && player.e.elements.O.gte(3) ? "Available" : "Need More"})`; },
+            canClick() { return player.e.elements.H.gte(1) && player.e.elements.N.gte(1) && player.e.elements.O.gte(3); },
+            onClick() {
+                player.e.elements.H = player.e.elements.H.sub(1);
+                player.e.elements.N = player.e.elements.N.sub(1);
+                player.e.elements.O = player.e.elements.O.sub(3);
+                player.e.elements.HNO3 = player.e.elements.HNO3.add(1);
+                layers.e.gainOnFusion("HNO3");
             },
         },
     },
 
-    doReset(resettingLayer) {
-        if (layers[resettingLayer]?.row > this.row) {
-            layerDataReset("l", ["rank"]);
-        }
+    // Displaying Elements and Compounds
+    display() {
+        return `
+            <h3>Elements</h3>
+            <p>H: ${format(player.e.elements.H)}</p>
+            <p>He: ${format(player.e.elements.He)}</p>
+            <p>C: ${format(player.e.elements.C)}</p>
+            <p>O: ${format(player.e.elements.O)}</p>
+            <p>N: ${format(player.e.elements.N)}</p>
+            <p>H₂O: ${format(player.e.elements.H2O)}</p>
+            <p>NH₃: ${format(player.e.elements.NH3)}</p>
+            <p>HNO₃: ${format(player.e.elements.HNO3)}</p>
+        `;
     },
 });
