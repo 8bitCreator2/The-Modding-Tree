@@ -29,9 +29,17 @@ addLayer("e", { // "e" for Energy
     buyables: {
         11: {
             cost(x) { 
-                // Apply cost reduction from Buyable 13's effect
-                let scaling = Decimal.pow(2, x).minus(tmp.e.buyables[13].effect); // Reduce cost scaling by Buyable 13's effect
-                return new Decimal(10).times(scaling);
+                let scaling = Decimal.pow(2, x); // Base scaling factor
+
+                // Apply cost scaling from Buyable 13 directly inside Buyable 13 code
+                if (player.e.buyables[13] >= 10) {
+                    scaling = scaling.times(Decimal.pow(1.2, x)); // Increase difficulty by 20% per level after 10
+                } else {
+                    // If Buyable 13 is below level 10, apply a regular cost scaling
+                    scaling = scaling.times(1); // No extra scaling if Buyable 13 is not at level 10
+                }
+                
+                return new Decimal(10).times(scaling); // Final cost after scaling adjustment
             },
             effect(x) { return Decimal.pow(1.5, x) }, // Energy gain x1.5 per level
             display() {
