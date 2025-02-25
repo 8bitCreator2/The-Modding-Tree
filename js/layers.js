@@ -58,7 +58,7 @@ addLayer("e", { // "e" for Energy
     buyables: {
         11: {
             cost(x) { 
-                let baseCost = new Decimal(10).times(Decimal.pow(1.5, x));
+                let baseCost = new Decimal(10).times(Decimal.pow(2.5, x));
                 if (hasUpgrade("e", 14)) baseCost = baseCost.times(0.8); // Upgrade 14: Cheaper buyables
                 return baseCost;
             },
