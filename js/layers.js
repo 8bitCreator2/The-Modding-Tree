@@ -8,10 +8,16 @@ addLayer("e", { // "e" for Energy
     type: "none", // No prestige reset, Energy is generated passively
     row: 0, 
 
-    // Energy Generation
-    passiveGeneration() { return 1 }, // Starts at 1 Energy/sec
+    // Energy Generation: Updated to use diff for passive generation
+    update(diff) {
+        player[this.layer].points = player[this.layer].points.add(this.passiveGeneration().times(diff));
+    },
 
-    // Upgrades & Buyables
+    passiveGeneration() { 
+        return new Decimal(1); // Generates 1 Energy per second 
+    },
+
+    // Buyables & Upgrades
     buyables: {
         11: {
             cost(x) { return new Decimal(10).times(Decimal.pow(2, x)) }, // Costs double per level
@@ -29,7 +35,7 @@ addLayer("e", { // "e" for Energy
         },
     },
 
-    // Display Energy Gain Rate
+    // Display Energy Gain Rate and Other Info
     tabFormat: [
         "main-display",
         ["display-text", function() {
