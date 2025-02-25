@@ -10,20 +10,11 @@ addLayer("e", { // "e" for Energy
 
     // Energy Generation: Now affected by upgrades
     update(diff) {
-    let energyGain = this.passiveGeneration();
-    player[this.layer].points = player[this.layer].points.add(energyGain.times(diff));
+        let energyGain = this.passiveGeneration();
+        player[this.layer].points = player[this.layer].points.add(energyGain.times(diff));
+    },
 
-    // Autobuy Buyable 11 if Milestone 0 is achieved
-    if (hasMilestone("e", 0)) {
-        while (player[this.layer].points.gte(tmp[this.layer].buyables[11].cost)) {
-            // If the player can afford the buyable, buy it
-            buyBuyable(this.layer, 11);
-        }
-    }
-},
-
-
-
+    // Passive Generation
     passiveGeneration() { 
         let baseGain = new Decimal(1);
         if (hasUpgrade("e", 13)) baseGain = baseGain.times(3); // Upgrade 13: x3 base gain
@@ -87,6 +78,13 @@ addLayer("e", { // "e" for Energy
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost());
                 addBuyables(this.layer, this.id, 1);
+            },
+            // Add automate method here for auto-buying
+            automate() {
+                if (hasMilestone("e", 0)) { // Autobuy Buyable 11 when Milestone 0 is reached
+                    return true; // Auto-buy if the condition is met
+                }
+                return false;
             }
         },
 
@@ -116,9 +114,9 @@ addLayer("e", { // "e" for Energy
             done() { return player[this.layer].points.gte(1000) }
         },
         1: {
-            requirementDescription: "5,000 Energy",
+            requirementDescription: "10,000 Energy",
             effectDescription: "Unlock Buyable 12, which boosts Buyable 11.",
-            done() { return player[this.layer].points.gte(5000) }
+            done() { return player[this.layer].points.gte(10000) }
         }
     },
 
