@@ -1,20 +1,18 @@
-addLayer("e", { // "e" for Energy
+addLayer("e", {
     name: "Energy", 
     symbol: "⚡",
     position: 0, 
     startData() { return { unlocked: true, points: new Decimal(0) }},
     color: "#FFD700",
     resource: "Energy",
-    type: "none", // No prestige reset, Energy is generated passively
+    type: "none",
     row: 0, 
 
-    // Energy Generation: Now affected by upgrades
     update(diff) {
         let energyGain = this.passiveGeneration();
         player[this.layer].points = player[this.layer].points.add(energyGain.times(diff));
     },
 
-    // Passive Generation
     passiveGeneration() { 
         let baseGain = new Decimal(1);
         if (hasUpgrade("e", 13)) baseGain = baseGain.times(3); // Upgrade 13: x3 base gain
@@ -23,27 +21,26 @@ addLayer("e", { // "e" for Energy
         return baseGain.times(buyableBoost).times(upgradeBoost);
     },
 
-    // Upgrades
     upgrades: {
         11: {
             title: "Energy Boost",
             description: "Double your Energy generation.",
-            cost: new Decimal(100),
-            unlocked() { return player[this.layer].points.gte(200); }
+            cost: new Decimal(250),
+            unlocked() { return player[this.layer].points.gte(500); }
         },
 
         12: {
             title: "Buyable Boost",
             description: "Buyable 11's effect is 20% stronger.",
             cost: new Decimal(750),
-            unlocked() { return player[this.layer].points.gte(1000); }
+            unlocked() { return player[this.layer].points.gte(1500); }
         },
 
         13: {
             title: "Passive Boost",
             description: "Triple your base Energy generation.",
-            cost: new Decimal(1500),
-            unlocked() { return player[this.layer].points.gte(2000); }
+            cost: new Decimal(2000),
+            unlocked() { return player[this.layer].points.gte(5000); }
         },
 
         14: {
@@ -54,11 +51,10 @@ addLayer("e", { // "e" for Energy
         },
     },
 
-    // Buyables
     buyables: {
         11: {
             cost(x) { 
-                let baseCost = new Decimal(10).times(Decimal.pow(2.5, x));
+                let baseCost = new Decimal(10).times(Decimal.pow(2, x));
                 if (hasUpgrade("e", 14)) baseCost = baseCost.times(0.8); // Upgrade 14: Cheaper buyables
                 return baseCost;
             },
@@ -75,16 +71,16 @@ addLayer("e", { // "e" for Energy
                         Current Boost: x${format(this.effect(getBuyableAmount(this.layer, this.id)))}`;
             },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
-            buy() {
-                player[this.layer].points = player[this.layer].points.sub(this.cost());
-                addBuyables(this.layer, this.id, 1);
-            },
-            // Add automate method here for auto-buying
-            automate() {
-                if (hasMilestone("e", 0)) { // Autobuy Buyable 11 when Milestone 0 is reached
-                    return true; // Auto-buy if the condition is met
+
+            // Implementing the `automate()` method
+            automate(diff) {
+                // Check if Milestone 1 is reached and if Buyable 11 can be bought
+                if (hasMilestone("e", 1)) { 
+                    if (player[this.layer].points.gte(this.cost())) {
+                        // Use the buyMax function to buy as much as possible
+                        buyBuyable(this.layer, this.id); // This line buys the maximum amount the player can afford.
+                    }
                 }
-                return false;
             }
         },
 
@@ -106,7 +102,6 @@ addLayer("e", { // "e" for Energy
         },
     },
 
-    // Milestones
     milestones: {
         0: {
             requirementDescription: "1,000 Energy",
@@ -120,7 +115,6 @@ addLayer("e", { // "e" for Energy
         }
     },
 
-    // Display Energy Gain Rate and Other Info
     tabFormat: [
         "main-display",
         ["display-text", function() {
