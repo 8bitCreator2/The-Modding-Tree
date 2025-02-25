@@ -8,7 +8,7 @@ addLayer("e", { // "e" for Energy
     type: "none", // No prestige reset, Energy is generated passively
     row: 0, 
 
-    // Energy Generation: Now affected by buyable effects
+    // Energy Generation: Now affected by all buyables
     update(diff) {
         let energyGain = this.passiveGeneration(); // Get base generation
         player[this.layer].points = player[this.layer].points.add(energyGain.times(diff));
@@ -16,32 +16,26 @@ addLayer("e", { // "e" for Energy
 
     passiveGeneration() { 
         let baseGain = new Decimal(1); // Base Energy gain = 1/sec
-        // Apply the effect of Buyable 11 (increased by x1.5 per level) 
-        let buyableBoost = tmp.e.buyables[11].effect; 
-        // If there's a second buyable, apply its effect (adds +0.1)
+
+        // Buyable 12 effect (adds +0.1 per level)
         if (player[this.layer].buyables[12] > 0) {
-            baseGain = baseGain.plus(0.1 * player[this.layer].buyables[12]); // Adds 0.1 per level of Buyable 12
+            baseGain = baseGain.plus(0.1 * player[this.layer].buyables[12]); 
         }
-        return baseGain.times(buyableBoost); // Apply the base + boost
+
+        // Buyable 11 effect (x1.5 per level)
+        let buyableBoost = tmp.e.buyables[11].effect; 
+        
+        // Buyable 13 effect (multiplies by points^0.75 per level)
+        let buyable13Boost = tmp.e.buyables[13].effect;
+
+        return baseGain.times(buyableBoost).times(buyable13Boost); // Apply all boosts
     },
 
-    // Buyable 11: Increases Energy Gain (x1.5 per level)
     buyables: {
+        // Buyable 11: x1.5 per level
         11: {
-            cost(x) { 
-                let scaling = Decimal.pow(2, x); // Base scaling factor
-
-                // Apply cost scaling from Buyable 13 directly inside Buyable 13 code
-                if (player.e.buyables[13] >= 10) {
-                    scaling = scaling.times(Decimal.pow(1.2, x)); // Increase difficulty by 20% per level after 10
-                } else {
-                    // If Buyable 13 is below level 10, apply a regular cost scaling
-                    scaling = scaling.times(1); // No extra scaling if Buyable 13 is not at level 10
-                }
-                
-                return new Decimal(10).times(scaling); // Final cost after scaling adjustment
-            },
-            effect(x) { return Decimal.pow(1.5, x) }, // Energy gain x1.5 per level
+            cost(x) { return new Decimal(10).times(Decimal.pow(2, x)) },
+            effect(x) { return Decimal.pow(1.5, x) }, 
             display() {
                 return `Increase Energy gain by x1.5 per level.<br>
                         Level: ${getBuyableAmount(this.layer, this.id)}<br>
@@ -55,10 +49,10 @@ addLayer("e", { // "e" for Energy
             }
         },
 
-        // Buyable 12: Increases Base Energy Gain by +0.1 per level
+        // Buyable 12: Adds +0.1 to base Energy gain per level
         12: {
-            cost(x) { return new Decimal(50).times(Decimal.pow(2, x)) }, // Costs double per level
-            effect(x) { return x }, // Adds 0.1 to the base per level
+            cost(x) { return new Decimal(50).times(Decimal.pow(2, x)) },
+            effect(x) { return x }, 
             display() {
                 return `Increase Base Energy gain by +0.1 per level.<br>
                         Level: ${getBuyableAmount(this.layer, this.id)}<br>
@@ -72,15 +66,15 @@ addLayer("e", { // "e" for Energy
             }
         },
 
-        // Buyable 13: Reduces cost scaling of Buyable 11
+        // Buyable 13: Multiplies Energy gain by (Points^0.75) per level
         13: {
-            cost(x) { return new Decimal(100).times(Decimal.pow(2, x)) }, // Costs double per level
-            effect(x) { return x * 0.1 }, // Reduces cost scaling by 10% per level
+            cost(x) { return new Decimal(250).times(Decimal.pow(3, x)) }, // More expensive
+            effect(x) { return Decimal.pow(player.points.plus(1), new Decimal(0.75).times(x)) }, // (points+1)^0.75 per level
             display() {
-                return `Reduces cost scaling of Buyable 11 by 10% per level.<br>
+                return `Multiply Energy gain by (Points^0.75) per level.<br>
                         Level: ${getBuyableAmount(this.layer, this.id)}<br>
                         Cost: ${format(this.cost())} Energy<br>
-                        Current Boost: -${format(this.effect(getBuyableAmount(this.layer, this.id)) * 100)}% cost scaling for Buyable 11`;
+                        Current Boost: x${format(this.effect(getBuyableAmount(this.layer, this.id)))}`;
             },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             buy() {
