@@ -28,22 +28,22 @@ addLayer("e", { // "e" for Energy
         11: {
             title: "Energy Boost",
             description: "Double your Energy generation.",
-            cost: new Decimal(250),
-            unlocked() { return player[this.layer].points.gte(500); }
+            cost: new Decimal(100),
+            unlocked() { return player[this.layer].points.gte(200); }
         },
 
         12: {
             title: "Buyable Boost",
             description: "Buyable 11's effect is 20% stronger.",
             cost: new Decimal(750),
-            unlocked() { return player[this.layer].points.gte(1500); }
+            unlocked() { return player[this.layer].points.gte(1000); }
         },
 
         13: {
             title: "Passive Boost",
             description: "Triple your base Energy generation.",
-            cost: new Decimal(2000),
-            unlocked() { return player[this.layer].points.gte(5000); }
+            cost: new Decimal(1500),
+            unlocked() { return player[this.layer].points.gte(2000); }
         },
 
         14: {
@@ -58,7 +58,7 @@ addLayer("e", { // "e" for Energy
     buyables: {
         11: {
             cost(x) { 
-                let baseCost = new Decimal(10).times(Decimal.pow(2, x));
+                let baseCost = new Decimal(10).times(Decimal.pow(1.5, x));
                 if (hasUpgrade("e", 14)) baseCost = baseCost.times(0.8); // Upgrade 14: Cheaper buyables
                 return baseCost;
             },
