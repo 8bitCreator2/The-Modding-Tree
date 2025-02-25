@@ -8,18 +8,28 @@ addLayer("e", { // "e" for Energy
     type: "none", // No prestige reset, Energy is generated passively
     row: 0, 
 
-    // Energy Generation
-    passiveGeneration() { return 1 }, // Starts at 1 Energy/sec
+    // Energy Generation: Now affected by buyable effect
+    update(diff) {
+        let energyGain = this.passiveGeneration(); // Get base generation
+        player[this.layer].points = player[this.layer].points.add(energyGain.times(diff));
+    },
 
-    // Upgrades & Buyables
+    passiveGeneration() { 
+        let baseGain = new Decimal(1); // Base Energy gain = 1/sec
+        let buyableBoost = tmp.e.buyables[11].effect; // Get the buyable effect
+        return baseGain.times(buyableBoost); // Apply buyable boost
+    },
+
+    // Buyable: Increases Energy Gain
     buyables: {
         11: {
             cost(x) { return new Decimal(10).times(Decimal.pow(2, x)) }, // Costs double per level
-            effect(x) { return Decimal.pow(1.5, x) }, // Multiplies Energy gain
+            effect(x) { return Decimal.pow(1.5, x) }, // Energy gain x1.5 per level
             display() {
                 return `Increase Energy gain by x1.5 per level.<br>
                         Level: ${getBuyableAmount(this.layer, this.id)}<br>
-                        Cost: ${format(this.cost())} Energy`;
+                        Cost: ${format(this.cost())} Energy<br>
+                        Current Boost: x${format(this.effect(getBuyableAmount(this.layer, this.id)))}`;
             },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             buy() {
@@ -29,7 +39,7 @@ addLayer("e", { // "e" for Energy
         },
     },
 
-    // Display Energy Gain Rate
+    // Display Energy Gain Rate and Other Info
     tabFormat: [
         "main-display",
         ["display-text", function() {
