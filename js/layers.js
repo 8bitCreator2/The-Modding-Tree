@@ -12,7 +12,15 @@ addLayer("e", { // "e" for Energy
     update(diff) {
         let energyGain = this.passiveGeneration();
         player[this.layer].points = player[this.layer].points.add(energyGain.times(diff));
-    },
+           if (hasMilestone("e", 0)) {
+        let canBuy = tmp.e.buyables[11].canAfford;
+        while (canBuy) { 
+            tmp.e.buyables[11].buy();
+            canBuy = tmp.e.buyables[11].canAfford;
+        }
+    }
+},
+
 
     passiveGeneration() { 
         let baseGain = new Decimal(1);
