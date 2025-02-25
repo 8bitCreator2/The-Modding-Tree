@@ -10,16 +10,18 @@ addLayer("e", { // "e" for Energy
 
     // Energy Generation: Now affected by upgrades
     update(diff) {
-        let energyGain = this.passiveGeneration();
-        player[this.layer].points = player[this.layer].points.add(energyGain.times(diff));
-           if (hasMilestone("e", 0)) {
-        let canBuy = tmp.e.buyables[11].canAfford;
-        while (canBuy) { 
-            tmp.e.buyables[11].buy();
-            canBuy = tmp.e.buyables[11].canAfford;
+    let energyGain = this.passiveGeneration();
+    player[this.layer].points = player[this.layer].points.add(energyGain.times(diff));
+
+    // Autobuy Buyable 11 if Milestone 0 is achieved
+    if (hasMilestone("e", 0)) {
+        while (player[this.layer].points.gte(tmp[this.layer].buyables[11].cost)) {
+            // If the player can afford the buyable, buy it
+            buyBuyable(this.layer, 11);
         }
     }
 },
+
 
 
     passiveGeneration() { 
