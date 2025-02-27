@@ -92,7 +92,7 @@ addLayer("e", { // "e" for Energy
             display() {
                 let x = getBuyableAmount(this.layer, this.id);
                 let effect = this.effect(x);
-                if (hasUpgrade("e", 12) effect = effect.times(UpgradeEffect("e", 13);
+                if (hasUpgrade("e", 13) effect = effect.times(UpgradeEffect("e", 13));
                 return `Increase Energy gain by x1.5 per level.<br>
                         Level: ${x}<br>
                         Cost: ${format(this.cost(x))} Energy<br>
