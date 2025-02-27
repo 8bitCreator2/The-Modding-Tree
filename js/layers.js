@@ -153,6 +153,7 @@ addLayer("e", { // "e" for Energy
         }],
         "blank",
         "buyables"
+        "upgrades"
     ]
 });
 
