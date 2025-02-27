@@ -152,7 +152,7 @@ addLayer("e", { // "e" for Energy
             return "Generating " + format(tmp.e.passiveGeneration) + " Energy per second.";
         }],
         "blank",
-        "buyables"
+        "buyables",
         "upgrades"
     ]
 });
