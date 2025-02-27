@@ -82,6 +82,21 @@ addLayer("e", { // "e" for Energy
                 addBuyables(this.layer, this.id, 1);
             }
         },
+         14: {
+            cost(x) { return new Decimal(500).times(Decimal.pow(4, x)) }, // More expensive
+            effect(x) { return Decimal.pow(1.2, x) }, // x1.2 per level
+            display() {
+                return `Multiply Point generation by x1.2 per level.<br>
+                        Level: ${getBuyableAmount(this.layer, this.id)}<br>
+                        Cost: ${format(this.cost())} Energy<br>
+                        Current Boost: x${format(this.effect(getBuyableAmount(this.layer, this.id)))}`;
+            },
+            canAfford() { return player[this.layer].points.gte(this.cost()) },
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(this.cost());
+                addBuyables(this.layer, this.id, 1);
+            }
+        },
     },
 
     // Display Energy Gain Rate and Other Info
