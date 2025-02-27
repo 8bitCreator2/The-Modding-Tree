@@ -17,9 +17,9 @@ addLayer("e", { // "e" for Energy
         let baseGain = new Decimal(1); // Base Energy gain = 1/sec
 
         // Buyable 12 effect (adds +0.1 per level)
-        if (player[this.layer].buyables[12].gt(0)) {
-            baseGain = baseGain.plus(Decimal.times(0.1, player[this.layer].buyables[12])); 
-        }
+       let buyable12Effect = tmp.e.buyables[12].effect;
+
+       baseGain = baseGain.plus(buyable12Effect); 
 
         // Buyable 11 effect (softcapped at 10)
         let buyableBoost = new Decimal(1);
