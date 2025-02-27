@@ -68,7 +68,7 @@ addLayer("e", { // "e" for Energy
 
         // Buyable 13: Multiplies Energy gain by (Points^0.75) per level
         13: {
-            cost(x) { return new Decimal(250).times(Decimal.pow(3, x)) }, // More expensive
+            cost(x) { return new Decimal(250).times(Decimal.pow(7, x)) }, // More expensive
             effect(x) { return Decimal.pow(player.points.plus(1), new Decimal(0.75).times(x)) }, // (points+1)^0.75 per level
             display() {
                 return `Multiply Energy gain by (Points^0.75) per level.<br>
