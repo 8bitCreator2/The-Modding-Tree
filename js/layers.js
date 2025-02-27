@@ -30,13 +30,18 @@ addLayer("e", { // "e" for Energy
             buyableBoost = Decimal.pow(1.5, 10).times(Decimal.pow(1.15, x.sub(10)));
         }
 
-        // Buyable 13 effect (multiplies by points^0.75 per level)
+        // Buyable 13 effect (multiplies by points^0.75 per level, scaling at level 3)
         let buyable13Boost = new Decimal(1);
         let b13Level = getBuyableAmount("e", 13);
         let exponent = new Decimal(0.75);
         if (hasUpgrade("e", 12)) exponent = exponent.plus(upgradeEffect("e", 12));
         if (b13Level.gt(0)) {
             buyable13Boost = Decimal.pow(player.points.plus(1), exponent.times(b13Level));
+
+            // Apply softcap and scaling at level 3
+            if (b13Level.gte(3)) {
+                buyable13Boost = buyable13Boost.times(Decimal.pow(b13Level, 0.5)); // Boost after level 3
+            }
         }
 
         return baseGain.times(buyableBoost).times(buyable13Boost);
@@ -61,6 +66,19 @@ addLayer("e", { // "e" for Energy
                 return new Decimal(0.05); // Adds +0.05 to the exponent
             },
             effectDisplay() { return "+" + format(this.effect()) + " to Buyable 13 exponent" }
+        },
+
+        13: {
+            title: "Boost Buyable 11",
+            description: "Increase Buyable 11 based on every 3 levels of Buyable 12.",
+            cost: new Decimal(500),
+            effect() {
+                let buyable12Level = getBuyableAmount("e", 12);
+                return Decimal.pow(1.2, Math.floor(buyable12Level / 3)); // Boost based on levels of Buyable 12
+            },
+            effectDisplay() { 
+                return "Boost Buyable 11 by x" + format(this.effect()) + " based on Buyable 12 levels (every 3 levels)";
+            },
         },
     },
 
@@ -152,8 +170,15 @@ addLayer("e", { // "e" for Energy
             return "Generating " + format(tmp.e.passiveGeneration) + " Energy per second.";
         }],
         "blank",
-        "buyables",
-        "upgrades"
+        {
+            "Buyables": [
+                "buyables"
+            ]
+        },
+        {
+            "Upgrades": [
+                "upgrades"
+            ]
+        }
     ]
 });
-
