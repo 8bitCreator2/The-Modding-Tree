@@ -164,21 +164,22 @@ addLayer("e", { // "e" for Energy
         },
     },
 
-    tabFormat: [
-        "main-display",
-        ["display-text", function() {
-            return "Generating " + format(tmp.e.passiveGeneration) + " Energy per second.";
-        }],
-        "blank",
-        {
-            "Buyables": [
-                "buyables"
-            ]
-        },
-        {
-            "Upgrades": [
-                "upgrades"
-            ]
-        }
-    ]
+   tabFormat: {
+    "Main": {
+        content: [
+            "main-display",
+            ["display-text", function() {
+                return "Generating " + format(tmp.e.passiveGeneration) + " Energy per second.";
+            }],
+            "blank",
+            "buyables" // Keep buyables in the main tab
+        ]
+    },
+    "Upgrades": {
+        content: [
+            "upgrades"
+        ]
+    }
+}
+
 });
