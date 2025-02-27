@@ -45,7 +45,7 @@ function getPointGen() {
     let gain = new Decimal(1); // Base gain for points/sec
 
     // Apply the effect of Buyable 14 from the Energy layer
-    if (hasUpgrade("e", 14)) {
+    if (hasBuyable("e", 14)) {
         gain = gain.times(tmp.e.buyables[14].effect);
     }
 
