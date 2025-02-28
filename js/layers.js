@@ -17,9 +17,8 @@ addLayer("e", { // "e" for Energy
         let baseGain = new Decimal(1); // Base Energy gain = 1/sec
 
         // Buyable 12 effect (adds +0.1 per level)
-       let buyable12Effect = tmp.e.buyables[12].effect;
-
-       baseGain = baseGain.plus(buyable12Effect); 
+        let buyable12Effect = tmp.e.buyables[12]?.effect || new Decimal(0);
+        baseGain = baseGain.plus(buyable12Effect); 
 
         // Buyable 11 effect (softcapped at 10)
         let buyableBoost = new Decimal(1);
@@ -92,70 +91,11 @@ addLayer("e", { // "e" for Energy
             display() {
                 let x = getBuyableAmount(this.layer, this.id);
                 let effect = this.effect(x);
-                if (hasUpgrade("e", 13) effect = effect.times(UpgradeEffect("e", 13));
+                if (hasUpgrade("e", 13)) effect = effect.times(upgradeEffect("e", 13));
                 return `Increase Energy gain by x1.5 per level.<br>
                         Level: ${x}<br>
                         Cost: ${format(this.cost(x))} Energy<br>
                         Current Boost: x${format(effect)} (Softcap after 10 levels)`;
-            },
-            canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
-            buy() {
-                player[this.layer].points = player[this.layer].points.sub(this.cost(getBuyableAmount(this.layer, this.id)));
-                addBuyables(this.layer, this.id, 1);
-            }
-        },
-
-        12: {
-            cost(x) { return new Decimal(50).times(Decimal.pow(2, x)) },
-            effect(x) { 
-                let baseEffect = new Decimal(0.1);
-                if (hasUpgrade("e", 11)) baseEffect = baseEffect.plus(upgradeEffect("e", 11));
-                return baseEffect.times(x);
-            }, 
-            display() {
-                return `Increase Base Energy gain by +0.1 per level.<br>
-                        Level: ${getBuyableAmount(this.layer, this.id)}<br>
-                        Cost: ${format(this.cost(getBuyableAmount(this.layer, this.id)))} Energy<br>
-                        Current Boost: +${format(this.effect(getBuyableAmount(this.layer, this.id)))}`;
-            },
-            canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
-            buy() {
-                player[this.layer].points = player[this.layer].points.sub(this.cost(getBuyableAmount(this.layer, this.id)));
-                addBuyables(this.layer, this.id, 1);
-            }
-        },
-
-        13: {
-            cost(x) { return new Decimal(250).times(Decimal.pow(12, x)) },
-            effect(x) { 
-                let baseExponent = new Decimal(0.75);
-                if (hasUpgrade("e", 12)) baseExponent = baseExponent.plus(upgradeEffect("e", 12));
-                return Decimal.pow(player.points.plus(1), baseExponent.times(x));
-            }, 
-            display() {
-                let baseExponent = new Decimal(0.75);
-                if (hasUpgrade("e", 12)) baseExponent = baseExponent.plus(upgradeEffect("e", 12));
-
-                return `Multiply Energy gain by (Points^${format(baseExponent)}) per level.<br>
-                        Level: ${getBuyableAmount(this.layer, this.id)}<br>
-                        Cost: ${format(this.cost(getBuyableAmount(this.layer, this.id)))} Energy<br>
-                        Current Boost: x${format(this.effect(getBuyableAmount(this.layer, this.id)))}`;
-            },
-            canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
-            buy() {
-                player[this.layer].points = player[this.layer].points.sub(this.cost(getBuyableAmount(this.layer, this.id)));
-                addBuyables(this.layer, this.id, 1);
-            }
-        },
-
-        14: {
-            cost(x) { return new Decimal(500).times(Decimal.pow(4, x)) },
-            effect(x) { return Decimal.pow(1.2, x) },
-            display() {
-                return `Multiply Point generation by x1.2 per level.<br>
-                        Level: ${getBuyableAmount(this.layer, this.id)}<br>
-                        Cost: ${format(this.cost(getBuyableAmount(this.layer, this.id)))} Energy<br>
-                        Current Boost: x${format(this.effect(getBuyableAmount(this.layer, this.id)))}`;
             },
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
