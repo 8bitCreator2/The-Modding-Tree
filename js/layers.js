@@ -23,8 +23,8 @@ addLayer("m", {
         // Apply Upgrade 11 (Doubles Matter gain)
         if (hasUpgrade("m", 11)) gain = gain.times(2);
 
-        // Apply Upgrade 12 (Matter boosts itself)
-        let matterBoost = player.m.points.add(1).log10().add(1);
+        // Apply Upgrade 12 (Matter boosts itself, avoiding NaN issues)
+        let matterBoost = player.m.points.add(1).log10().add(1).max(1);
 
         // Apply Buyable 12 effect (+0.05 base to Upgrade 12 effect)
         matterBoost = matterBoost.add(buyableEffect("m", 12).max(0));
@@ -51,7 +51,7 @@ addLayer("m", {
             description: "Matter boosts its own production.",
             cost: new Decimal(100),
             effect() {
-                return player.m.points.add(1).log10().add(1);
+                return player.m.points.add(1).log10().add(1).max(1);
             },
             effectDisplay() { return "x" + format(upgradeEffect("m", 12)) },
         },
@@ -99,7 +99,7 @@ addLayer("m", {
         14: {
             title: "Matter Stabilizer",
             cost(x) { return new Decimal(200).times(Decimal.pow(4, x)) },
-            effect(x) { return player.m.points.add(1).log10().times(x.add(1)) },
+            effect(x) { return player.m.points.add(1).log10().times(x.add(1)).max(1) },
             display() { return "Matter boosts Points gain. Current: x" + format(this.effect(getBuyableAmount("m", 14))) },
             canAfford() { return player.m.points.gte(this.cost()) },
             buy() {
