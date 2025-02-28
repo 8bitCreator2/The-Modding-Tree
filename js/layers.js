@@ -15,29 +15,29 @@ addLayer("m", {
     layerShown() { return true },
 
     update(diff) {
-        let gain = new Decimal(1)
+        let gain = new Decimal(1);
 
-        // Apply buyable 11 (Matter Generator)
-        gain = gain.times(buyableEffect("m", 11))
+        // Apply Buyable 11 (Matter Generator)
+        gain = gain.times(buyableEffect("m", 11).max(1));
 
         // Apply Upgrade 11 (Doubles Matter gain)
-        if (hasUpgrade("m", 11)) gain = gain.times(2)
+        if (hasUpgrade("m", 11)) gain = gain.times(2);
 
-        // Apply Upgrade 12 (Matter boosts its own production)
-        let matterBoost = player.m.points.add(1).log10().add(1)
+        // Apply Upgrade 12 (Matter boosts itself)
+        let matterBoost = player.m.points.add(1).log10().add(1);
 
         // Apply Buyable 12 effect (+0.05 base to Upgrade 12 effect)
-        matterBoost = matterBoost.add(buyableEffect("m", 12))
+        matterBoost = matterBoost.add(buyableEffect("m", 12).max(0));
 
-        gain = gain.times(matterBoost)
+        gain = gain.times(matterBoost);
 
         // Apply Buyable 13 (Boosts Matter based on Points^0.5)
-        gain = gain.times(buyableEffect("m", 13))
+        gain = gain.times(buyableEffect("m", 13).max(1));
 
         // Apply Upgrade 13 (Raise Matter gain to 1.2 power)
-        if (hasUpgrade("m", 13)) gain = gain.pow(1.2)
+        if (hasUpgrade("m", 13)) gain = gain.pow(1.2);
 
-        player.m.points = player.m.points.add(gain.times(diff))
+        player.m.points = player.m.points.add(gain.times(diff));
     },
 
     upgrades: {
@@ -51,7 +51,7 @@ addLayer("m", {
             description: "Matter boosts its own production.",
             cost: new Decimal(100),
             effect() {
-                return player.m.points.add(1).log10().add(1)
+                return player.m.points.add(1).log10().add(1);
             },
             effectDisplay() { return "x" + format(upgradeEffect("m", 12)) },
         },
@@ -70,8 +70,8 @@ addLayer("m", {
             display() { return "Boosts Matter gain by x" + format(this.effect(getBuyableAmount("m", 11))) },
             canAfford() { return player.m.points.gte(this.cost()) },
             buy() {
-                player.m.points = player.m.points.sub(this.cost())
-                setBuyableAmount("m", 11, getBuyableAmount("m", 11).add(1))
+                player.m.points = player.m.points.sub(this.cost());
+                setBuyableAmount("m", 11, getBuyableAmount("m", 11).add(1));
             },
         },
         12: {
@@ -81,8 +81,8 @@ addLayer("m", {
             display() { return "Increases the base of Upgrade 12 by +" + format(this.effect(getBuyableAmount("m", 12))) },
             canAfford() { return player.m.points.gte(this.cost()) },
             buy() {
-                player.m.points = player.m.points.sub(this.cost())
-                setBuyableAmount("m", 12, getBuyableAmount("m", 12).add(1))
+                player.m.points = player.m.points.sub(this.cost());
+                setBuyableAmount("m", 12, getBuyableAmount("m", 12).add(1));
             },
         },
         13: {
@@ -92,8 +92,8 @@ addLayer("m", {
             display() { return "Boosts Matter gain based on Points^0.5. Current: x" + format(this.effect(getBuyableAmount("m", 13))) },
             canAfford() { return player.m.points.gte(this.cost()) },
             buy() {
-                player.m.points = player.m.points.sub(this.cost())
-                setBuyableAmount("m", 13, getBuyableAmount("m", 13).add(1))
+                player.m.points = player.m.points.sub(this.cost());
+                setBuyableAmount("m", 13, getBuyableAmount("m", 13).add(1));
             },
         },
         14: {
@@ -103,9 +103,9 @@ addLayer("m", {
             display() { return "Matter boosts Points gain. Current: x" + format(this.effect(getBuyableAmount("m", 14))) },
             canAfford() { return player.m.points.gte(this.cost()) },
             buy() {
-                player.m.points = player.m.points.sub(this.cost())
-                setBuyableAmount("m", 14, getBuyableAmount("m", 14).add(1))
+                player.m.points = player.m.points.sub(this.cost());
+                setBuyableAmount("m", 14, getBuyableAmount("m", 14).add(1));
             },
         },
     },
-})
+});
