@@ -46,7 +46,7 @@ function getPointGen() {
 
     // Apply the effect of Buyable 14 from the Energy layer
     
-        gain = gain.times(tmp.e.buyables[14].effect);
+        
     
 
     return gain;
