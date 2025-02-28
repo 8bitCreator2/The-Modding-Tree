@@ -44,14 +44,13 @@ function getPointGen() {
 
     let gain = new Decimal(1); // Base gain for points/sec
 
-    // Apply the effect of Buyable 14 from the Energy layer
-    
-        
-    
+    // Apply the effect of Buyable 14 from the Matter layer
+    if (hasLayer("m")) {
+        gain = gain.times(buyableEffect("m", 14)); 
+    }
 
     return gain;
 }
-
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
