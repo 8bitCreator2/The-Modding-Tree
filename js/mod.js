@@ -41,13 +41,10 @@ function getPointGen() {
     if (!canGenPoints())
         return new Decimal(0);
 
-    let gain = new Decimal(1); // Base gain for points/sec
+    let gain = new Decimal(1); // 🔹 Base 1/sec generation (fixes stuck at 0)
 
-    // 🔨 Apply Upgrade 12 Effect (Boost based on Stone)
-    if (hasUpgrade("s", 12)) gain = gain.times(upgradeEffect("s", 12));
-
-    // ⛏️ Apply Pickaxe Buyable Effect (Boost based on Pickaxe levels)
-    gain = gain.times(getBuyableAmount("s", 11).pow(1.2));
+    if (hasUpgrade("s", 12)) gain = gain.times(upgradeEffect("s", 12)); // Upgrade 12 boosts Points
+    gain = gain.times(getBuyableAmount("s", 11).pow(1.2)); // Pickaxes boost Points
 
     return gain;
 }
