@@ -38,13 +38,19 @@ function canGenPoints(){
 
 // Calculate points/sec!
 function getPointGen() {
-	if(!canGenPoints())
-		return new Decimal(0)
+    if (!canGenPoints())
+        return new Decimal(0);
 
-	let gain = new Decimal(1)
-	return gain
+    let gain = new Decimal(1); // Base gain for points/sec
+
+    // 🔨 Apply Upgrade 12 Effect (Boost based on Stone)
+    if (hasUpgrade("s", 12)) gain = gain.times(upgradeEffect("s", 12));
+
+    // ⛏️ Apply Pickaxe Buyable Effect (Boost based on Pickaxe levels)
+    gain = gain.times(getBuyableAmount("s", 11).pow(1.2));
+
+    return gain;
 }
-
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
 }}
