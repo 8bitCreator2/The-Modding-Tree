@@ -1,8 +1,8 @@
 addLayer("s", {
     name: "Stone", // Display Name
-    symbol: "🪨", // Symbol on the layer tab
+    symbol: "S", // Symbol for the layer (Stone -> "S")
     position: 0, // Row 1, left-most
-    startData() { return { unlocked: true, points: new Decimal(0) }},
+    startData() { return { unlocked: true, points: new Decimal(0) }}, // Points start at 0
     color: "#888888",
     requires: new Decimal(10), // Requirement to unlock (10 points)
     resource: "Stone", // Prestige Currency Name
@@ -50,5 +50,36 @@ addLayer("s", {
             },
             effect(x) { return new Decimal(1.2).pow(x) },
         },
+
+        12: {
+            title: "Drill",
+            cost(x) { return new Decimal(25).times(Decimal.pow(2, x)) },
+            display() { return "Doubles Stone gain.\nCost: " + format(this.cost()) + " Stone" },
+            unlocked() { return getBuyableAmount("s", 11).gte(5) }, // Unlock at 5 Pickaxes
+            canAfford() { return player.s.points.gte(this.cost()) },
+            buy() {
+                player.s.points = player.s.points.sub(this.cost())
+                setBuyableAmount("s", 12, getBuyableAmount("s", 12).add(1))
+            },
+            effect(x) { return new Decimal(2).pow(x) },
+        },
+
+        13: {
+            title: "Quarry",
+            cost(x) { return new Decimal(100).times(Decimal.pow(3, x)) },
+            display() { return "Generates +0.5% of Stone/sec.\nCost: " + format(this.cost()) + " Stone" },
+            unlocked() { return getBuyableAmount("s", 11).gte(10) }, // Unlock at 10 Pickaxes
+            canAfford() { return player.s.points.gte(this.cost()) },
+            buy() {
+                player.s.points = player.s.points.sub(this.cost())
+                setBuyableAmount("s", 13, getBuyableAmount("s", 13).add(1))
+            },
+            effect(x) { return new Decimal(0.005).times(x) }, // +0.5% per level
+        },
+    },
+
+    // 🔋 Passive Generation (including Quarry's Stone generation)
+    passiveGeneration() {
+        return getBuyableAmount("s", 13).times(0.005); // +0.5% Stone/sec per level
     },
 });
