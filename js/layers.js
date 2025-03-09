@@ -4,7 +4,7 @@ addLayer("s", {
     position: 0,
     startData() { 
         return { unlocked: true, points: new Decimal(0) } 
-    }, // Points now start at 0
+    }, // Points start at 0
     color: "#888888",
     requires: new Decimal(10), 
     resource: "Stone", 
@@ -13,10 +13,11 @@ addLayer("s", {
     type: "normal", 
     exponent: 0.5, 
 
+    // 🔹 Stone Generation Multiplier (Fix for Buyable 12)
     gainMult() { 
         let mult = new Decimal(1);
         if (hasUpgrade("s", 11)) mult = mult.times(2); // Upgrade 11: Double Stone gain
-        if (getBuyableAmount("s", 12).gte(1)) mult = mult.times(getBuyableAmount("s", 12).pow(2)); // Drill boosts Stone
+        if (getBuyableAmount("s", 12).gte(1)) mult = mult.times(Decimal.pow(2, getBuyableAmount("s", 12))); // Fix Drill Effect
         return mult;
     },
     
