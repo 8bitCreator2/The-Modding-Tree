@@ -1,68 +1,85 @@
-let modInfo = {
-    name: "The ??? Tree",
-    id: "mymod",
-    author: "nobody",
-    pointsName: "points",
-    modFiles: ["layers.js", "tree.js"],
+addLayer("s", {
+    name: "Stone", // Display Name
+    symbol: "S", // Symbol for the layer (Stone -> "S")
+    position: 0, // Row 1, left-most
+    startData() { return { unlocked: true, points: new Decimal(0) }}, // Points start at 0
+    color: "#888888",
+    requires: new Decimal(10), // Requirement to unlock (10 points)
+    resource: "Stone", // Prestige Currency Name
+    baseResource: "points", // What you reset from
+    baseAmount() { return player.points }, // How much of base currency you have
+    type: "normal", // Normal prestige type
+    exponent: 0.5, // Square root gain formula
+    gainMult() { 
+        let mult = new Decimal(1)
+        if (hasUpgrade("s", 11)) mult = mult.times(2) // Upgrade 11: Double Stone gain
+        return mult
+    },
+    gainExp() { return new Decimal(1) }, // No extra exponent
 
-    discordName: "",
-    discordLink: "",
-    initialStartPoints: new Decimal(10), // Used for hard resets and new players
-    offlineLimit: 1,  // In hours
-}
+    row: 1, // Row 1 (resets Row 0)
+    hotkeys: [{ key: "s", description: "Press S to Prestige for Stone", onPress() { if (canReset("s")) doReset("s") } }],
+    layerShown() { return true }, // Always visible
 
-// Set your version in num and name
-let VERSION = {
-    num: "0.0",
-    name: "Literally nothing",
-}
+    // ⛏️ Upgrades
+    upgrades: {
+        11: {
+            title: "Bigger Pickaxe",
+            description: "Double Stone Gain.",
+            cost: new Decimal(5),
+        },
+        12: {
+            title: "Stronger Tools",
+            description: "Boost Point Gain based on Stone.",
+            cost: new Decimal(10),
+            effect() { return player.s.points.add(1).log2().add(1) }, // Logarithmic effect
+            effectDisplay() { return "x" + format(this.effect()) }, // Display Effect
+        },
+    },
 
-let changelog = `<h1>Changelog:</h1><br>
-    <h3>v0.0</h3><br>
-        - Added things.<br>
-        - Added stuff.`
+    // 🔨 Buyables
+    buyables: {
+        11: {
+            title: "Pickaxe",
+            cost(x) { return new Decimal(5).times(Decimal.pow(1.5, x)) },
+            display() { return "Increase Point Gen by 20%.\nCost: " + format(this.cost()) + " Stone" },
+            canAfford() { return player.s.points.gte(this.cost()) },
+            buy() {
+                player.s.points = player.s.points.sub(this.cost())
+                setBuyableAmount("s", 11, getBuyableAmount("s", 11).add(1))
+            },
+            effect(x) { return new Decimal(1.2).pow(x) },
+        },
 
-let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
+        12: {
+            title: "Drill",
+            cost(x) { return new Decimal(25).times(Decimal.pow(2, x)) },
+            display() { return "Doubles Stone gain.\nCost: " + format(this.cost()) + " Stone" },
+            unlocked() { return getBuyableAmount("s", 11).gte(5) }, // Unlock at 5 Pickaxes
+            canAfford() { return player.s.points.gte(this.cost()) },
+            buy() {
+                player.s.points = player.s.points.sub(this.cost())
+                setBuyableAmount("s", 12, getBuyableAmount("s", 12).add(1))
+            },
+            effect(x) { return new Decimal(2).pow(x) },
+        },
 
-var doNotCallTheseFunctionsEveryTick = ["blowUpEverything"]
+        13: {
+            title: "Quarry",
+            cost(x) { return new Decimal(100).times(Decimal.pow(3, x)) },
+            display() { return "Generates +0.5% of Stone/sec.\nCost: " + format(this.cost()) + " Stone" },
+            unlocked() { return getBuyableAmount("s", 11).gte(10) }, // Unlock at 10 Pickaxes
+            canAfford() { return player.s.points.gte(this.cost()) },
+            buy() {
+                player.s.points = player.s.points.sub(this.cost())
+                setBuyableAmount("s", 13, getBuyableAmount("s", 13).add(1))
+            },
+            effect(x) { return new Decimal(0.005).times(x) }, // +0.5% per level
+        },
+    },
 
-function getStartPoints(){
-    return new Decimal(modInfo.initialStartPoints)
-}
-
-// Determines if it should show points/sec
-function canGenPoints(){
-    return true
-}
-
-// Calculate points/sec!
-function getPointGen() {
-    if (!canGenPoints())
-        return new Decimal(0);
-
-    let gain = new Decimal(1); // Base gain for points/sec
-
-    // 🔨 Apply Upgrade 12 Effect (Boost based on Stone)
-    if (hasUpgrade("s", 12)) gain = gain.times(upgradeEffect("s", 12));
-
-    // ⛏️ Apply Pickaxe Buyable Effect (Boost based on Pickaxe levels)
-    gain = gain.times(getBuyableAmount("s", 11).pow(1.2));
-
-    return gain;
-}
-
-function addedPlayerData() { return {} }
-
-var displayThings = []
-
-function isEndgame() {
-    return player.points.gte(new Decimal("e280000000"))
-}
-
-var backgroundStyle = {}
-
-function maxTickLength() {
-    return(3600) // Default is 1 hour which is just arbitrarily large
-}
-
-function fixOldSave(oldVersion){}
+    // 🔋 Passive Generation (including Quarry's Stone generation)
+    passiveGeneration() {
+        return getBuyableAmount("s", 13).times(0.005); // +0.5% Stone/sec per level
+    },
+});
