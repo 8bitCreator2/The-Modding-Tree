@@ -42,8 +42,12 @@ function getPointGen() {
 
     let gain = new Decimal(1); // Base gain for points/sec
 
-    // Apply the effect of Buyable 14 from the Matter layer safely
-   
+    // 🔨 Apply Upgrade 12 Effect (Boost based on Stone)
+    if (hasUpgrade("s", 12)) gain = gain.times(upgradeEffect("s", 12));
+
+    // ⛏️ Apply Pickaxe Buyable Effect (Boost based on Pickaxe levels)
+    gain = gain.times(getBuyableAmount("s", 11).pow(1.2));
+
     return gain;
 }
 
