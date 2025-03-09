@@ -43,10 +43,7 @@ function getPointGen() {
     let gain = new Decimal(1); // Base gain for points/sec
 
     // Apply the effect of Buyable 14 from the Matter layer safely
-    if (hasLayer("m")) {
-        gain = gain.times(buyableEffect("m", 14).max(1)); 
-    }
-
+   
     return gain;
 }
 
