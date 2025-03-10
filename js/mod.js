@@ -42,9 +42,7 @@ function getPointGen() {
 
     let gain = new Decimal(1); // 🔹 Base 1/sec generation (Fix for No Starting Points)
 
-    if (hasUpgrade("s", 12)) gain = gain.times(upgradeEffect("s", 12)); // Upgrade 12 boosts Points
-    gain = gain.times(getBuyableAmount("s", 11).pow(1.2)); // Pickaxes boost Points
-
+   
     return gain;
 }
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
