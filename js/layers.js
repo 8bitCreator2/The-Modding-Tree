@@ -1,28 +1,59 @@
-addLayer("p", {
-    name: "prestige", // This is optional, only used in a few places, If absent it just uses the layer id.
-    symbol: "P", // This appears on the layer's node. Default is the id with the first letter capitalized
-    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
-    startData() { return {
-        unlocked: true,
-		points: new Decimal(0),
-    }},
-    color: "#4BDC13",
-    requires: new Decimal(10), // Can be a function that takes requirement increases into account
-    resource: "prestige points", // Name of prestige currency
-    baseResource: "points", // Name of resource prestige is based on
-    baseAmount() {return player.points}, // Get the current amount of baseResource
-    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 0.5, // Prestige currency exponent
-    gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1)
-        return mult
+addLayer("s", {
+    name: "stardust", // Optional, name for reference
+    symbol: "S",      // Symbol to display on the layer's node
+    position: 0,      // Horizontal position in the row (first position)
+    
+    startData() {
+        return {
+            unlocked: true,          // Layer is unlocked from the start
+            points: new Decimal(0),  // Starting points (Stardust points)
+        };
     },
-    gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+
+    color: "#4BDC13", // Color of the Stardust layer's node
+
+    requires: new Decimal(10), // Requires 10 points to unlock Stardust layer
+    resource: "stardust",      // The main resource of this layer (Stardust points)
+    baseResource: "points",    // The base resource that Stardust is calculated from
+    baseAmount() { return player.points }, // Get the amount of the base resource (Points)
+
+    type: "normal", // Normal prestige (cost based on amount gained)
+    exponent: 0.5,  // Exponent for Stardust points calculation
+
+    gainMult() {
+        let mult = new Decimal(1);
+        return mult;  // Default multiplier for gaining Stardust points
     },
-    row: 0, // Row the layer is in on the tree (0 is the first row)
+
+    gainExp() {
+        return new Decimal(1);  // Default exponent for Stardust points
+    },
+
+    row: 0, // Row for this layer in the prestige tree (first row)
+    
     hotkeys: [
-        {key: "p", description: "P: Reset for prestige points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "s", description: "S: Reset for Stardust points", onPress() {
+            if (canReset(this.layer)) doReset(this.layer);
+        }},
     ],
-    layerShown(){return true}
-})
+
+    layerShown() {
+        return true;  // Always show this layer (can change based on conditions)
+    },
+
+    upgrades: {
+        11: {
+            title: "Stardust Multiplier",  // Title of the upgrade
+            description: "Multiply your matter gain",  // What the upgrade does
+            cost: new Decimal(1), // Cost of the upgrade in Stardust points
+
+            effect() {
+                return new Decimal(3);  // Multiplies points by 3
+            },
+
+            effectDisplay() {
+                return "x" + format(this.effect());  // Display the effect
+            },
+        },
+    }
+});
