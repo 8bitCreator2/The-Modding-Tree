@@ -65,37 +65,39 @@ addLayer("s", {
                 "upgrades",
             ],
         },
-        "Galactic Research": {
-            unlocked() { return player.s.points.gte(1000) },  
-            content: [
-                "main-display",
-                "blank",
-                ["display-text", "<h3>Welcome to Galactic Research!</h3>"],
-                ["display-text", "Convert excess Stardust into Condensated Stardust for powerful upgrades!"],
-                "blank",
-                ["clickable", 11], // Condensated Stardust Prestige
-                "blank",
-                ["display-text", () => `You have <h2>${format(player.s.cstardust)}</h2> Condensated Stardust.`],
-            ],
-        },
+          "Galactic Research": {
+        unlocked() { return player.s.points.gte(1000); },
+        content: [
+            "main-display",
+            "blank",
+            ["display-text", "<h3 style='font-family:Courier New, monospace;'>Welcome to Galactic Research!</h3>"],
+            ["display-text", "<p style='font-family:Courier New, monospace;'>Convert excess Stardust into Condensated Stardust for powerful upgrades!</p>"],
+            "blank",
+            ["clickable", 11],
+            "blank",
+            ["display-text", () => `<h2 style='font-family:Courier New, monospace;'>You have ${format(player.s.cstardust)} Condensated Stardust.</h2>`],
+        ],
     },
-  clickables: {
+    },
+    clickables: {
         11: {
             title: "Condensate Stardust",
-            display() { return `Reset Stardust to gain <b>${format(tmp.s.getCondensatedGain)}</b> Condensated Stardust.`; },
+            display() { 
+                let gain = player.s.points.div(1000).pow(0.5).floor();
+                return `Reset Stardust to gain <b>${format(gain)}</b> Condensated Stardust.`; 
+            },
             canClick() { return player.s.points.gte(1000); },
             onClick() {
-                player.s.cstardust = player.s.cstardust.add(tmp.s.getCondensatedGain);
+                let gain = player.s.points.div(1000).pow(0.5).floor();
+                player.s.cstardust = player.s.cstardust.add(gain);
                 player.s.points = new Decimal(0); // Reset Stardust
             },
             style: { "width": "200px", "height": "80px" },
         },
     },
 
-    // --- FORMULA: How much Condensated Stardust you get ---
-    getCondensatedGain() {
-        return player.s.points.div(1000).pow(0.5).floor(); 
-    },
+    
+    
 
     // --- UPGRADES ---
     upgrades: {
