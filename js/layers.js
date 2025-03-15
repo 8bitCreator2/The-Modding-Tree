@@ -27,8 +27,14 @@ addLayer("s", {
         }
 
          if (hasUpgrade("s", 13)) {
-            mult = mult.times(1.5); // Apply Upgrade 12 effect
+            mult = mult.times(1.5); 
         }
+         if (hasUpgrade("s", 15)) {
+            mult = mult.times(1.75); 
+        }
+         if (hasUpgrade("s", 21)) {
+            mult = mult.times(upgradeEffect('s', 21)); 
+             
         return mult;  // Default multiplier for gaining Stardust points
     },
 
@@ -104,7 +110,7 @@ addLayer("s", {
         13: {
             title: "Celestial Amplification",  
             description: "Multiply Stardust gain by 1.5 and Matter gain by 2.",  
-            cost: new Decimal(5),  
+            cost: new Decimal(15),  
             
             unlocked() { return hasUpgrade("s", 12) },  
 
@@ -119,7 +125,7 @@ addLayer("s", {
         14: {
             title: "Interstellar Influence",  
             description: "Multiply Matter gain by Stardust.",  
-            cost: new Decimal(10),  
+            cost: new Decimal(40),  
             
             unlocked() { return hasUpgrade("s", 13) },  
 
@@ -128,7 +134,37 @@ addLayer("s", {
             },
 
             effectDisplay() {
-                return "x" + format(this.effect()) + " Points";  
+                return "x" + format(this.effect()) + " Matter";  
+            },
+        },
+         15: {
+            title: "Galactic Resonance",  
+            description: "Multiply Stardust gain by 1.75 and Matter gain by 2.",  
+            cost: new Decimal(20),  
+            
+            unlocked() { return hasUpgrade("s", 14) },  
+
+            effect() {
+                return { stardust: new Decimal(1.75), points: new Decimal(2) };
+            },
+
+            effectDisplay() {
+                return "x" + format(this.effect().stardust) + " Stardust, x" + format(this.effect().points) + " Points";  
+            },
+        },
+        21: {
+            title: "Self-Sustaining Stardust",  
+            description: "Multiply Stardust gain by Stardust.",  
+            cost: new Decimal(100),  
+            
+            unlocked() { return hasUpgrade("s", 15) },  
+
+            effect() {
+                return player.s.points.pow(0.2).max(1);  
+            },
+
+            effectDisplay() {
+                return "x" + format(this.effect()) + " Stardust";  
             },
         },
     }
