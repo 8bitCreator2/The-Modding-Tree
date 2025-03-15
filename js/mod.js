@@ -40,8 +40,10 @@ function canGenPoints(){
 function getPointGen() {
     if (!canGenPoints()) return new Decimal(0);
 
-    let gain = new Decimal(1); // 🔹 Base 1/sec generation (Fix for No Starting Points)
-
+    let gain = new Decimal(1);
+	 if (hasUpgrade('s', 13)) {
+        gain = gain.times(upgradeEffect('s', 13));  
+    } 
    
     return gain;
 }
