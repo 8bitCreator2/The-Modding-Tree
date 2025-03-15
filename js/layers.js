@@ -1,47 +1,56 @@
-addLayer("s", { // "s" for Stone
-    name: "Stone", 
-    symbol: "🪨",
-    position: 0, 
-    startData() { return { unlocked: true, points: new Decimal(0) }},
-    color: "#808080", // Gray color for Stone
-    resource: "Stone",
-    type: "none", // No prestige reset, Stone is generated passively
-    row: 0, 
+addLayer("s", {  
+    name: "Stardust",  
+    symbol: "☄️",  // Stardust symbol  
+    color: "#FFD700",  
+    row: 1,  // Appears in row 1 (above points)  
 
-    // Stone Generation: Passive generation of stone
-    update(diff) {
-        player[this.layer].points = player[this.layer].points.add(this.passiveGeneration().times(diff));
-    },
+    startData() { return {  
+        unlocked: true,  // Always unlocked  
+        points: new Decimal(0),  // Stardust currency  
+        total: new Decimal(0),  // Total Stardust collected  
+        best: new Decimal(0),  // Highest Stardust count ever  
+    }},  
 
-    passiveGeneration() { 
-        return new Decimal(1); // Start with 1 Stone per second
-    },
+    resource: "stardust",  
+    baseResource: "points",  // Resets points to gain Stardust  
+    baseAmount() { return player.points },  // The amount of points the player has  
 
-    // Buyables & Upgrades
-    buyables: {
-        11: {
-            cost(x) { return new Decimal(10).times(Decimal.pow(2, x)) }, // Costs double per level
-            effect(x) { return Decimal.pow(1.5, x) }, // Multiplies Stone generation rate
-            display() {
-                return `Increase Stone generation by x1.5 per level.<br>
-                        Level: ${getBuyableAmount(this.layer, this.id)}<br>
-                        Cost: ${format(this.cost())} Stone`;
-            },
-            canAfford() { return player[this.layer].points.gte(this.cost()) },
-            buy() {
-                player[this.layer].points = player[this.layer].points.sub(this.cost());
-                addBuyables(this.layer, this.id, 1);
-            }
-        },
-    },
+    requires: new Decimal(10),  // Unlocks at 10 points  
+    type: "normal",  
+    exponent: 0.5,  // Slightly stronger scaling  
 
-    // Display Stone Generation Rate and Other Info
-    tabFormat: [
-        "main-display",
-        ["display-text", function() {
-            return "Generating " + format(tmp.s.passiveGeneration) + " Stone per second.";
-        }],
-        "blank",
-        "buyables"
-    ]
-});
+    gainMult() {  // Stardust gain multiplier  
+        let mult = new Decimal(1);  
+        if (hasUpgrade('s', 11)) mult = mult.times(1.5); // Upgrade 11 boost  
+        if (hasUpgrade('s', 12)) mult = mult.times(2);   // Upgrade 12 boost  
+        return mult;  
+    },  
+
+    gainExp() { return new Decimal(1); },  
+
+    layerShown() { return true },  // Always visible  
+
+    upgrades: {  
+        11: {  
+            title: "Cosmic Boost",  
+            description: "Multiply Stardust gain by 1.5x.",  
+            cost: new Decimal(2),  
+            effect() { return new Decimal(1.5); },  
+            effectDisplay() { return "x" + format(this.effect()); }  
+        },  
+        12: {  
+            title: "Galactic Energy",  
+            description: "Multiply Stardust gain by 2x.",  
+            cost: new Decimal(5),  
+            effect() { return new Decimal(2); },  
+            effectDisplay() { return "x" + format(this.effect()); },  
+        },  
+        13: {  
+            title: "Stardust Synergy",  
+            description: "Stardust boosts point generation.",  
+            cost: new Decimal(10),  
+            effect() { return player.s.points.add(1).log10().add(1); },  
+            effectDisplay() { return "x" + format(this.effect()); },  
+        },  
+    },  
+});  
