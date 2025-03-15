@@ -1,6 +1,6 @@
 addLayer("s", {
-    name: "stardust", // Optional, name for reference
-    symbol: "S",      // Symbol to display on the layer's node
+    name: "Stardust", // Optional, name for reference
+    symbol: "✨",      // Symbol to display on the layer's node
     position: 0,      // Horizontal position in the row (first position)
     
     startData() {
@@ -10,11 +10,11 @@ addLayer("s", {
         };
     },
 
-    color: "#4BDC13", // Color of the Stardust layer's node
+    color: "#7A4B96", // Color of the Stardust layer's node
 
     requires: new Decimal(10), // Requires 10 points to unlock Stardust layer
-    resource: "stardust",      // The main resource of this layer (Stardust points)
-    baseResource: "points",    // The base resource that Stardust is calculated from
+    resource: "Stardust",      // The main resource of this layer (Stardust points)
+    baseResource: "Matter",    // The base resource that Stardust is calculated from
     baseAmount() { return player.points }, // Get the amount of the base resource (Points)
 
     type: "normal", // Normal prestige (cost based on amount gained)
