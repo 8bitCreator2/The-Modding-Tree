@@ -25,6 +25,10 @@ addLayer("s", {
         if (hasUpgrade("s", 12)) {
             mult = mult.times(player.points.pow(0.35)); // Apply Upgrade 12 effect
         }
+
+         if (hasUpgrade("s", 13)) {
+            mult = mult.times(1.5); // Apply Upgrade 12 effect
+        }
         return mult;  // Default multiplier for gaining Stardust points
     },
 
@@ -44,26 +48,49 @@ addLayer("s", {
         return true;  // Always show this layer (can change based on conditions)
     },
 
+    tabFormat: {
+        "Main Stardust": {
+            content: [
+                "main-display",
+                "prestige-button",
+                "resource-display",
+                "blank",
+                ["display-text", "Harness the power of Stardust!"],
+                "upgrades",
+            ],
+        },
+        "Galactic Research": {
+            unlocked() { return player.s.points.gte(1000) },  // Unlock at 1000 Stardust
+            content: [
+                "blank",
+                ["display-text", "<h3>Welcome to Galactic Research!</h3>"],
+                ["display-text", "More upgrades and mechanics will be available here in the future."],
+            ],
+        },
+    },
+
+    // --- UPGRADES ---
     upgrades: {
         11: {
-            title: "Stardust Multiplier",  // Title of the upgrade
-            description: "Multiply your matter gain",  // What the upgrade does
-            cost: new Decimal(1), // Cost of the upgrade in Stardust points
+            title: "Stardust Multiplier",  
+            description: "Multiply your points by 3.",  
+            cost: new Decimal(1),  
 
             effect() {
-                return new Decimal(3);  // Multiplies points by 3
+                return new Decimal(3);  
             },
 
             effectDisplay() {
-                return "x" + format(this.effect());  // Display the effect
+                return "x" + format(this.effect());  
             },
         },
+
         12: {
             title: "Cosmic Expansion",  
             description: "Multiply Stardust gain by points^0.35.",  
             cost: new Decimal(3),  
             
-            unlocked() { return hasUpgrade("s", 11) },  // Requires Upgrade 11
+            unlocked() { return hasUpgrade("s", 11) },  
             
             effect() {
                 return player.points.pow(0.35);
@@ -71,6 +98,22 @@ addLayer("s", {
 
             effectDisplay() {
                 return "x" + format(this.effect());  
+            },
+        },
+
+        13: {
+            title: "Celestial Amplification",  
+            description: "Multiply Stardust gain by 1.5 and Points gain by 2.",  
+            cost: new Decimal(5),  
+            
+            unlocked() { return hasUpgrade("s", 12) },  
+
+            effect() {
+                return { stardust: new Decimal(1.5), points: new Decimal(2) };
+            },
+
+            effectDisplay() {
+                return "x" + format(this.effect().stardust) + " Stardust, x" + format(this.effect().points) + " Points";  
             },
         },
     }
