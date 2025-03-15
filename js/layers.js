@@ -22,6 +22,9 @@ addLayer("s", {
 
     gainMult() {
         let mult = new Decimal(1);
+        if (hasUpgrade("s", 12)) {
+            mult = mult.times(player.points.pow(0.35)); // Apply Upgrade 12 effect
+        }
         return mult;  // Default multiplier for gaining Stardust points
     },
 
@@ -53,6 +56,21 @@ addLayer("s", {
 
             effectDisplay() {
                 return "x" + format(this.effect());  // Display the effect
+            },
+        },
+        12: {
+            title: "Cosmic Expansion",  
+            description: "Multiply Stardust gain by points^0.35.",  
+            cost: new Decimal(3),  
+            
+            unlocked() { return hasUpgrade("s", 11) },  // Requires Upgrade 11
+            
+            effect() {
+                return player.points.pow(0.35);
+            },
+
+            effectDisplay() {
+                return "x" + format(this.effect());  
             },
         },
     }
