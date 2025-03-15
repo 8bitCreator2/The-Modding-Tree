@@ -66,13 +66,35 @@ addLayer("s", {
             ],
         },
         "Galactic Research": {
-            unlocked() { return player.s.points.gte(1000) },  // Unlock at 1000 Stardust
+            unlocked() { return player.s.points.gte(1000) },  
             content: [
+                "main-display",
                 "blank",
                 ["display-text", "<h3>Welcome to Galactic Research!</h3>"],
-                ["display-text", "More upgrades and mechanics will be available here in the future."],
+                ["display-text", "Convert excess Stardust into Condensated Stardust for powerful upgrades!"],
+                "blank",
+                ["clickable", 11], // Condensated Stardust Prestige
+                "blank",
+                ["display-text", () => `You have <h2>${format(player.s.cstardust)}</h2> Condensated Stardust.`],
             ],
         },
+    },
+  clickables: {
+        11: {
+            title: "Condensate Stardust",
+            display() { return `Reset Stardust to gain <b>${format(tmp.s.getCondensatedGain)}</b> Condensated Stardust.`; },
+            canClick() { return player.s.points.gte(1000); },
+            onClick() {
+                player.s.cstardust = player.s.cstardust.add(tmp.s.getCondensatedGain);
+                player.s.points = new Decimal(0); // Reset Stardust
+            },
+            style: { "width": "200px", "height": "80px" },
+        },
+    },
+
+    // --- FORMULA: How much Condensated Stardust you get ---
+    getCondensatedGain() {
+        return player.s.points.div(1000).pow(0.5).floor(); 
     },
 
     // --- UPGRADES ---
@@ -99,7 +121,7 @@ addLayer("s", {
             unlocked() { return hasUpgrade("s", 11) },  
             
             effect() {
-                return player.points.pow(0.35);
+                return player.points.pow(0.25);
             },
 
             effectDisplay() {
@@ -130,7 +152,7 @@ addLayer("s", {
             unlocked() { return hasUpgrade("s", 13) },  
 
             effect() {
-                return player.s.points.pow(0.4).max(1);  
+                return player.s.points.pow(0.35).max(1);  
             },
 
             effectDisplay() {
@@ -140,7 +162,7 @@ addLayer("s", {
          15: {
             title: "Galactic Resonance",  
             description: "Multiply Stardust gain by 1.75 and Matter gain by 2.",  
-            cost: new Decimal(20),  
+            cost: new Decimal(100),  
             
             unlocked() { return hasUpgrade("s", 14) },  
 
@@ -155,12 +177,12 @@ addLayer("s", {
         21: {
             title: "Self-Sustaining Stardust",  
             description: "Multiply Stardust gain by Stardust.",  
-            cost: new Decimal(100),  
+            cost: new Decimal(250),  
             
             unlocked() { return hasUpgrade("s", 15) },  
 
             effect() {
-                return player.s.points.pow(0.2).max(1);  
+                return player.s.points.pow(0.25).max(1);  
             },
 
             effectDisplay() {
