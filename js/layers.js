@@ -73,7 +73,7 @@ addLayer("s", {
     upgrades: {
         11: {
             title: "Stardust Multiplier",  
-            description: "Multiply your points by 3.",  
+            description: "Multiply your Matter by 3.",  
             cost: new Decimal(1),  
 
             effect() {
@@ -87,7 +87,7 @@ addLayer("s", {
 
         12: {
             title: "Cosmic Expansion",  
-            description: "Multiply Stardust gain by points^0.35.",  
+            description: "Multiply Stardust gain by Matter.",  
             cost: new Decimal(3),  
             
             unlocked() { return hasUpgrade("s", 11) },  
@@ -103,7 +103,7 @@ addLayer("s", {
 
         13: {
             title: "Celestial Amplification",  
-            description: "Multiply Stardust gain by 1.5 and Points gain by 2.",  
+            description: "Multiply Stardust gain by 1.5 and Matter gain by 2.",  
             cost: new Decimal(5),  
             
             unlocked() { return hasUpgrade("s", 12) },  
@@ -114,6 +114,21 @@ addLayer("s", {
 
             effectDisplay() {
                 return "x" + format(this.effect().stardust) + " Stardust, x" + format(this.effect().points) + " Points";  
+            },
+        },
+        14: {
+            title: "Interstellar Influence",  
+            description: "Multiply Matter gain by Stardust.",  
+            cost: new Decimal(10),  
+            
+            unlocked() { return hasUpgrade("s", 13) },  
+
+            effect() {
+                return player.s.points.pow(0.4).max(1);  
+            },
+
+            effectDisplay() {
+                return "x" + format(this.effect()) + " Points";  
             },
         },
     }
