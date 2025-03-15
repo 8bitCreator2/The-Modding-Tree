@@ -34,7 +34,7 @@ addLayer("s", {
         }
          if (hasUpgrade("s", 21)) {
             mult = mult.times(upgradeEffect('s', 21)); 
-             
+              }
         return mult;  // Default multiplier for gaining Stardust points
     },
 
