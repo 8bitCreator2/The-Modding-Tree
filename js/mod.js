@@ -48,6 +48,10 @@ function getPointGen() {
     let buyable12Effect = getBuyableAmount('s', 12).times(1); // Each Buyable 12 adds +1 to base points gain
     gain = gain.plus(buyable12Effect); // Add the effect of Buyable 12 to the base points gain
 
+    // Apply effect of Buyable 11 (Stellar Matter), which is a multiplier to the base points gain
+    let buyable11Effect = getBuyableAmount('s', 11).times(1.1); // Assuming Buyable 11 gives a 1.1x multiplier per purchase
+    gain = gain.times(buyable11Effect); // Multiply base points gain by Buyable 11's effect
+
     // Apply upgrade effects if the player has bought specific upgrades
 
     // If the player has upgrade 11 (Core Fusion), apply its effect
@@ -68,6 +72,7 @@ function getPointGen() {
     // Return the final points gain
     return gain;
 }
+
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
