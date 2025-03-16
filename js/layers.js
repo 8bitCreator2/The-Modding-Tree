@@ -65,12 +65,19 @@ addLayer("s", {
                 "upgrades",
             ],
         },
-        "Galactic Research": {
-            unlocked() { return player.s.points.gte(1000) },  // Unlock at 1000 Stardust
+           "Galactic Research": {
+            unlocked() { return player.s.points.gte(1000) },  
             content: [
                 "blank",
                 ["display-text", "<h3>Welcome to Galactic Research!</h3>"],
                 ["display-text", "More upgrades and mechanics will be available here in the future."],
+                ["display-text", `Condensated Stardust formula: +1 Condensated Stardust per 100 Stardust.`],
+                "blank",
+                ["display-text", function() {
+                    return "Condensated Stardust " + layerText("h2", "s", format(tmp.s.effect)) + "× boosts Stardust gain.";
+                }],
+                "blank",
+                ["resource-display", "condensatedPoints"], // Display the new resource
             ],
         },
     },
@@ -167,5 +174,14 @@ addLayer("s", {
                 return "x" + format(this.effect()) + " Stardust";  
             },
         },
-    }
+    },
+     effect() {
+        return player.s.condensatedPoints.plus(1).pow(0.25); // (Condensated Stardust + 1) ^ 0.25
+    },
+    update(diff) {
+        if (player.s.points.gte(1000)) {
+            // Generate 1 Condensated Stardust per 100 Stardust points.
+            player.s.condensatedPoints = player.s.points.div(100).floor();  
+        }
+    },
 });
