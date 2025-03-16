@@ -6,7 +6,8 @@ addLayer("s", {
     startData() {
         return {
             unlocked: true,          // Layer is unlocked from the start
-            points: new Decimal(0),  // Starting points (Stardust points)
+            points: new Decimal(0),
+            condensatedPoints: new Decimal(0),
         };
     },
 
@@ -66,11 +67,13 @@ addLayer("s", {
             ],
         },
         "Galactic Research": {
-            unlocked() { return player.s.points.gte(1000) },  // Unlock at 1000 Stardust
+            unlocked() { return player.s.points.gte(1000) },  
             content: [
                 "blank",
                 ["display-text", "<h3>Welcome to Galactic Research!</h3>"],
-                ["display-text", "More upgrades and mechanics will be available here in the future."],
+                ["display-text", "Condensated Stardust formula: +1 per 100 Stardust."],
+                ["display-text", "You have " + layerText("h2", "s", format(player.s.condensatedPoints)) + " Condensated Stardust, " +
+                 "which boosts Stardust gain by " + layerText("h2", "s", format(tmp.s.condensatedEffect))],
             ],
         },
     },
@@ -167,5 +170,22 @@ addLayer("s", {
                 return "x" + format(this.effect()) + " Stardust";  
             },
         },
-    }
+    },
+    // --- Condensated Stardust Effect ---
+    condensatedEffect() {
+        return player.s.condensatedPoints.add(1).pow(0.25); // Formula: (Condensated Stardust + 1) ^ 0.25
+    },
+
+    // --- Display Effect Description ---
+    effectDescription() {
+        return "which boosts Stardust gain by " + layerText("h2", "s", format(tmp.s.condensatedEffect));
+    },
+
+    // --- Condensated Stardust Generation ---
+    update(diff) {
+        if (player.s.points.gte(1000)) {
+            // Generate 1 Condensated Stardust per 100 Stardust.
+            player.s.condensatedPoints = player.s.points.div(100).floor();  
+        }
+    },
 });
