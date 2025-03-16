@@ -20,35 +20,61 @@ addLayer("s", {
         {key: "s", description: "S: Reset for stellar matter", onPress(){ if (canReset(this.layer)) doReset(this.layer) }},
     ],
     layerShown() { return true },
-    upgrades: {
+        upgrades: {
         11: {
-            title: "Core Fusion",
-            description: "Boosts Points & Stellar Matter by x1.2",
-            cost: new Decimal(10),
-            effect() { return Decimal.pow(1.2, getBuyableAmount("s", 11)); },
-            effectDisplay() { return "x" + format(this.effect()) },
-            unlocked() { return true },
+            title: "Core Fusion", 
+            description: "Triple your point generation.",
+            cost: new Decimal(1), 
+            effect() {
+                return new Decimal(3);
+            },
+            effectDisplay() { return "x" + format(this.effect()) }, 
         },
         12: {
-            title: "White Dwarf",
-            description: "Increases Base Points Gain by +1 for each purchase",
-            cost: new Decimal(100),
-            effect(x) { return new Decimal(1); },
-            display() {
-                return "Increases Base Points Gain by +1 for each purchase" + 
-                       "<br>Cost: " + format(this.cost()) + " Stellar Matter" + 
-                       "<br>Bought: " + format(getBuyableAmount("s", 12));
+            title: "White Dwarf", 
+            description: "Multiply your Stellar Matter gain by 1.5x.",
+            cost: new Decimal(3), 
+            effect() {
+                return new Decimal(1.5);
             },
-            canAfford() { return player.s.points.gte(this.cost()); },
-            buy() {
-                player.s.points = player.s.points.sub(this.cost());
-                addBuyables("s", 12, 1);
-                // Add +1 base points gain for each purchase
-                player.pointsBaseGain = player.pointsBaseGain.add(1);  
+            effectDisplay() { return "x" + format(this.effect()) },
+            unlocked() { return hasUpgrade("s", 11); }, 
+        },
+        13: {
+            title: "Cosmic Synergy", 
+            description: "Points are boosted based on your Stellar Matter.",
+            cost: new Decimal(5),
+            effect() {
+                return player.s.points.add(1).pow(0.3);
             },
-            unlocked() { return getBuyableAmount("s", 11).gte(3); }, // Unlocks after buying Buyable 11, 3 times
+            effectDisplay() { return "x" + format(this.effect()) },
+            unlocked() { return hasUpgrade("s", 12); }, 
+        },
+        21: {
+            title: "Galactic Feedback", 
+            description: "Stellar Matter gain is boosted based on your Points.",
+            cost: new Decimal(8), 
+            effect() {
+                return player.points.add(1).pow(0.15);
+            },
+            effectDisplay() { return "x" + format(this.effect()) },
+            unlocked() { return hasUpgrade("s", 13); }, 
+        },
+        22: {
+            title: "Solar Flare", 
+            description: "Triple your Stellar Matter gain and multiply Points by 1.5x.",
+            cost: new Decimal(15), 
+            effect() {
+                return { 
+                    stellarBoost: new Decimal(3),  
+                    pointsBoost: new Decimal(1.5) 
+                };
+            },
+            effectDisplay() { return "x3 Stellar Matter, x1.5 Points" },
+            unlocked() { return hasUpgrade("s", 21); }, 
         },
     },
+
     buyables: {
         11: {
             title: "Core Fusion",
