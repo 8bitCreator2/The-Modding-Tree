@@ -7,6 +7,7 @@ addLayer("s", {
         return {
             unlocked: true,          // Layer is unlocked from the start
             points: new Decimal(0),  // Starting points (Stardust points)
+            condensed: new Decimal(0), // Condensed Stardust
         };
     },
 
@@ -34,7 +35,7 @@ addLayer("s", {
         }
          if (hasUpgrade("s", 21)) {
             mult = mult.times(upgradeEffect('s', 21)); 
-              }
+        }
         return mult;  // Default multiplier for gaining Stardust points
     },
 
@@ -47,9 +48,8 @@ addLayer("s", {
     hotkeys: [
         {key: "s", description: "S: Reset for Stardust points", onPress() {
             if (canReset(this.layer)) doReset(this.layer);
-        }},
-    ],
-
+        }}],
+        
     layerShown() {
         return true;  // Always show this layer (can change based on conditions)
     },
@@ -70,7 +70,13 @@ addLayer("s", {
             content: [
                 "blank",
                 ["display-text", "<h3>Welcome to Galactic Research!</h3>"],
-                ["display-text", "More upgrades and mechanics will be available here in the future."],
+                ["raw-html", function() {
+                    if (player.tab == "s") return "You have " + 
+                    layerText("h2", "s", format(player.s.condensed)) + " Condensed Stardust, which is growing by " + 
+                    layerText("h2", "s", format(player.s.points.log(10).pow(0.5))) + " per second.";
+                }],
+                "blank",
+                ["upgrades", "galacticResearch"],  // Make sure upgrades are inside Galactic Research tab
             ],
         },
     },
@@ -166,6 +172,22 @@ addLayer("s", {
             effectDisplay() {
                 return "x" + format(this.effect()) + " Stardust";  
             },
+        },
+
+        // Galactic Research Upgrades (Upgrade 101) will go here
+
+        101: {
+            title: "Condensed Stardust Boost",
+            description: "Condensed Stardust boosts Stardust gain by Stardust ^ X (X = Condensed Stardust).",
+            cost() { return player.s.condensed },  // Costs Condensed Stardust
+            effect() {
+                return player.s.condensed;
+            },
+            effectDisplay() {
+                return "^" + format(this.effect());
+            },
+            unlocked() { return player.s.points.gte(1000) },
+            layerShown() { return player.tab == "s" && player.s.points.gte(1000) }, // Show only in Galactic Research tab
         },
     }
 });
