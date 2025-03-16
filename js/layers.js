@@ -1,50 +1,53 @@
 addLayer("s", {
-    name: "Stardust", // Optional, name for reference
-    symbol: "✨",      // Symbol to display on the layer's node
-    position: 0,      // Horizontal position in the row (first position)
-    
+    name: "Stardust",
+    symbol: "✨",
+    position: 0,
+
     startData() {
         return {
-            unlocked: true,          // Layer is unlocked from the start
+            unlocked: true,
             points: new Decimal(0),
             condensatedPoints: new Decimal(0),
         };
     },
 
-    color: "#7A4B96", // Color of the Stardust layer's node
+    color: "#7A4B96",
 
-    requires: new Decimal(10), // Requires 10 points to unlock Stardust layer
-    resource: "Stardust",      // The main resource of this layer (Stardust points)
-    baseResource: "Matter",    // The base resource that Stardust is calculated from
-    baseAmount() { return player.points }, // Get the amount of the base resource (Points)
+    requires: new Decimal(10),
+    resource: "Stardust",
+    baseResource: "Matter",
+    baseAmount() { return player.points },
 
-    type: "normal", // Normal prestige (cost based on amount gained)
-    exponent: 0.5,  // Exponent for Stardust points calculation
+    type: "normal",
+    exponent: 0.5,
 
     gainMult() {
         let mult = new Decimal(1);
         if (hasUpgrade("s", 12)) {
-            mult = mult.times(player.points.pow(0.35)); // Apply Upgrade 12 effect
+            mult = mult.times(player.points.pow(0.35));
+        }
+        if (hasUpgrade("s", 13)) {
+            mult = mult.times(1.5);
+        }
+        if (hasUpgrade("s", 15)) {
+            mult = mult.times(1.75);
+        }
+        if (hasUpgrade("s", 21)) {
+            mult = mult.times(upgradeEffect("s", 21));
         }
 
-         if (hasUpgrade("s", 13)) {
-            mult = mult.times(1.5); 
-        }
-         if (hasUpgrade("s", 15)) {
-            mult = mult.times(1.75); 
-        }
-         if (hasUpgrade("s", 21)) {
-            mult = mult.times(upgradeEffect('s', 21)); 
-              }
-        return mult;  // Default multiplier for gaining Stardust points
+        // Apply Condensated Stardust boost
+        mult = mult.times(tmp.s.effect.condensatedBoost);
+        
+        return mult;
     },
 
     gainExp() {
-        return new Decimal(1);  // Default exponent for Stardust points
+        return new Decimal(1);
     },
 
-    row: 0, // Row for this layer in the prestige tree (first row)
-    
+    row: 0,
+
     hotkeys: [
         {key: "s", description: "S: Reset for Stardust points", onPress() {
             if (canReset(this.layer)) doReset(this.layer);
@@ -52,7 +55,7 @@ addLayer("s", {
     ],
 
     layerShown() {
-        return true;  // Always show this layer (can change based on conditions)
+        return true;
     },
 
     tabFormat: {
@@ -73,119 +76,126 @@ addLayer("s", {
                 ["display-text", "<h3>Welcome to Galactic Research!</h3>"],
                 ["display-text", "Condensated Stardust formula: +1 per 100 Stardust."],
                 ["display-text", "You have " + layerText("h2", "s", format(player.s.condensatedPoints)) + " Condensated Stardust, " +
-                 "which boosts Stardust gain by " + layerText("h2", "s", format(tmp.s.condensatedEffect))],
+                 "which boosts Stardust gain by " + layerText("h2", "s", format(tmp.s.effect.condensatedBoost))],
             ],
         },
     },
 
-    // --- UPGRADES ---
     upgrades: {
         11: {
             title: "Stardust Multiplier",  
             description: "Multiply your Matter by 3.",  
-            cost: new Decimal(1),  
+            cost: new Decimal(1),
 
             effect() {
-                return new Decimal(3);  
+                return new Decimal(3);
             },
 
             effectDisplay() {
-                return "x" + format(this.effect());  
+                return "x" + format(this.effect());
             },
         },
 
         12: {
-            title: "Cosmic Expansion",  
-            description: "Multiply Stardust gain by Matter.",  
-            cost: new Decimal(3),  
-            
-            unlocked() { return hasUpgrade("s", 11) },  
-            
+            title: "Cosmic Expansion",
+            description: "Multiply Stardust gain by Matter^0.35.",
+            cost: new Decimal(3),
+
+            unlocked() { return hasUpgrade("s", 11) },
+
             effect() {
-                return player.points.pow(0.2);
+                return player.points.pow(0.35);
             },
 
             effectDisplay() {
-                return "x" + format(this.effect());  
+                return "x" + format(this.effect());
             },
         },
 
         13: {
-            title: "Celestial Amplification",  
-            description: "Multiply Stardust gain by 1.5 and Matter gain by 2.",  
-            cost: new Decimal(15),  
-            
-            unlocked() { return hasUpgrade("s", 12) },  
+            title: "Celestial Amplification",
+            description: "Multiply Stardust gain by 1.5 and Matter gain by 2.",
+            cost: new Decimal(15),
+
+            unlocked() { return hasUpgrade("s", 12) },
 
             effect() {
                 return { stardust: new Decimal(1.5), points: new Decimal(2) };
             },
 
             effectDisplay() {
-                return "x" + format(this.effect().stardust) + " Stardust, x" + format(this.effect().points) + " Points";  
+                return "x" + format(this.effect().stardust) + " Stardust, x" + format(this.effect().points) + " Points";
             },
         },
+
         14: {
-            title: "Interstellar Influence",  
-            description: "Multiply Matter gain by Stardust.",  
-            cost: new Decimal(40),  
-            
-            unlocked() { return hasUpgrade("s", 13) },  
+            title: "Interstellar Influence",
+            description: "Multiply Matter gain by Stardust^0.4.",
+            cost: new Decimal(40),
+
+            unlocked() { return hasUpgrade("s", 13) },
 
             effect() {
-                return player.s.points.pow(0.4).max(1);  
+                return player.s.points.pow(0.4).max(1);
             },
 
             effectDisplay() {
-                return "x" + format(this.effect()) + " Matter";  
+                return "x" + format(this.effect()) + " Matter";
             },
         },
-         15: {
-            title: "Galactic Resonance",  
-            description: "Multiply Stardust gain by 1.75 and Matter gain by 2.",  
-            cost: new Decimal(120),  
-            
-            unlocked() { return hasUpgrade("s", 14) },  
+
+        15: {
+            title: "Galactic Resonance",
+            description: "Multiply Stardust gain by 1.75 and Matter gain by 2.",
+            cost: new Decimal(120),
+
+            unlocked() { return hasUpgrade("s", 14) },
 
             effect() {
                 return { stardust: new Decimal(1.75), points: new Decimal(2) };
             },
 
             effectDisplay() {
-                return "x" + format(this.effect().stardust) + " Stardust, x" + format(this.effect().points) + " Points";  
+                return "x" + format(this.effect().stardust) + " Stardust, x" + format(this.effect().points) + " Points";
             },
         },
+
         21: {
-            title: "Self-Sustaining Stardust",  
-            description: "Multiply Stardust gain by Stardust.",  
-            cost: new Decimal(300),  
-            
-            unlocked() { return hasUpgrade("s", 15) },  
+            title: "Self-Sustaining Stardust",
+            description: "Multiply Stardust gain by Stardust^0.2.",
+            cost: new Decimal(300),
+
+            unlocked() { return hasUpgrade("s", 15) },
 
             effect() {
-                return player.s.points.pow(0.2).max(1);  
+                return player.s.points.pow(0.2).max(1);
             },
 
             effectDisplay() {
-                return "x" + format(this.effect()) + " Stardust";  
+                return "x" + format(this.effect()) + " Stardust";
             },
         },
     },
-    // --- Condensated Stardust Effect ---
-    condensatedEffect() {
-        return player.s.condensatedPoints.add(1).pow(0.25); // Formula: (Condensated Stardust + 1) ^ 0.25
+
+    // --- EFFECT FUNCTION ---
+    effect() {
+        return {
+            condensatedBoost: player.s.condensatedPoints.add(1).pow(0.25) // (Condensated Stardust + 1)^0.25
+        };
     },
 
-    // --- Display Effect Description ---
+    // --- EFFECT DESCRIPTION ---
     effectDescription() {
-        return "which boosts Stardust gain by " + layerText("h2", "s", format(tmp.s.condensatedEffect));
+        return "which boosts Stardust gain by " + layerText("h2", "s", format(tmp.s.effect.condensatedBoost));
     },
 
-    // --- Condensated Stardust Generation ---
+    // --- UPDATE FUNCTION ---
     update(diff) {
         if (player.s.points.gte(1000)) {
-            // Generate 1 Condensated Stardust per 100 Stardust.
-            player.s.condensatedPoints = player.s.points.div(100).floor();  
+            let newCondensated = player.s.points.div(100).floor();
+            if (newCondensated.gt(player.s.condensatedPoints)) {
+                player.s.condensatedPoints = newCondensated;
+            }
         }
     },
 });
