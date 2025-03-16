@@ -6,7 +6,8 @@ addLayer("s", {
     startData() {
         return {
             unlocked: true,          // Layer is unlocked from the start
-            points: new Decimal(0),  // Starting points (Stardust points)
+            points: new Decimal(0), 
+            condensatedPoints: new Decimal(0),// Starting points (Stardust points)
         };
     },
 
@@ -106,7 +107,7 @@ addLayer("s", {
             unlocked() { return hasUpgrade("s", 11) },  
             
             effect() {
-                return player.points.pow(0.35);
+                return player.points.pow(0.3);
             },
 
             effectDisplay() {
@@ -137,7 +138,7 @@ addLayer("s", {
             unlocked() { return hasUpgrade("s", 13) },  
 
             effect() {
-                return player.s.points.pow(0.4).max(1);  
+                return player.s.points.pow(0.35).max(1);  
             },
 
             effectDisplay() {
@@ -147,7 +148,7 @@ addLayer("s", {
          15: {
             title: "Galactic Resonance",  
             description: "Multiply Stardust gain by 1.75 and Matter gain by 2.",  
-            cost: new Decimal(20),  
+            cost: new Decimal(75),  
             
             unlocked() { return hasUpgrade("s", 14) },  
 
@@ -162,7 +163,7 @@ addLayer("s", {
         21: {
             title: "Self-Sustaining Stardust",  
             description: "Multiply Stardust gain by Stardust.",  
-            cost: new Decimal(100),  
+            cost: new Decimal(300),  
             
             unlocked() { return hasUpgrade("s", 15) },  
 
