@@ -38,21 +38,35 @@ function canGenPoints(){
 
 // Calculate points/sec!
 function getPointGen() {
-	if(!canGenPoints())
-		return new Decimal(0)
+    if (!canGenPoints()) {
+        return new Decimal(0); // If points cannot be generated, return 0
+    }
 
-	let gain = new Decimal(1)
-	 if (hasUpgrade('s', 11)) {
-         gain = gain.times(upgradeEffect('s', 11));  
-     } 
-	if (hasUpgrade('s', 13)) {
-         gain = gain.times(upgradeEffect('s', 13));  
-     } 
-	if (hasUpgrade('s', 22)) {
-         gain = gain.times(1.5);  
-     } 
-	
-	return gain
+    let gain = new Decimal(1); // Initial points gain multiplier (base gain)
+
+    // Add effect of Buyable 12 (Star Fragment), which adds +1 to base points gain
+    let buyable12Effect = getBuyableAmount('s', 12).times(1); // Each Buyable 12 adds +1 to base points gain
+    gain = gain.plus(buyable12Effect); // Add the effect of Buyable 12 to the base points gain
+
+    // Apply upgrade effects if the player has bought specific upgrades
+
+    // If the player has upgrade 11 (Core Fusion), apply its effect
+    if (hasUpgrade('s', 11)) {
+        gain = gain.times(upgradeEffect('s', 11));  
+    }
+
+    // If the player has upgrade 13 (based on Stellar Matter), apply its effect
+    if (hasUpgrade('s', 13)) {
+        gain = gain.times(upgradeEffect('s', 13));  
+    }
+
+    // If the player has upgrade 22 (Points Boost), apply a flat 1.5x multiplier
+    if (hasUpgrade('s', 22)) {
+        gain = gain.times(1.5);  
+    }
+
+    // Return the final points gain
+    return gain;
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
