@@ -44,7 +44,7 @@ function getPointGen() {
 
     let gain = new Decimal(1); // Initial points gain multiplier (base gain)
 
-    // Add effect of Buyable 12 (Star Fragment), which adds +1 to base points gain
+    // Apply effect of Buyable 12 (Star Fragment), which adds +1 to base points gain for each bought
     let buyable12Effect = getBuyableAmount('s', 12).times(1); // Each Buyable 12 adds +1 to base points gain
     gain = gain.plus(buyable12Effect); // Add the effect of Buyable 12 to the base points gain
 
@@ -72,6 +72,7 @@ function getPointGen() {
     // Return the final points gain
     return gain;
 }
+
 
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
