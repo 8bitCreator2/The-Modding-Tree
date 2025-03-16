@@ -13,7 +13,20 @@ addLayer("s", {
     baseAmount() { return player.points }, // Base amount of points
     type: "normal", // Normal type, scaling as more points are gained
     exponent: 0.5, // Exponent for stellar matter gain
-    gainMult() { return new Decimal(1) }, // Gain multiplier for stellar matter
+    gainMult() { let mult = new Decimal(1)
+                if (hasUpgrade('s', 12)) {
+        gain = gain.times(upgradeEffect('s', 12));  
+    } 
+                if (hasUpgrade('s', 21)) {
+        gain = gain.times(upgradeEffect('s', 21));  
+    }
+                if (hasUpgrade('s', 22)) {
+        gain = gain.times(3));  
+    }
+                if (hasBuyable('s', 11)) {
+        gain = gain.times(buyableEffect('s', 11));  
+    }
+               return gain }, // Gain multiplier for stellar matter
     gainExp() { return new Decimal(1) }, // Exponent for stellar matter gain
     row: 1, // Row on the tree
     hotkeys: [
@@ -95,9 +108,9 @@ addLayer("s", {
         12: {
             title: "Star Fragment",
             cost(x) { return new Decimal(100).times(Decimal.pow(2, x)); },
-            effect(x) { return Decimal.pow(1.5, x); },
+            effect(x) { return Decimal.add(1, x); },
             display() { 
-                return "Boosts Points by x" + format(this.effect()) +
+                return "adds to point base +1 " + format(this.effect()) +
                        "<br>Cost: " + format(this.cost()) + " Stellar Matter" +
                        "<br>Bought: " + format(getBuyableAmount("s", 12));
             },
