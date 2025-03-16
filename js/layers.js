@@ -1,46 +1,48 @@
 addLayer("s", {
-    name: "Stardust",  
-    symbol: "✨",      
-    position: 0,      
-
+    name: "Stardust", // Optional, name for reference
+    symbol: "✨",      // Symbol to display on the layer's node
+    position: 0,      // Horizontal position in the row (first position)
+    
     startData() {
         return {
-            unlocked: true,          
-            points: new Decimal(0), 
-            condensatedPoints: new Decimal(0), 
+            unlocked: true,          // Layer is unlocked from the start
+            points: new Decimal(0),  // Starting points (Stardust points)
         };
     },
 
-    color: "#7A4B96", 
+    color: "#7A4B96", // Color of the Stardust layer's node
 
-    requires: new Decimal(10),  
-    resource: "Stardust",     
-    baseResource: "points",    
-    baseAmount() { return player.points }, 
+    requires: new Decimal(10), // Requires 10 points to unlock Stardust layer
+    resource: "Stardust",      // The main resource of this layer (Stardust points)
+    baseResource: "Matter",    // The base resource that Stardust is calculated from
+    baseAmount() { return player.points }, // Get the amount of the base resource (Points)
 
-    type: "normal",  
-    exponent: 0.5,  
+    type: "normal", // Normal prestige (cost based on amount gained)
+    exponent: 0.5,  // Exponent for Stardust points calculation
 
     gainMult() {
         let mult = new Decimal(1);
+        if (hasUpgrade("s", 12)) {
+            mult = mult.times(player.points.pow(0.35)); // Apply Upgrade 12 effect
+        }
 
-        if (hasUpgrade("s", 11)) mult = mult.times(upgradeEffect("s", 11)); 
-        if (hasUpgrade("s", 12)) mult = mult.times(player.points.pow(0.35)); 
-        if (hasUpgrade("s", 13)) mult = mult.times(upgradeEffect("s", 13).stardust); 
-        if (hasUpgrade("s", 15)) mult = mult.times(upgradeEffect("s", 15).stardust); 
-        if (hasUpgrade("s", 21)) mult = mult.times(upgradeEffect("s", 21)); 
-
-        // Apply Condensated Stardust Effect
-        mult = mult.times(tmp.s.effect);
-
-        return mult;
+         if (hasUpgrade("s", 13)) {
+            mult = mult.times(1.5); 
+        }
+         if (hasUpgrade("s", 15)) {
+            mult = mult.times(1.75); 
+        }
+         if (hasUpgrade("s", 21)) {
+            mult = mult.times(upgradeEffect('s', 21)); 
+              }
+        return mult;  // Default multiplier for gaining Stardust points
     },
 
     gainExp() {
-        return new Decimal(1);  
+        return new Decimal(1);  // Default exponent for Stardust points
     },
 
-    row: 0,  
+    row: 0, // Row for this layer in the prestige tree (first row)
     
     hotkeys: [
         {key: "s", description: "S: Reset for Stardust points", onPress() {
@@ -49,7 +51,7 @@ addLayer("s", {
     ],
 
     layerShown() {
-        return true;  
+        return true;  // Always show this layer (can change based on conditions)
     },
 
     tabFormat: {
@@ -64,18 +66,11 @@ addLayer("s", {
             ],
         },
         "Galactic Research": {
-            unlocked() { return player.s.points.gte(1000) },  
+            unlocked() { return player.s.points.gte(1000) },  // Unlock at 1000 Stardust
             content: [
                 "blank",
                 ["display-text", "<h3>Welcome to Galactic Research!</h3>"],
                 ["display-text", "More upgrades and mechanics will be available here in the future."],
-                ["display-text", `Condensated Stardust formula: +1 per 100 Stardust.`],
-                "blank",
-                ["display-text", function() {
-                    return "Condensated Stardust " + layerText("h2", "s", format(tmp.s.effect)) + "× boosts Stardust gain.";
-                }],
-                "blank",
-                ["resource-display", "condensatedPoints"], 
             ],
         },
     },
@@ -102,9 +97,9 @@ addLayer("s", {
             cost: new Decimal(3),  
             
             unlocked() { return hasUpgrade("s", 11) },  
-
+            
             effect() {
-                return player.points.pow(0.3).max(1);
+                return player.points.pow(0.2);
             },
 
             effectDisplay() {
@@ -124,10 +119,9 @@ addLayer("s", {
             },
 
             effectDisplay() {
-                return "x" + format(this.effect().stardust) + " Stardust, x" + format(this.effect().points) + " Matter";  
+                return "x" + format(this.effect().stardust) + " Stardust, x" + format(this.effect().points) + " Points";  
             },
         },
-
         14: {
             title: "Interstellar Influence",  
             description: "Multiply Matter gain by Stardust.",  
@@ -136,18 +130,17 @@ addLayer("s", {
             unlocked() { return hasUpgrade("s", 13) },  
 
             effect() {
-                return player.s.points.pow(0.35).max(1);  
+                return player.s.points.pow(0.4).max(1);  
             },
 
             effectDisplay() {
                 return "x" + format(this.effect()) + " Matter";  
             },
         },
-
-        15: {
+         15: {
             title: "Galactic Resonance",  
             description: "Multiply Stardust gain by 1.75 and Matter gain by 2.",  
-            cost: new Decimal(75),  
+            cost: new Decimal(120),  
             
             unlocked() { return hasUpgrade("s", 14) },  
 
@@ -156,10 +149,9 @@ addLayer("s", {
             },
 
             effectDisplay() {
-                return "x" + format(this.effect().stardust) + " Stardust, x" + format(this.effect().points) + " Matter";  
+                return "x" + format(this.effect().stardust) + " Stardust, x" + format(this.effect().points) + " Points";  
             },
         },
-
         21: {
             title: "Self-Sustaining Stardust",  
             description: "Multiply Stardust gain by Stardust.",  
@@ -175,16 +167,5 @@ addLayer("s", {
                 return "x" + format(this.effect()) + " Stardust";  
             },
         },
-    },
-
-    // --- CONDENSATED STARDUST MECHANIC ---
-    effect() {
-        return player.s.condensatedPoints.plus(1).pow(0.25); 
-    },
-
-    update(diff) {
-        if (player.s.points.gte(1000)) {
-            player.s.condensatedPoints = player.s.points.div(100).floor();  
-        }
-    },
+    }
 });
