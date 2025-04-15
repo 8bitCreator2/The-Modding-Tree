@@ -1,42 +1,55 @@
-// Example of a unique mechanic layer in The Modding Tree for an Energy-based game
+// Inverter Layer - TMT Style Updated
 
 addLayer("inverter", {
   name: "Inverter",
   symbol: "INV",
   position: 1,
   row: 1,
-  startData() {
-    return {
-      unlocked: true,
-      points: new Decimal(0),
-      inverting: false,
-    }
-  },
   color: "#FF6666",
-  requires: new Decimal(10), // Requires 10 player points (Energy) to unlock
-  resource: "inverted energy",
-  baseResource: "points", // Base resource is player points (Energy)
-  baseAmount() { return player.points },
-  type: "static", // Because it scales with how many you have
-  exponent: 1.5,
+  type: "none",
+
+  startData() { return {
+    unlocked: true,
+    points: new Decimal(0),
+    inverting: false,
+  }},
+
+  layerShown() { return true },
+
+  tabFormat: [
+    "main-display",
+    "blank",
+    ["display-text", () => `You have <h2 style='color:#FF6666'>${format(player.inverter.points)}</h2> inverted energy.`],
+    "blank",
+    "clickables",
+    "upgrades",
+    "blank",
+    ["bar", "inversionBar"],
+  ],
 
   effect() {
-    let eff = player[this.layer].points.add(1).pow(0.5)
-    return eff
+    return player.inverter.points.add(1).sqrt()
   },
+
   effectDescription() {
-    return "which divides energy gain by x but multiplies all generator upgrades by √x"
+    return `which divides energy gain by x but multiplies all generator upgrades by √x`
   },
 
-  layerShown() {
-    return true
-  },
-
-  doReset(resettingLayer) {
-    if (layers[resettingLayer].row > this.row) {
-      let keep = []
-      layerDataReset(this.layer, keep)
-    }
+  bars: {
+    inversionBar: {
+      direction: RIGHT,
+      width: 300,
+      height: 30,
+      progress() {
+        if (!player.inverter.inverting) return 0
+        return player.points.div(player.points.add(Decimal.pow(1.05, player.inverter.points))).toNumber()
+      },
+      display() {
+        return player.inverter.inverting ? "Inverting energy..." : "Not inverting"
+      },
+      fillStyle: { "background-color": "#FF9999" },
+      baseStyle: { "background-color": "#444" },
+    },
   },
 
   upgrades: {
@@ -45,7 +58,7 @@ addLayer("inverter", {
       description: "Inverted energy boosts generator speed (x^0.3).",
       cost: new Decimal(1),
       effect() {
-        return player[this.layer].points.add(1).pow(0.3)
+        return player.inverter.points.add(1).pow(0.3)
       },
       effectDisplay() { return format(this.effect()) + "x" },
     },
@@ -62,7 +75,7 @@ addLayer("inverter", {
       display() {
         return player.inverter.inverting ? "Stop Inverting" : "Start Inverting"
       },
-      canClick() { return true },
+      canClick: () => true,
       onClick() {
         player.inverter.inverting = !player.inverter.inverting
       },
