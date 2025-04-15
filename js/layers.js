@@ -1,172 +1,79 @@
-addLayer("s", {
-    name: "stellar", // Layer name
-    symbol: "S", // Display symbol for the layer
-    position: 1, // Position in the tree
-    startData() {
-        return {
-            unlocked: true,
-            points: new Decimal(0), // Stellar Matter points
-        };
-    },
-    color: "#FFD700", // Color for the layer
-    requires: new Decimal(10), // Requirement for unlocking this layer
-    resource: "stellar matter", // Name of the resource
-    baseResource: "points", // Resource based on points
-    baseAmount() {
-        return player.points;
-    }, // Base amount of points
-    type: "normal", // Normal type, scaling as more points are gained
-    exponent: 0.5, // Exponent for stellar matter gain
-    gainMult() {
-        let mult = new Decimal(1); // Default multiplier
+// Example of a unique mechanic layer in The Modding Tree for an Energy-based game
 
-        // Apply upgrades' effects to the multiplier
-        if (hasUpgrade('s', 12)) {
-            mult = mult.times(upgradeEffect('s', 12));  
-        }
-        if (hasUpgrade('s', 21)) {
-            mult = mult.times(upgradeEffect('s', 21));  
-        }
-        if (hasUpgrade('s', 22)) {
-            mult = mult.times(upgradeEffect('s', 22).stellarBoost);  
-        }
-        if (hasBuyable('s', 11)) {
-            mult = mult.times(buyableEffect('s', 11));  
-        }
-        
-        return mult; // Return the calculated multiplier
-    },
-    gainExp() {
-        return new Decimal(1); // Exponent for stellar matter gain
-    },
-    row: 1, // Row on the tree
-    hotkeys: [
-        {key: "s", description: "S: Reset for stellar matter", onPress(){ if (canReset(this.layer)) doReset(this.layer) }},
-    ],
-    layerShown() {
-        return true;
-    },
-    upgrades: {
-        11: {
-            title: "Core Fusion",
-            description: "Triple your point generation.",
-            cost: new Decimal(1),
-            effect() {
-                return new Decimal(3);
-            },
-            effectDisplay() {
-                return "x" + format(this.effect());
-            },
-        },
-        12: {
-            title: "White Dwarf",
-            description: "Multiply your Stellar Matter gain by 1.5x.",
-            cost: new Decimal(3),
-            effect() {
-                return new Decimal(1.5);
-            },
-            effectDisplay() {
-                return "x" + format(this.effect());
-            },
-            unlocked() {
-                return hasUpgrade("s", 11);
-            },
-        },
-        13: {
-            title: "Cosmic Synergy",
-            description: "Points are boosted based on your Stellar Matter.",
-            cost: new Decimal(5),
-            effect() {
-                return player.s.points.add(1).pow(0.3);
-            },
-            effectDisplay() {
-                return "x" + format(this.effect());
-            },
-            unlocked() {
-                return hasUpgrade("s", 12);
-            },
-        },
-        21: {
-            title: "Galactic Feedback",
-            description: "Stellar Matter gain is boosted based on your Points.",
-            cost: new Decimal(8),
-            effect() {
-                return player.points.add(1).pow(0.15);
-            },
-            effectDisplay() {
-                return "x" + format(this.effect());
-            },
-            unlocked() {
-                return hasUpgrade("s", 13);
-            },
-        },
-        22: {
-            title: "Solar Flare",
-            description: "Triple your Stellar Matter gain and multiply Points by 1.5x.",
-            cost: new Decimal(15),
-            effect() {
-                return {
-                    stellarBoost: new Decimal(3),
-                    pointsBoost: new Decimal(1.5)
-                };
-            },
-            effectDisplay() {
-                return "x3 Stellar Matter, x1.5 Points";
-            },
-            unlocked() {
-                return hasUpgrade("s", 21);
-            },
-        },
-    },
+addLayer("inverter", {
+  name: "Inverter",
+  symbol: "INV",
+  position: 1,
+  row: 1,
+  startData() {
+    return {
+      unlocked: false,
+      points: new Decimal(0),
+      inverting: false,
+    }
+  },
+  color: "#FF6666",
+  requires: new Decimal(10), // Requires 10 player points (Energy) to unlock
+  resource: "inverted energy",
+  baseResource: "points", // Base resource is player points (Energy)
+  baseAmount() { return player.points },
+  type: "static", // Because it scales with how many you have
+  exponent: 1.5,
 
-    buyables: {
-        11: {
-            title: "Core Fusion",
-            cost(x) {
-                return new Decimal(10).times(Decimal.pow(2, x));
-            },
-            effect(x) {
-                return Decimal.pow(1.2, x);
-            },
-            display() {
-                return "Boosts Points & Stellar Matter by x" + format(this.effect()) +
-                    "<br>Cost: " + format(this.cost()) + " Stellar Matter" +
-                    "<br>Bought: " + format(getBuyableAmount("s", 11));
-            },
-            canAfford() {
-                return player.s.points.gte(this.cost());
-            },
-            buy() {
-                player.s.points = player.s.points.sub(this.cost());
-                addBuyables("s", 11, 1);
-            },
-            unlocked() {
-                return true;
-            },
-        },
-        12: {
-            title: "Star Fragment",
-            cost(x) {
-                return new Decimal(100).times(Decimal.pow(2, x));
-            },
-            effect(x) {
-                return Decimal.add(1, x);
-            },
-            display() {
-                return "Adds to point base +1 " + format(this.effect()) +
-                    "<br>Cost: " + format(this.cost()) + " Stellar Matter" +
-                    "<br>Bought: " + format(getBuyableAmount("s", 12));
-            },
-            canAfford() {
-                return player.s.points.gte(this.cost());
-            },
-            buy() {
-                player.s.points = player.s.points.sub(this.cost());
-                addBuyables("s", 12, 1);
-            },
-            unlocked() {
-                return getBuyableAmount("s", 11).gte(3); // Unlock after buying Buyable 11 three times
-            },
-        },
+  effect() {
+    let eff = player[this.layer].points.add(1).pow(0.5)
+    return eff
+  },
+  effectDescription() {
+    return "which divides energy gain by x but multiplies all generator upgrades by √x"
+  },
+
+  layerShown() {
+    return true
+  },
+
+  doReset(resettingLayer) {
+    if (layers[resettingLayer].row > this.row) {
+      let keep = []
+      layerDataReset(this.layer, keep)
+    }
+  },
+
+  upgrades: {
+    11: {
+      title: "Phase Inversion",
+      description: "Inverted energy boosts generator speed (x^0.3).",
+      cost: new Decimal(1),
+      effect() {
+        return player[this.layer].points.add(1).pow(0.3)
+      },
+      effectDisplay() { return format(this.effect()) + "x" },
     },
+    12: {
+      title: "Antiflux Feedback",
+      description: "Every Inverter reset adds +10% to generator efficiency permanently.",
+      cost: new Decimal(5),
+    },
+  },
+
+  clickables: {
+    11: {
+      title: "Invert Mode",
+      display() {
+        return player.inverter.inverting ? "Stop Inverting" : "Start Inverting"
+      },
+      canClick() { return true },
+      onClick() {
+        player.inverter.inverting = !player.inverter.inverting
+      },
+    },
+  },
+
+  update(diff) {
+    if (player.inverter.inverting) {
+      let drain = diff.mul(Decimal.pow(1.05, player.inverter.points)).min(player.points)
+      player.points = player.points.sub(drain)
+      player.inverter.points = player.inverter.points.add(drain.div(1e6))
+    }
+  },
 });
