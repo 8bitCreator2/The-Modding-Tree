@@ -7,7 +7,7 @@ addLayer("inverter", {
   row: 1,
   startData() {
     return {
-      unlocked: false,
+      unlocked: true,
       points: new Decimal(0),
       inverting: false,
     }
