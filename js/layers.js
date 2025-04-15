@@ -12,6 +12,7 @@ addLayer("inverter", {
       unlocked: true,
       points: new Decimal(0),
       inverting: false,
+      invertedEnergy: new Decimal(0), // Track inverted energy
     }
   },
 
@@ -22,7 +23,7 @@ addLayer("inverter", {
   tabFormat: [
     "main-display",
     "blank",
-    ["display-text", () => `You have <h2 style='color:#FF6666'>${formatWhole(player.inverter.points)}</h2> inverted energy.`],
+    ["display-text", () => `You have <h2 style='color:#FF6666'>${formatWhole(player.inverter.invertedEnergy)}</h2> inverted energy.`],
     "blank",
     "clickables",
     "upgrades",
@@ -96,6 +97,11 @@ addLayer("inverter", {
       const actualDrain = Decimal.min(drain, player.points);
       player.points = player.points.sub(actualDrain);
       player.inverter.points = player.inverter.points.add(actualDrain.div(1e6));
+    }
+
+    // Add inverted energy at 10 points
+    if (player.inverter.points.gte(10) && player.inverter.invertedEnergy.lt(player.inverter.points.div(10))) {
+      player.inverter.invertedEnergy = player.inverter.points.div(10).floor();
     }
   },
 });
