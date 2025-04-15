@@ -44,31 +44,7 @@ function getPointGen() {
 
     let gain = new Decimal(1); // Initial points gain multiplier (base gain)
 
-    // Apply effect of Buyable 12 (Star Fragment), which adds +1 to base points gain for each bought
-    let buyable12Effect = getBuyableAmount('s', 12).times(1); // Each Buyable 12 adds +1 to base points gain
-    gain = gain.plus(buyable12Effect); // Add the effect of Buyable 12 to the base points gain
-
-    // Apply effect of Buyable 11 (Stellar Matter), which is a multiplier to the base points gain
-    let buyable11Effect = getBuyableAmount('s', 11).times(1.1); // Assuming Buyable 11 gives a 1.1x multiplier per purchase
-    gain = gain.times(buyable11Effect); // Multiply base points gain by Buyable 11's effect
-
-    // Apply upgrade effects if the player has bought specific upgrades
-
-    // If the player has upgrade 11 (Core Fusion), apply its effect
-    if (hasUpgrade('s', 11)) {
-        gain = gain.times(upgradeEffect('s', 11));  
-    }
-
-    // If the player has upgrade 13 (based on Stellar Matter), apply its effect
-    if (hasUpgrade('s', 13)) {
-        gain = gain.times(upgradeEffect('s', 13));  
-    }
-
-    // If the player has upgrade 22 (Points Boost), apply a flat 1.5x multiplier
-    if (hasUpgrade('s', 22)) {
-        gain = gain.times(1.5);  
-    }
-
+  
     // Return the final points gain
     return gain;
 }
