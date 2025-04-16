@@ -6,7 +6,7 @@ addLayer("inverter", {
   row: 1,
   color: "#FF6666",
   type: "none",
-  baseResource: "Inverters", // Added base resource as 'Inverters'
+  resource: "Inverters", // Added base resource as 'Inverters'
 
   startData() {
     return {
