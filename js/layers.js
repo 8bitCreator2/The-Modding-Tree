@@ -1,11 +1,12 @@
 // Inverter Layer - Fully Functional TMT Style
 addLayer("inverter", {
-  name: "Inverter",
+  name: "Inverters", // Updated resource layer name to 'Inverters'
   symbol: "INV",
   position: 1,
   row: 1,
   color: "#FF6666",
   type: "none",
+  baseResource: "Inverters", // Added base resource as 'Inverters'
 
   startData() {
     return {
@@ -30,14 +31,6 @@ addLayer("inverter", {
     "blank",
     ["bar", "inversionBar"],
   ],
-
-  effect() {
-    return player.inverter.points.add(1).sqrt();
-  },
-
-  effectDescription() {
-    return `which divides energy gain by √x but boosts generator upgrades by √x`;
-  },
 
   bars: {
     inversionBar: {
@@ -68,6 +61,7 @@ addLayer("inverter", {
       },
       onClick() {
         player.inverter.inverting = !player.inverter.inverting;
+        console.log("Inversion toggled:", player.inverter.inverting); // Debugging output
       },
     },
   },
@@ -75,33 +69,35 @@ addLayer("inverter", {
   upgrades: {
     11: {
       title: "Phase Inversion",
-      description: "Inverted energy boosts generator speed (x^0.3).",
-      cost: new Decimal(1),
-      effect() {
-        return player.inverter.points.add(1).pow(0.3);
-      },
-      effectDisplay() {
-        return format(this.effect()) + "x";
-      },
+      description: "Reduces drain of energy by 20%.",
+      cost: new Decimal(5),
     },
     12: {
       title: "Antiflux Feedback",
-      description: "Each inverter point gives +10% generator efficiency.",
-      cost: new Decimal(5),
+      description: "Further reduces drain of energy by 30%.",
+      cost: new Decimal(10),
     },
   },
 
   update(diff) {
+    // Drain reduction multiplier from upgrades
+    let drainMult = new Decimal(1);
+    if (hasUpgrade("inverter", 11)) drainMult = drainMult.mul(0.8);
+    if (hasUpgrade("inverter", 12)) drainMult = drainMult.mul(0.7);
+
     if (player.inverter.inverting) {
-      const drain = Decimal.pow(1.05, player.inverter.points).mul(diff);
+      const baseDrain = Decimal.pow(1.05, player.inverter.points).mul(diff);
+      const drain = baseDrain.mul(drainMult);
       const actualDrain = Decimal.min(drain, player.points);
+      console.log("Draining", actualDrain.toString(), "from energy"); // Debugging output
       player.points = player.points.sub(actualDrain);
       player.inverter.points = player.inverter.points.add(actualDrain.div(3));
+      console.log("Added", actualDrain.div(3).toString(), "to inverter points"); // Debugging output
     }
 
-    // Add inverted energy at 10 points
-    if (player.inverter.points.gte(10) && player.inverter.invertedEnergy.lt(player.inverter.points.div(10))) {
-      player.inverter.invertedEnergy = player.inverter.points.div(10).floor();
-    }
+    // Generate inverted energy at 1% of inverter points per second
+    const gain = player.inverter.points.mul(0.01).mul(diff);
+    player.inverter.invertedEnergy = player.inverter.invertedEnergy.add(gain);
+    console.log("Generated inverted energy:", gain.toString());
   },
 });
