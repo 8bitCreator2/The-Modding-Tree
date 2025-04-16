@@ -96,7 +96,7 @@ addLayer("inverter", {
       const drain = Decimal.pow(1.05, player.inverter.points).mul(diff);
       const actualDrain = Decimal.min(drain, player.points);
       player.points = player.points.sub(actualDrain);
-      player.inverter.points = player.inverter.points.add(actualDrain.div(1e6));
+      player.inverter.points = player.inverter.points.add(actualDrain.div(3));
     }
 
     // Add inverted energy at 10 points
