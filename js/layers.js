@@ -100,33 +100,6 @@ addLayer("inverter", {
         console.log("Inversion speed set to 100%");
       },
     },
-    16: {
-      title: "Fine Control - 1%",
-      display: "Set Inversion Speed to 1%",
-      canClick: () => true,
-      onClick() {
-        player.inverter.inversionSpeed = new Decimal(0.01);
-        console.log("Inversion speed set to 1%");
-      },
-    },
-    17: {
-      title: "Fine Control - 25%",
-      display: "Set Inversion Speed to 25%",
-      canClick: () => true,
-      onClick() {
-        player.inverter.inversionSpeed = new Decimal(0.25);
-        console.log("Inversion speed set to 25%");
-      },
-    },
-    18: {
-      title: "Fine Control - 200%",
-      display: "Set Inversion Speed to 200%",
-      canClick: () => true,
-      onClick() {
-        player.inverter.inversionSpeed = new Decimal(2);
-        console.log("Inversion speed set to 200%");
-      },
-    },
     14: {
       title: "Toggle Inversion",
       display() {
@@ -159,6 +132,65 @@ addLayer("inverter", {
       },
       unlocked() {
         return true;
+      },
+    },
+  },
+
+  milestones: {
+    0: {
+      requirementDescription: "5 Overcloaked Energy",
+      effectDescription: "Unlock a buyable that boosts inverters gained for toggle inversion by 2.",
+      done() {
+        return player.inverter.overcloakedEnergy.gte(5);
+      },
+    },
+    1: {
+      requirementDescription: "10 Overcloaked Energy",
+      effectDescription: "Unlocks a second buyable.",
+      done() {
+        return player.inverter.overcloakedEnergy.gte(10);
+      },
+    },
+  },
+
+  buyables: {
+    11: {
+      cost(x) { return new Decimal(10).mul(Decimal.pow(2, x)); },
+      title: "Toggle Boost",
+      display() {
+        return `Boost inverters from toggle by 2x\nCost: ${format(this.cost(getBuyableAmount("inverter", 11)))} Inverted Energy`;
+      },
+      canAfford() {
+        return player.inverter.invertedEnergy.gte(this.cost(getBuyableAmount("inverter", 11)));
+      },
+      buy() {
+        let cost = this.cost(getBuyableAmount("inverter", 11));
+        player.inverter.invertedEnergy = player.inverter.invertedEnergy.sub(cost);
+        addBuyables("inverter", 11, 1);
+      },
+      unlocked() {
+        return hasMilestone("inverter", 0);
+      },
+    },
+    12: {
+      cost(x) { return new Decimal(100).mul(Decimal.pow(3, x)); },
+      title: "Inversion Engine",
+      display() {
+        return `Boost inverted energy gain by 10% per level\nCost: ${format(this.cost(getBuyableAmount("inverter", 12)))} Inverted Energy`;
+      },
+      canAfford() {
+        return player.inverter.invertedEnergy.gte(this.cost(getBuyableAmount("inverter", 12)));
+      },
+      buy() {
+        let cost = this.cost(getBuyableAmount("inverter", 12));
+        player.inverter.invertedEnergy = player.inverter.invertedEnergy.sub(cost);
+        addBuyables("inverter", 12, 1);
+      },
+      unlocked() {
+        return hasMilestone("inverter", 1);
+      },
+      effect() {
+        return new Decimal(1).add(new Decimal(0.1).mul(getBuyableAmount("inverter", 12)));
       },
     },
   },
@@ -198,40 +230,44 @@ addLayer("inverter", {
     },
     22: {
       title: "Temporal Tuning",
-      description: "Adds finer control options for inversion speed (1%, 25%, 200%).",
+      description: "Gives finer control of inversion speed via clickables.",
       cost: new Decimal(100),
-    },
-    23: {
-      title: "Polar Dampening",
-      description: "Inverted energy gain is reduced based on points^0.1.",
-      cost: new Decimal(250),
     },
   },
 
-  buyables: {
-    13: {
-      cost(x) { return new Decimal(500).mul(Decimal.pow(5, x)); },
-      title: "Overcloak Refinement",
-      display() {
-        return `Boosts overcloak effectiveness by 25% per level.\nCost: ${format(this.cost(getBuyableAmount("inverter", 13)))} Inverted Energy`;
-      },
-      canAfford() {
-        return player.inverter.invertedEnergy.gte(this.cost(getBuyableAmount("inverter", 13)));
-      },
-      buy() {
-        const cost = this.cost(getBuyableAmount("inverter", 13));
-        player.inverter.invertedEnergy = player.inverter.invertedEnergy.sub(cost);
-        addBuyables("inverter", 13, 1);
-      },
-      unlocked() {
-        return player.inverter.overcloakedEnergy.gte(25);
-      },
-      effect(x) {
-        return Decimal.pow(1.25, x);
-      },
-      effectDisplay() {
-        return `${format(this.effect(getBuyableAmount("inverter", 13)))}x`;
-      },
-    },
+  update(diff) {
+    let drainMult = new Decimal(1);
+    if (hasUpgrade("inverter", 11)) drainMult = drainMult.mul(0.8);
+    if (hasUpgrade("inverter", 12)) drainMult = drainMult.mul(0.7);
+    const overcloakEffect = new Decimal(1).sub(player.inverter.overcloakedEnergy.mul(0.1));
+    drainMult = drainMult.mul(overcloakEffect.max(0));
+
+    const inverterPointEffect = Decimal.div(1, Decimal.add(player.inverter.points, 1).pow(0.05));
+    drainMult = drainMult.mul(inverterPointEffect);
+
+    if (player.inverter.inverting) {
+      const baseDrain = Decimal.pow(1.05, player.inverter.points).mul(diff);
+      const drain = baseDrain.mul(drainMult).mul(player.inverter.inversionSpeed);
+      const actualDrain = Decimal.min(drain, player.points);
+      console.log("Draining", actualDrain.toString(), "from energy");
+      player.points = player.points.sub(actualDrain);
+      player.inverter.points = player.inverter.points.add(actualDrain.div(3));
+      console.log("Added", actualDrain.div(3).toString(), "to inverter points");
+    }
+
+    let gain = player.inverter.points.mul(0.01).mul(diff);
+    if (hasUpgrade("inverter", 21)) {
+      gain = gain.mul(upgradeEffect("inverter", 21));
+    }
+    if (hasMilestone("inverter", 1)) {
+      gain = gain.mul(buyableEffect("inverter", 12));
+    }
+
+    if (player.inverter.invertedEnergy.gte("1e6")) {
+      gain = gain.div(player.inverter.invertedEnergy.div("1e6").add(1));
+    }
+
+    player.inverter.invertedEnergy = player.inverter.invertedEnergy.add(gain);
+    console.log("Generated inverted energy:", gain.toString());
   },
 });
