@@ -6,7 +6,7 @@ addLayer("inverter", {
   row: 1,
   color: "#FF6666",
   type: "none",
-  baseResource: "Inverters",
+  resource: "Inverters",
 
   startData() {
     return {
@@ -61,10 +61,10 @@ addLayer("inverter", {
       display() {
         return `Overcloaked: ${formatWhole(player.inverter.overcloakedEnergy)}`;
       },
-      fillStyle: { backgroundColor: "#FF33FF" },
+      fillStyle: { backgroundColor: "#9944FF" },
       baseStyle: { backgroundColor: "#222" },
       unlocked() {
-        return player.inverter.overcloakedEnergy.gt(0);
+        return true; // Always show the overcloak bar
       },
     },
   },
@@ -100,7 +100,7 @@ addLayer("inverter", {
         console.log("Overcloaked energy. Cost:", cost.toString());
       },
       unlocked() {
-        return player.inverter.overcloakedEnergy.gt(0);
+        return true; // Always show the overcloak button
       },
     },
   },
@@ -115,6 +115,17 @@ addLayer("inverter", {
       title: "Antiflux Feedback",
       description: "Further reduces drain of energy by 30%.",
       cost: new Decimal(10),
+    },
+    13: {
+      title: "Polarity Amplifier",
+      description: "Player points are boosted by inverted energy^0.33.",
+      cost: new Decimal(25),
+      effect() {
+        return player.inverter.invertedEnergy.add(1).pow(0.33);
+      },
+      effectDisplay() {
+        return format(this.effect()) + "x";
+      },
     },
   },
 
