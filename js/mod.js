@@ -43,7 +43,9 @@ function getPointGen() {
     }
 
     let gain = new Decimal(1); // Initial points gain multiplier (base gain)
-
+if (hasUpgrade('inverter', 13)) {
+         gain = gain.times(upgradeEffect('inverter', 13));  
+     }
   
     // Return the final points gain
     return gain;
