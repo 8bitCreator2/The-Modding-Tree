@@ -15,6 +15,7 @@ addLayer("inverter", {
       inverting: false,
       invertedEnergy: new Decimal(0),
       overcloakedEnergy: new Decimal(0),
+      inversionSpeed: new Decimal(1),
     }
   },
 
@@ -28,6 +29,8 @@ addLayer("inverter", {
     ["display-text", () => `You have <h2 style='color:#FF6666'>${formatWhole(player.inverter.invertedEnergy)}</h2> inverted energy.`],
     ["display-text", () => `Overcloaking consumes inverted energy to reduce energy drain by 10% per overcloaked energy. (Max 5)`],
     "blank",
+    ["display-text", () => hasUpgrade("inverter", 22) ? `Inversion speed: ${formatPercent(player.inverter.inversionSpeed)}` : ""],
+    ["slider", ["inverter", "inversionSpeedSlider"]],
     "clickables",
     "upgrades",
     "blank",
@@ -48,10 +51,7 @@ addLayer("inverter", {
       display() {
         return player.inverter.inverting ? "Inverting energy..." : "Not inverting";
       },
-      fillStyle: {
-        backgroundImage: "linear-gradient(to right, #ff9999, #cc6666, #ff9999)",
-        animation: "pulse 2s infinite"
-      },
+      fillStyle: { backgroundColor: "#FF9999" },
       baseStyle: { backgroundColor: "#222" },
     },
     overcloakBar: {
@@ -64,13 +64,10 @@ addLayer("inverter", {
       display() {
         return `Overcloaked: ${formatWhole(player.inverter.overcloakedEnergy)}`;
       },
-      fillStyle: {
-        backgroundImage: "linear-gradient(to right, #9944FF, #FF4444)",
-        animation: "pulse 2s infinite"
-      },
+      fillStyle: { backgroundColor: "#9944FF" },
       baseStyle: { backgroundColor: "#222" },
       unlocked() {
-        return true;
+        return true; // Always show the overcloak bar
       },
     },
   },
@@ -86,7 +83,7 @@ addLayer("inverter", {
       },
       onClick() {
         player.inverter.inverting = !player.inverter.inverting;
-        console.log("Inversion toggled:", player.inverter.inverting);
+        console.log("Inversion toggled:", player.inverter.inverting); // Debugging output
       },
     },
     12: {
@@ -95,6 +92,7 @@ addLayer("inverter", {
         const cost = Decimal.pow(player.inverter.overcloakedEnergy.add(1), 2);
         return `Overcloak for ${formatWhole(cost)} Inverted Energy`;
       },
+      tooltip: "Consumes Inverted Energy to reduce energy drain. Each overcloak reduces drain by 10%. Max 5.",
       canClick() {
         const cost = Decimal.pow(player.inverter.overcloakedEnergy.add(1), 2);
         return player.inverter.invertedEnergy.gte(cost) && player.inverter.overcloakedEnergy.lt(5);
@@ -107,6 +105,24 @@ addLayer("inverter", {
       },
       unlocked() {
         return true;
+      },
+    },
+  },
+
+  sliders: {
+    inversionSpeedSlider: {
+      min: 0,
+      max: 1,
+      step: 0.01,
+      value() {
+        return player.inverter.inversionSpeed.toNumber();
+      },
+      onChange(value) {
+        player.inverter.inversionSpeed = new Decimal(value);
+        console.log("Inversion speed set to:", value);
+      },
+      unlocked() {
+        return hasUpgrade("inverter", 22);
       },
     },
   },
@@ -144,6 +160,11 @@ addLayer("inverter", {
         return format(this.effect()) + "x";
       },
     },
+    22: {
+      title: "Temporal Tuning",
+      description: "Unlocks a slider to adjust toggle inversion speed (0% to 100%).",
+      cost: new Decimal(100),
+    },
   },
 
   update(diff) {
@@ -155,7 +176,7 @@ addLayer("inverter", {
 
     if (player.inverter.inverting) {
       const baseDrain = Decimal.pow(1.05, player.inverter.points).mul(diff);
-      const drain = baseDrain.mul(drainMult);
+      const drain = baseDrain.mul(drainMult).mul(player.inverter.inversionSpeed);
       const actualDrain = Decimal.min(drain, player.points);
       console.log("Draining", actualDrain.toString(), "from energy");
       player.points = player.points.sub(actualDrain);
