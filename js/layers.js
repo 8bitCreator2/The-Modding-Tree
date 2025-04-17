@@ -65,13 +65,40 @@ addLayer("inverter", {
       fillStyle: { backgroundColor: "#9944FF" },
       baseStyle: { backgroundColor: "#222" },
       unlocked() {
-        return true; // Always show the overcloak bar
+        return true;
       },
     },
   },
 
   clickables: {
     11: {
+      title: "Slow Inversion",
+      display: "Set Inversion Speed to 25%",
+      canClick: () => true,
+      onClick() {
+        player.inverter.inversionSpeed = new Decimal(0.25);
+        console.log("Inversion speed set to 25%");
+      },
+    },
+    12: {
+      title: "Medium Inversion",
+      display: "Set Inversion Speed to 50%",
+      canClick: () => true,
+      onClick() {
+        player.inverter.inversionSpeed = new Decimal(0.5);
+        console.log("Inversion speed set to 50%");
+      },
+    },
+    13: {
+      title: "Fast Inversion",
+      display: "Set Inversion Speed to 100%",
+      canClick: () => true,
+      onClick() {
+        player.inverter.inversionSpeed = new Decimal(1);
+        console.log("Inversion speed set to 100%");
+      },
+    },
+    14: {
       title: "Toggle Inversion",
       display() {
         return player.inverter.inverting ? "Stop Inverting" : "Start Inverting";
@@ -81,10 +108,10 @@ addLayer("inverter", {
       },
       onClick() {
         player.inverter.inverting = !player.inverter.inverting;
-        console.log("Inversion toggled:", player.inverter.inverting); // Debugging output
+        console.log("Inversion toggled:", player.inverter.inverting);
       },
     },
-    12: {
+    15: {
       title: "Overcloak",
       display() {
         const cost = Decimal.pow(player.inverter.overcloakedEnergy.add(1), 2);
@@ -103,25 +130,6 @@ addLayer("inverter", {
       },
       unlocked() {
         return true;
-      },
-    },
-    13: {
-      title: "Adjust Inversion Speed",
-      display() {
-        return `Speed: ${formatPercent(player.inverter.inversionSpeed)}`;
-      },
-      canClick() {
-        return hasUpgrade("inverter", 22);
-      },
-      onClick() {
-        const current = player.inverter.inversionSpeed;
-        if (current.eq(1)) player.inverter.inversionSpeed = new Decimal(0.5);
-        else if (current.eq(0.5)) player.inverter.inversionSpeed = new Decimal(0);
-        else if (current.eq(0)) player.inverter.inversionSpeed = new Decimal(1);
-        console.log("Toggled inversion speed to", player.inverter.inversionSpeed.toString());
-      },
-      unlocked() {
-        return hasUpgrade("inverter", 22);
       },
     },
   },
@@ -161,7 +169,7 @@ addLayer("inverter", {
     },
     22: {
       title: "Temporal Tuning",
-      description: "Unlocks a clickable to adjust toggle inversion speed (-50% to 100%).",
+      description: "Gives finer control of inversion speed via clickables.",
       cost: new Decimal(100),
     },
   },
@@ -172,6 +180,10 @@ addLayer("inverter", {
     if (hasUpgrade("inverter", 12)) drainMult = drainMult.mul(0.7);
     const overcloakEffect = new Decimal(1).sub(player.inverter.overcloakedEnergy.mul(0.1));
     drainMult = drainMult.mul(overcloakEffect.max(0));
+
+    // Inverter points reduce drain multiplier slightly
+    const inverterPointEffect = Decimal.div(1, Decimal.add(player.inverter.points, 1).pow(0.05));
+    drainMult = drainMult.mul(inverterPointEffect);
 
     if (player.inverter.inverting) {
       const baseDrain = Decimal.pow(1.05, player.inverter.points).mul(diff);
@@ -186,8 +198,3 @@ addLayer("inverter", {
     let gain = player.inverter.points.mul(0.01).mul(diff);
     if (hasUpgrade("inverter", 21)) {
       gain = gain.mul(upgradeEffect("inverter", 21));
-    }
-    player.inverter.invertedEnergy = player.inverter.invertedEnergy.add(gain);
-    console.log("Generated inverted energy:", gain.toString());
-  },
-});
