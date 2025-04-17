@@ -23,53 +23,56 @@ addLayer("inverter", {
     return true;
   },
 
+  update(diff) {
+    // Log current inverter points before applying logic
+    console.log("Inverter points before cap:", player.inverter.points.toString());
+
+    // Clamp inverter points to 1000 if it exceeds the cap
+    if (player.inverter.points.gt(1000)) {
+      player.inverter.points = new Decimal(1000);
+      console.log("Inverter points capped at 1000.");
+    }
+
+    // Place other update logic here as needed...
+  },
+
   tabFormat: [
     "main-display",
     "blank",
     ["display-text", () => `You have <h2 style='color:#FF6666'>${formatWhole(player.inverter.invertedEnergy)}</h2> inverted energy.`],
     ["display-text", () => `Overcloaking consumes inverted energy to reduce energy drain by 10% per overcloaked energy.`],
+    ["display-text", () => player.inverter.points.gte(1000) ? "You have reached the inverter hard cap of 1000." : ""],
+    ["display-text", () => player.inverter.overcloakedEnergy.gte(10) ? "Overcloak cost now scales significantly higher." : ""],
     "blank",
     "clickables",
     "upgrades",
     "milestones",
     "buyables",
+    "challenges",
     "blank",
     ["bar", "inversionBar"],
     ["bar", "overcloakBar"],
   ],
 
-  bars: {
-    inversionBar: {
-      direction: RIGHT,
-      width: 300,
-      height: 30,
-      progress() {
-        if (!player.inverter.inverting) return 0;
-        const drainRate = Decimal.pow(1.05, player.inverter.points);
-        return player.points.div(player.points.add(drainRate)).toNumber();
-      },
-      display() {
-        return player.inverter.inverting ? "Inverting energy..." : "Not inverting";
-      },
-      fillStyle: { backgroundColor: "#FF9999" },
-      baseStyle: { backgroundColor: "#222" },
-    },
-    overcloakBar: {
-      direction: RIGHT,
-      width: 300,
-      height: 30,
-      progress() {
-        return player.inverter.overcloakedEnergy.div(player.inverter.invertedEnergy.max(1)).toNumber();
-      },
-      display() {
-        return `Overcloaked: ${formatWhole(player.inverter.overcloakedEnergy)}`;
-      },
-      fillStyle: { backgroundColor: "#9944FF" },
-      baseStyle: { backgroundColor: "#222" },
+  challenges: {
+    11: {
+      name: "Entropy Lock",
+      challengeDescription: "Overcloak is disabled.",
+      canComplete: () => player.inverter.points.gte(1000),
+      goalDescription: "Reach 1000 Inverter Points.",
+      rewardDescription: "Unlocks the next layer.",
       unlocked() {
-        return true;
+        return player.inverter.overcloakedEnergy.gte(25);
       },
-    },
+      onEnter() {
+        player.inverter.overcloakDisabled = true;
+        console.log("Entered Entropy Lock challenge.");
+      },
+      onExit() {
+        player.inverter.overcloakDisabled = false;
+        console.log("Exited Entropy Lock challenge.");
+      }
+    }
   },
 
   clickables: {
@@ -116,16 +119,20 @@ addLayer("inverter", {
     15: {
       title: "Overcloak",
       display() {
-        const cost = Decimal.pow(player.inverter.overcloakedEnergy.add(1), 2);
+        const base = player.inverter.overcloakedEnergy.gte(10) ? 3 : 2;
+        const cost = Decimal.pow(base, player.inverter.overcloakedEnergy.add(1));
         return `Overcloak for ${formatWhole(cost)} Inverted Energy`;
       },
       tooltip: "Consumes Inverted Energy to reduce energy drain. Each overcloak reduces drain by 10%.",
       canClick() {
-        const cost = Decimal.pow(player.inverter.overcloakedEnergy.add(1), 2);
+        if (player.challenges["inverter"][11]) return false;
+        const base = player.inverter.overcloakedEnergy.gte(10) ? 3 : 2;
+        const cost = Decimal.pow(base, player.inverter.overcloakedEnergy.add(1));
         return player.inverter.invertedEnergy.gte(cost);
       },
       onClick() {
-        const cost = Decimal.pow(player.inverter.overcloakedEnergy.add(1), 2);
+        const base = player.inverter.overcloakedEnergy.gte(10) ? 3 : 2;
+        const cost = Decimal.pow(base, player.inverter.overcloakedEnergy.add(1));
         player.inverter.invertedEnergy = player.inverter.invertedEnergy.sub(cost);
         player.inverter.overcloakedEnergy = player.inverter.overcloakedEnergy.add(1);
         console.log("Overcloaked energy. Cost:", cost.toString());
@@ -134,8 +141,43 @@ addLayer("inverter", {
         return true;
       },
     },
+    16: {
+      title: "Precise: 1%",
+      display: "Set Inversion Speed to 1%",
+      canClick: () => true,
+      onClick() {
+        player.inverter.inversionSpeed = new Decimal(0.01);
+        console.log("Inversion speed set to 1%");
+      },
+      unlocked() {
+        return hasUpgrade("inverter", 22);
+      },
+    },
+    17: {
+      title: "Precise: 10%",
+      display: "Set Inversion Speed to 10%",
+      canClick: () => true,
+      onClick() {
+        player.inverter.inversionSpeed = new Decimal(0.10);
+        console.log("Inversion speed set to 10%");
+      },
+      unlocked() {
+        return hasUpgrade("inverter", 22);
+      },
+    },
+    18: {
+      title: "Precise: 75%",
+      display: "Set Inversion Speed to 75%",
+      canClick: () => true,
+      onClick() {
+        player.inverter.inversionSpeed = new Decimal(0.75);
+        console.log("Inversion speed set to 75%");
+      },
+      unlocked() {
+        return hasUpgrade("inverter", 22);
+      },
+    },
   },
-
   milestones: {
     0: {
       requirementDescription: "5 Overcloaked Energy",
