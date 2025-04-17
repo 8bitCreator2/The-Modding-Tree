@@ -27,10 +27,12 @@ addLayer("inverter", {
     "main-display",
     "blank",
     ["display-text", () => `You have <h2 style='color:#FF6666'>${formatWhole(player.inverter.invertedEnergy)}</h2> inverted energy.`],
-    ["display-text", () => `Overcloaking consumes inverted energy to reduce energy drain by 10% per overcloaked energy. (Max 5)`],
+    ["display-text", () => `Overcloaking consumes inverted energy to reduce energy drain by 10% per overcloaked energy.`],
     "blank",
     "clickables",
     "upgrades",
+    "milestones",
+    "buyables",
     "blank",
     ["bar", "inversionBar"],
     ["bar", "overcloakBar"],
@@ -117,10 +119,10 @@ addLayer("inverter", {
         const cost = Decimal.pow(player.inverter.overcloakedEnergy.add(1), 2);
         return `Overcloak for ${formatWhole(cost)} Inverted Energy`;
       },
-      tooltip: "Consumes Inverted Energy to reduce energy drain. Each overcloak reduces drain by 10%. Max 5.",
+      tooltip: "Consumes Inverted Energy to reduce energy drain. Each overcloak reduces drain by 10%.",
       canClick() {
         const cost = Decimal.pow(player.inverter.overcloakedEnergy.add(1), 2);
-        return player.inverter.invertedEnergy.gte(cost) && player.inverter.overcloakedEnergy.lt(5);
+        return player.inverter.invertedEnergy.gte(cost);
       },
       onClick() {
         const cost = Decimal.pow(player.inverter.overcloakedEnergy.add(1), 2);
@@ -130,6 +132,65 @@ addLayer("inverter", {
       },
       unlocked() {
         return true;
+      },
+    },
+  },
+
+  milestones: {
+    0: {
+      requirementDescription: "5 Overcloaked Energy",
+      effectDescription: "Unlock a buyable that boosts inverters gained for toggle inversion by 2.",
+      done() {
+        return player.inverter.overcloakedEnergy.gte(5);
+      },
+    },
+    1: {
+      requirementDescription: "10 Overcloaked Energy",
+      effectDescription: "Unlocks a second buyable.",
+      done() {
+        return player.inverter.overcloakedEnergy.gte(10);
+      },
+    },
+  },
+
+  buyables: {
+    11: {
+      cost(x) { return new Decimal(10).mul(Decimal.pow(2, x)); },
+      title: "Toggle Boost",
+      display() {
+        return `Boost inverters from toggle by 2x\nCost: ${format(this.cost(getBuyableAmount("inverter", 11)))} Inverted Energy`;
+      },
+      canAfford() {
+        return player.inverter.invertedEnergy.gte(this.cost(getBuyableAmount("inverter", 11)));
+      },
+      buy() {
+        let cost = this.cost(getBuyableAmount("inverter", 11));
+        player.inverter.invertedEnergy = player.inverter.invertedEnergy.sub(cost);
+        addBuyables("inverter", 11, 1);
+      },
+      unlocked() {
+        return hasMilestone("inverter", 0);
+      },
+    },
+    12: {
+      cost(x) { return new Decimal(100).mul(Decimal.pow(3, x)); },
+      title: "Inversion Engine",
+      display() {
+        return `Boost inverted energy gain by 10% per level\nCost: ${format(this.cost(getBuyableAmount("inverter", 12)))} Inverted Energy`;
+      },
+      canAfford() {
+        return player.inverter.invertedEnergy.gte(this.cost(getBuyableAmount("inverter", 12)));
+      },
+      buy() {
+        let cost = this.cost(getBuyableAmount("inverter", 12));
+        player.inverter.invertedEnergy = player.inverter.invertedEnergy.sub(cost);
+        addBuyables("inverter", 12, 1);
+      },
+      unlocked() {
+        return hasMilestone("inverter", 1);
+      },
+      effect() {
+        return new Decimal(1).add(new Decimal(0.1).mul(getBuyableAmount("inverter", 12)));
       },
     },
   },
@@ -181,7 +242,6 @@ addLayer("inverter", {
     const overcloakEffect = new Decimal(1).sub(player.inverter.overcloakedEnergy.mul(0.1));
     drainMult = drainMult.mul(overcloakEffect.max(0));
 
-    // Inverter points reduce drain multiplier slightly
     const inverterPointEffect = Decimal.div(1, Decimal.add(player.inverter.points, 1).pow(0.05));
     drainMult = drainMult.mul(inverterPointEffect);
 
@@ -198,3 +258,16 @@ addLayer("inverter", {
     let gain = player.inverter.points.mul(0.01).mul(diff);
     if (hasUpgrade("inverter", 21)) {
       gain = gain.mul(upgradeEffect("inverter", 21));
+    }
+    if (hasMilestone("inverter", 1)) {
+      gain = gain.mul(buyableEffect("inverter", 12));
+    }
+
+    if (player.inverter.invertedEnergy.gte("1e6")) {
+      gain = gain.div(player.inverter.invertedEnergy.div("1e6").add(1));
+    }
+
+    player.inverter.invertedEnergy = player.inverter.invertedEnergy.add(gain);
+    console.log("Generated inverted energy:", gain.toString());
+  },
+});
