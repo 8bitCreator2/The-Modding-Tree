@@ -38,16 +38,13 @@ function canGenPoints(){
 
 // Calculate points/sec!
 function getPointGen() {
-    if (!canGenPoints()) {
-        return new Decimal(0); // If points cannot be generated, return 0
-    }
+    if (!canGenPoints()) return new Decimal(0);
 
-    let gain = new Decimal(1); // Initial points gain multiplier (base gain)
-if (hasUpgrade('inverter', 13)) {
-         gain = gain.times(upgradeEffect('inverter', 13));  
-     }
-  
-    // Return the final points gain
+    let gain = new Decimal(1);
+    // Bank bonus based on deposit and formula A = C*(1+i)/D scaled down by 1000
+    let bankBonus = player.b.deposit.times(1 + player.b.i).div(player.b.D * 1000);
+    gain = gain.add(bankBonus);
+
     return gain;
 }
 
