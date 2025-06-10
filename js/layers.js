@@ -1,4 +1,4 @@
-/ layers/b.js
+
 addLayer("b", {
     name: "Bank",
     symbol: "B",
