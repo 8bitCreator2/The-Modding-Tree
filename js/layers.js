@@ -19,8 +19,8 @@ addLayer("b", {
     },
 
     tabFormat: [
-        ["display-text", () => `<h2 style='color: #f5d442;'>Welcome to the Bank layer.</h2>`],
-        ["display-text", () => `<span style='color: #f5d442;'>You have <b>${format(player.b.bankingPoints)}</b> Banking Points.</span>`],
-        ["display-text", () => `<span style='color: #f5d442;'>Formula: <b>C = A × (1 + i) / 100</b><br>Where A = Points = ${format(player.points)}, i = ${format(player.b.interest.mul(100))}%, C = Banking Points gained/sec</span>`],
+        ["display-text", () => `<h2 style='color: white;'>Welcome to the Bank layer.</h2>`],
+        ["display-text", () => `You have <b style='color: #f5d442;'>${format(player.b.bankingPoints)}</b> Banking Points.`],
+        ["display-text", () => `Formula: <b>C = A × (1 + i) / 100</b><br>Where A = Points = <b style='color: #f5d442;'>${format(player.points)}</b>, i = <b style='color: #f5d442;'>${format(player.b.interest.mul(100))}%</b>, C = Banking Points gained/sec`],
     ],
 });
