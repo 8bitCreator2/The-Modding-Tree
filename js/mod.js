@@ -42,8 +42,8 @@ function getPointGen() {
 
     let gain = new Decimal(1);
     // Bank bonus based on deposit and formula A = C*(1+i)/D scaled down by 1000
-    let bankBonus = player.b.deposit.times(1 + player.b.i).div(player.b.D * 1000);
-    gain = gain.add(bankBonus);
+    
+    
 
     return gain;
 }
