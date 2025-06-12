@@ -106,24 +106,24 @@ addLayer("inversion", {
         return new Decimal(3);
       },
     },
-    13: {
-      title: "Reduce Drain",
-      description: "Reduces drain by 100%.",
-      cost: new Decimal(200),
-      effect() {
-        return new Decimal(0); // Multiplies drain by 0
-      },
-    },
+   13: {
+  title: "Reduce Drain",
+  description: "Reduces drain by 90%.",
+  cost: new Decimal(200),
+  effect() {
+    return new Decimal(0.1); // Multiplies drain by 0.1 (90% reduction)
+  },
+},
   },
 
   update(diff) {
     if (player.inversion.inverting) {
-      let baseDrain = Decimal.pow(1.05, player.inversion.points).mul(diff);
-      if (hasUpgrade("inversion", 13)) baseDrain = baseDrain.mul(upgradeEffect("inversion", 13));
-      const drain = baseDrain.mul(player.inversion.inversionSpeed);
-      const actualDrain = Decimal.min(drain, player.points);
-      player.points = player.points.sub(actualDrain);
-      player.inversion.points = player.inversion.points.add(actualDrain.sqrt());
+     let baseDrain = Decimal.pow(1.05, player.inversion.points).mul(diff);
+if (hasUpgrade("inversion", 13)) baseDrain = baseDrain.mul(upgradeEffect("inversion", 13));
+const drain = baseDrain.mul(player.inversion.inversionSpeed);
+const actualDrain = Decimal.min(drain, player.points);
+player.points = player.points.sub(actualDrain);
+player.inversion.points = player.inversion.points.add(actualDrain.sqrt());
     }
 
     let gain = player.inversion.points.mul(0.01);
