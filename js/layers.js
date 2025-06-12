@@ -126,6 +126,15 @@ addLayer("inversion", {
     },
 },
   },
+  milestones: {
+  1: {
+    requirementDescription: "Get upgrade 21",
+    effectDescription: "Unlocks Inverter level.",
+    done() { return hasUpgrade('inversion', 21); },
+    unlocked() { return hasUpgrade('inversion', 21); }, // Makes it visible only after upgrade 21
+  },
+  
+},
 
   update(diff) {
     if (player.inversion.inverting) {
