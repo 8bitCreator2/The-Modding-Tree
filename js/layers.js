@@ -4,7 +4,7 @@ addLayer("inversion", {
   symbol: "INV",
   position: 0,
   row: 0,
-  color: "#FF6666",
+  color: "#3399FF", // Changed to blue
   startData() {
     return {
       unlocked: true,
@@ -23,7 +23,7 @@ addLayer("inversion", {
   tabFormat: [
     "main-display",
     "blank",
-    ["display-text", () => `You have <h2 style='color:#FF6666'>${formatWhole(player.inversion.invertedEnergy)}</h2> inverted energy.`],
+    ["display-text", () => `You have <h2 style='color:#3399FF'>${formatWhole(player.inversion.invertedEnergy)}</h2> inverted energy.`],
     ["display-text", () => `Inverters boost your inverted energy gain.`],
     "clickables",
     "upgrades",
@@ -44,7 +44,7 @@ addLayer("inversion", {
       display() {
         return player.inversion.inverting ? "Inverting energy..." : "Not inverting";
       },
-      fillStyle: { backgroundColor: "#FF9999" },
+      fillStyle: { backgroundColor: "#66B2FF" },
       baseStyle: { backgroundColor: "#222" },
     },
   },
