@@ -114,6 +114,17 @@ addLayer("inversion", {
     return new Decimal(0.1); // Multiplies drain by 0.1 (90% reduction)
   },
 },
+    21: {
+    title: "Inverted Resonance",
+    description: "Inverted energy boosts point gain at a ^0.2 rate.",
+    cost: new Decimal(500), // or whatever cost is appropriate
+    effect() {
+        return player.inversion.invertedEnergy.max(1).pow(0.2);
+    },
+    effectDisplay() {
+        return "^" + format(upgradeEffect('inversion', 21));
+    },
+},
   },
 
   update(diff) {
