@@ -14,7 +14,7 @@ addLayer("inversion", {
       inversionSpeed: new Decimal(1),
     }
   },
-  resource: "Inverted Energy",
+  resource: "Inverters",
   type: "none",
   layerShown() {
     return true;
@@ -24,7 +24,9 @@ addLayer("inversion", {
     "main-display",
     "blank",
     ["display-text", () => `You have <h2 style='color:#FF6666'>${formatWhole(player.inversion.invertedEnergy)}</h2> inverted energy.`],
+    ["display-text", () => `Inverters boost your inverted energy gain.`],
     "clickables",
+    "upgrades",
     "blank",
     ["bar", "inversionBar"],
   ],
@@ -84,6 +86,28 @@ addLayer("inversion", {
     },
   },
 
+  upgrades: {
+    11: {
+      title: "Boost Inverted Energy I",
+      description: "Boost inverted energy gain by 2x.",
+      cost: new Decimal(10),
+      effect() {
+        return new Decimal(2);
+      },
+    },
+    12: {
+      title: "Boost Inverted Energy II",
+      description: "Boost inverted energy gain by 3x (requires Upgrade 11).",
+      cost: new Decimal(50),
+      unlocked() {
+        return hasUpgrade("inversion", 11);
+      },
+      effect() {
+        return new Decimal(3);
+      },
+    },
+  },
+
   update(diff) {
     if (player.inversion.inverting) {
       const baseDrain = Decimal.pow(1.05, player.inversion.points).mul(diff);
@@ -93,7 +117,10 @@ addLayer("inversion", {
       player.inversion.points = player.inversion.points.add(actualDrain.sqrt());
     }
 
-    let gain = player.inversion.points.mul(0.01).mul(diff);
+    let gain = player.inversion.points.mul(0.01);
+    if (hasUpgrade("inversion", 11)) gain = gain.mul(upgradeEffect("inversion", 11));
+    if (hasUpgrade("inversion", 12)) gain = gain.mul(upgradeEffect("inversion", 12));
+    gain = gain.mul(diff);
     player.inversion.invertedEnergy = player.inversion.invertedEnergy.add(gain);
   },
 });
