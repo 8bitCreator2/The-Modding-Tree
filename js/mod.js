@@ -39,11 +39,13 @@ function canGenPoints(){
 // Calculate points/sec!
 function getPointGen() {
     if (!canGenPoints()) return new Decimal(0);
+	 
 
     let gain = new Decimal(1);
     // Bank bonus based on deposit and formula A = C*(1+i)/D scaled down by 1000
     
-    
+     if (hasUpgrade('inverted', 21)) {
+        gain = gain.times(player.inverted.energy.max(1).pow(0.2));
 
     return gain;
 }
