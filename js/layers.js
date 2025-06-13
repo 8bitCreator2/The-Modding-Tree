@@ -53,7 +53,7 @@ addLayer("inversion", {
         width: 300,
         height: 30,
         progress() {
-            const inverters = player.i.inverters;
+            const inverters = player.inversion.points.toNumber();
             const level = Math.floor(inverters / 50);
             const levelStart = level * 50;
             const nextLevelReq = (level + 1) * 50;
