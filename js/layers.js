@@ -27,6 +27,7 @@ addLayer("inversion", {
     ["display-text", () => `Inverters boost your inverted energy gain.`],
     "clickables",
     "upgrades",
+    "milestones",
     "blank",
     ["bar", "inversionBar"],
   ],
@@ -46,6 +47,25 @@ addLayer("inversion", {
       },
       fillStyle: { backgroundColor: "#66B2FF" },
       baseStyle: { backgroundColor: "#222" },
+    },
+    inverterLevelBar: {
+        direction: RIGHT,
+        width: 300,
+        height: 30,
+        progress() {
+            const inverters = player.i.inverters;
+            const level = Math.floor(inverters / 50);
+            const levelStart = level * 50;
+            const nextLevelReq = (level + 1) * 50;
+            return (inverters - levelStart) / (nextLevelReq - levelStart);
+        },
+        display() {
+            const inverters = player.i.inverters;
+            const level = Math.floor(inverters / 50);
+            const nextLevelReq = (level + 1) * 50;
+            return `Inverter Level: ${level} | ${inverters} / ${nextLevelReq} inverters`;
+        },
+        fillStyle: { 'background-color': '#00ffcc' },
     },
   },
 
