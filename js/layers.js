@@ -50,6 +50,7 @@ addLayer("p", {
 	    cost: new Decimal(5),
 	    effect() { 
 		    let eff = new Decimal(2);
+		    if (hasUpgrade("p", 31)) eff = eff.add(upgradeEffect("p", 31));
 
 		    return eff },
 	 effectDisplay() {
@@ -74,9 +75,9 @@ addLayer("p", {
 		    21: { 
 	    title: "Language",
 	    description: "The emergence of complex vocal communication (boosts knowledge based on prehistoric points also let first upgrade affect prehistoric points with a reduced effect)",
-	    cost: new Decimal(50),
+	    cost: new Decimal(25),
 	    effect() { 
-    let base = player.p.points
+    let base = Decimal.max(player.p.points, 1)
     let eff = new Decimal(base).pow(0.3)
     return eff
 },
@@ -117,9 +118,24 @@ addLayer("p", {
 			     effectDisplay() {
         return "x" + format(upgradeEffect('p', 23));
     }, 
-		    
-    },
+	unlocked() { return hasUpgrade("p", 22); },	    
+    },  
+	    31: { 
+	    title: "Hafting",
+	    description: "By securing stone tools to wooden shafts, early humans enhanced their hunting, crafting, and construction abilities. (Knowledge adds upgrade 12 base)",
+	    cost: new Decimal(500),
+	    effect() { 
+    let base = Decimal.max(player.points, 1)
+    let eff = new Decimal(base).pow(0.05)
+    return eff
+},
+		    effectDisplay() {
+        return "+" + format(upgradeEffect('p', 31));
+    }, 
+		 unlocked() { return hasUpgrade("p", 23); },	
+	    
 	     }, 
+	    }, 
      
 	    
 	     
