@@ -38,4 +38,5 @@ addLayer("p", {
         return "+" + format(upgradeEffect('p', 11));
     }, 
 		};
-		    })
+		    }
+})
