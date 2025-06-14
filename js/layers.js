@@ -15,7 +15,9 @@ addLayer("p", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
-	    if (hasUpgrade("p", 12)) mult = mult.mul(upgradeEffect("p",11));
+	    if (hasUpgrade("p", 12)) mult = mult.mul(upgradeEffect("p",12));
+	    if (hasUpgrade("p", 23)) mult = mult.mul(upgradeEffect("p",23));
+	    
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -101,9 +103,22 @@ addLayer("p", {
     }, 
      unlocked() { return hasUpgrade("p", 21); },
 	    
-		    }
-		    
+		    },
+	    	     23: { 
+	    title: "Boats",
+	    description: "Enabled early humans to cross rivers, navigate coastlines, and expand trade networks. (knowledge boosts Primitive points",
+	    cost: new Decimal(1500),
+	    effect() { 
+    let base = player.points
+    let eff = new Decimal(base).pow(0.1)
+    return eff
+},
+			     effectDisplay() {
+        return "x" + format(upgradeEffect('p', 23));
     }, 
+		    
+    },
+	     }, 
      
 	    
 	     
