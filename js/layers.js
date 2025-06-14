@@ -73,7 +73,7 @@ addLayer("p", {
 		    21: { 
 	    title: "Language",
 	    description: "The emergence of complex vocal communication (boosts knowledge based on prehistoric points)",
-	    cost: new Decimal(300),
+	    cost: new Decimal(50),
 	    effect() { 
     let base = player.p.points
     let eff = new Decimal(base).pow(0.3)
@@ -90,7 +90,7 @@ addLayer("p", {
 	     22: { 
 	    title: "Bone tools",
 	    description: "Are bone tools better than stone tools!? (boosts first upgrade based on prehistoric points)",
-	    cost: new Decimal(1500),
+	    cost: new Decimal(125),
 	    effect() { 
     let base = player.p.points
     let eff = new Decimal(base).pow(0.3)
@@ -107,7 +107,7 @@ addLayer("p", {
 	    	     23: { 
 	    title: "Boats",
 	    description: "Enabled early humans to cross rivers, navigate coastlines, and expand trade networks. (knowledge boosts Primitive points",
-	    cost: new Decimal(1500),
+	    cost: new Decimal(500),
 	    effect() { 
     let base = player.points
     let eff = new Decimal(base).pow(0.1)
