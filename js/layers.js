@@ -57,7 +57,7 @@ addLayer("p", {
 	    13: { 
 	    title: "Advanced Stone Tools",
 	    description: "Better, harder, stronger stone tools (Boosts First upgrade based on Knowledge)",
-	    cost: new Decimal(5),
+	    cost: new Decimal(20),
 	    effect() { 
     let base = Decimal.max(player.points, 1)
     let eff = new Decimal(base).pow(0.2)
