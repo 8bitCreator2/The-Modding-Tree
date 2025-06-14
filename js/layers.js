@@ -33,7 +33,7 @@ addLayer("p", {
 	    cost: new Decimal(1),
 	    effect() { 
 		    let eff = new Decimal(2);
-		    if (hasUpgrade("p", 13)) gain = gain.mul(UpgradeEffect("p", 13));
+		    if (hasUpgrade("p", 13)) eff = eff.mul(UpgradeEffect("p", 13));
 
 		    return eff },
 	 effectDisplay() {
@@ -59,7 +59,7 @@ addLayer("p", {
 	    description: "Better, harder, stronger stone tools (Boosts First upgrade based on Knowledge)",
 	    cost: new Decimal(5),
 	    effect() { 
-		    let eff = Math.pow(player.points, 0.2);
+		    let eff = new Decimal(player.points).pow(0.2)
 
 		    return eff },
 	 effectDisplay() {
