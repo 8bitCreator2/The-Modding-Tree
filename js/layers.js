@@ -30,7 +30,7 @@ addLayer("p", {
 	    title: "Stone tools",
 	    description: "stone tools were humanity’s first innovation thus +2 Knowledge point generation",
 	    cost: new Decimal(10),
-	    effect: { 
+	    effect() { 
 		    let eff = new Decimal(2);
 
 		    return eff },
