@@ -31,9 +31,9 @@ addLayer("p", {
 	    description: "stone tools were humanity’s first innovation thus +2 Knowledge point generation",
 	    cost: new Decimal(10),
 	    effect: { 
-		    let eff = new Decimal(2)
+		    let eff = new Decimal(2);
 
-		    return eff }
+		    return eff },
 	 effectDisplay() {
         return "+" + format(upgradeEffect('p', 11));
     }, 
