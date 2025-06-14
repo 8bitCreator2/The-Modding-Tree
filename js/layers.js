@@ -136,6 +136,15 @@ addLayer("p", {
 	    
 	     }, 
 	    }, 
+	milestones: {
+		1: {
+	requirementDescription: "Unlock Hafting",
+        effectDescription:"Unlock the woodworking layer",
+        done() { return hasUpgrade("p", 31); },  
+        unlocked() { return hasUpgrade("p", 31); }, 
+},
+		},
+			
      
 	    
 	     
