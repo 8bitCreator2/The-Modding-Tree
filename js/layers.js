@@ -15,6 +15,7 @@ addLayer("p", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+	    if (hasUpgrade("p", 12)) mult = mult.mul(upgradeEffect("p",11));
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -28,8 +29,8 @@ addLayer("p", {
     upgrades: {  
 	    11: { 
 	    title: "Stone tools",
-	    description: "stone tools were humanity’s first innovation thus +2 Knowledge point generation",
-	    cost: new Decimal(10),
+	    description: "Stone tools were humanity’s first innovation thus +2 Knowledge point generation",
+	    cost: new Decimal(1),
 	    effect() { 
 		    let eff = new Decimal(2);
 
@@ -38,5 +39,18 @@ addLayer("p", {
         return "+" + format(upgradeEffect('p', 11));
     }, 
 		},
+	     12: { 
+	    title: "Control of Fire",
+	    description: "early humans gained warmth, protection, and the spark of innovation (Boosts Prehistoric points)",
+	    cost: new Decimal(5),
+	    effect() { 
+		    let eff = new Decimal(2);
+
+		    return eff },
+	 effectDisplay() {
+        return "x" + format(upgradeEffect('p', 12));
+    }, 
+	    
 		    },
+	
 })
