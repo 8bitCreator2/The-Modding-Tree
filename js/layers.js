@@ -63,6 +63,7 @@ addLayer("p", {
     let eff = new Decimal(base).pow(0.2)
     return eff
 },
+		    },
 		    21: { 
 	    title: "Language",
 	    description: "The emergence of complex vocal communication (boosts knowledge based on prehistoric points)",
