@@ -34,6 +34,7 @@ addLayer("p", {
 	    effect() { 
 		    let eff = new Decimal(2);
 		    if (hasUpgrade("p", 13)) eff = eff.mul(upgradeEffect("p", 13));
+		    if (hasUpgrade("p", 22)) eff = eff.mul(upgradeEffect("p", 22));
 
 		    return eff },
 	 effectDisplay() {
@@ -63,6 +64,9 @@ addLayer("p", {
     let eff = new Decimal(base).pow(0.2)
     return eff
 },
+		    	 effectDisplay() {
+        return "x" + format(upgradeEffect('p', 13));
+    }, 
 		    },
 		    21: { 
 	    title: "Language",
@@ -81,6 +85,27 @@ addLayer("p", {
      unlocked() { return hasUpgrade("p", 13); },
 	    
 		    },
-	     },
+	     22: { 
+	    title: "Bone tools",
+	    description: "Are bone tools better than stone tools!? (boosts first upgrade based on prehistoric points)",
+	    cost: new Decimal(1500),
+	    effect() { 
+    let base = player.p.points
+    let eff = new Decimal(base).pow(0.3)
+    return eff
+},
+
+		  
+	 effectDisplay() {
+        return "x" + format(upgradeEffect('p', 22));
+    }, 
+     unlocked() { return hasUpgrade("p", 21); },
+	    
+		    }
+		    
+    }, 
+     
+	    
+	     
 	
 })
