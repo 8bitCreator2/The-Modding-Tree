@@ -37,4 +37,12 @@ addLayer("w", {
 	 effectDisplay() {
         return "x" + format(upgradeEffect('w', 11));
     }, 
-})
+		     }, 
+ }, 
+	milestones: 1: {
+	requirementDescription: "Get 1 wood",
+        effectDescription:"Unlock the more Prehistoric Upgrades",
+        done() { return player.w.points(1) },  
+        unlocked() { return hasUpgrade("p", 31); }, 
+},
+	 })
