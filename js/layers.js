@@ -63,12 +63,21 @@ addLayer("p", {
     let eff = new Decimal(base).pow(0.2)
     return eff
 },
+		    21: { 
+	    title: "Language",
+	    description: "The emergence of complex vocal communication (boosts knowledge based on prehistoric points)",
+	    cost: new Decimal(300),
+	    effect() { 
+    let base = player.p.points
+    let eff = new Decimal(base).pow(0.3)
+    return eff
+},
 
 		  
 	 effectDisplay() {
-        return "x" + format(upgradeEffect('p', 13));
+        return "x" + format(upgradeEffect('p', 21));
     }, 
-     unlocked() { return hasUpgrade("p", 12); },
+     unlocked() { return hasUpgrade("p", 13); },
 	    
 		    },
 	     },
