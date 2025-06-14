@@ -59,9 +59,12 @@ addLayer("p", {
 	    description: "Better, harder, stronger stone tools (Boosts First upgrade based on Knowledge)",
 	    cost: new Decimal(5),
 	    effect() { 
-		    let eff = new Decimal(player.points).pow(0.2)
+    let base = Decimal.max(player.points, 1)
+    let eff = new Decimal(base).pow(0.2)
+    return eff
+},
 
-		    return eff },
+		  
 	 effectDisplay() {
         return "x" + format(upgradeEffect('p', 13));
     }, 
