@@ -25,4 +25,21 @@ addLayer("p", {
         {key: "p", description: "P: Reset for prestige points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return true}
-})
+    upgrades: {  
+	    11: { 
+	    title: "Stone tools",
+	    description: "stone tools were humanity’s first innovation thus +2 Knowledge point generation",
+	    cost: new Decimal(10),
+	    effect: { 
+		    let eff = new Decimal(2)
+
+		    return eff }
+	 effectDisplay() {
+        return "+" + format(upgradeEffect('p', 11));
+    }, 
+		     } 
+		      }
+		      }
+	     }
+	     }
+		      
