@@ -33,7 +33,7 @@ addLayer("p", {
 	    cost: new Decimal(1),
 	    effect() { 
 		    let eff = new Decimal(2);
-		    if (hasUpgrade("p", 13)) eff = eff.mul(UpgradeEffect("p", 13));
+		    if (hasUpgrade("p", 13)) eff = eff.mul(upgradeEffect("p", 13));
 
 		    return eff },
 	 effectDisplay() {
