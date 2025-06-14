@@ -1,7 +1,7 @@
 let modInfo = {
-	name: "The ??? Tree",
-	author: "nobody",
-	pointsName: "Matter",
+	name: "The Historic Tree",
+	author: "8bitCreator",
+	pointsName: "Knowledge",
 	modFiles: ["layers.js", "tree.js"],
 
 	discordName: "",
@@ -42,11 +42,7 @@ function getPointGen() {
 	 
 
     let gain = new Decimal(1);
-    // Bank bonus based on deposit and formula A = C*(1+i)/D scaled down by 1000
-    
-    if (hasUpgrade('inversion', 21)) {
-    gain = gain.times(upgradeEffect('inversion', 21));
-}
+   
     return gain;
 }
 
