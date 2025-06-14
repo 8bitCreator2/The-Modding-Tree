@@ -72,7 +72,7 @@ addLayer("p", {
 		    },
 		    21: { 
 	    title: "Language",
-	    description: "The emergence of complex vocal communication (boosts knowledge based on prehistoric points)",
+	    description: "The emergence of complex vocal communication (boosts knowledge based on prehistoric points also let first upgrade affect prehistoric points with a reduced effect)",
 	    cost: new Decimal(50),
 	    effect() { 
     let base = player.p.points
