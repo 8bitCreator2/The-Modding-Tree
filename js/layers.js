@@ -50,6 +50,7 @@ addLayer("p", {
 	 effectDisplay() {
         return "x" + format(upgradeEffect('p', 12));
     }, 
+     unlocked() { return hasUpgrade("p", 11); },
 	    
 		    },
 	     },
