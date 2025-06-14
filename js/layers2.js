@@ -24,5 +24,17 @@ addLayer("w", {
     hotkeys: [
         {key: "w", description: "W: Reset for wood", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){return hasMilestone("p", 1);}
+    layerShown(){return hasMilestone("p", 1);},
+	 upgrades: {  
+	    11: { 
+	    title: "Notched sticks",
+	    description: "wood boosts knowledge points",
+	    cost: new Decimal(1),
+	    effect() { 
+		    let eff = Decimal.max(player.w.points).pow(2)
+
+		    return eff },
+	 effectDisplay() {
+        return "x" + format(upgradeEffect('w', 11));
+    }, 
 })
