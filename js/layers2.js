@@ -31,7 +31,7 @@ addLayer("w", {
 	    description: "wood boosts knowledge points",
 	    cost: new Decimal(1),
 	    effect() { 
-		    let eff = Decimal.max(player.w.points).pow(2)
+		    let eff = Decimal.max(player.w.points, 1).pow(2)
 
 		    return eff },
 	 effectDisplay() {
@@ -41,7 +41,7 @@ addLayer("w", {
  }, 
 	milestones: 1: {
 	requirementDescription: "Get 1 wood",
-        effectDescription:"Unlock the more Prehistoric Upgrades",
+        effectDescription:"Unlock more Prehistoric Upgrades",
         done() { return player.w.points(1) },  
         unlocked() { return hasUpgrade("p", 31); }, 
 },
