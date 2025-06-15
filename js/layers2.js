@@ -40,11 +40,11 @@ addLayer("w", {
 		     }, 
  }, 
 	milestones: {
-		1:{
-	requirementDescription: "Get 1 wood",
-        effectDescription:"Unlock more Prehistoric Upgrades",
-        done() { return player.w.points(1) },  
-        unlocked() { return hasUpgrade("p", 31); }, 
-},
-	  }, 
+    1: {
+        requirementDescription: "Get 1 wood",
+        effectDescription: "Unlock more Prehistoric Upgrades",
+        done() { return player.w.points.gte(1) },  // Fix here
+        unlocked() { return hasUpgrade("p", 31); },
+    },
+}
 	 })
