@@ -1,9 +1,3 @@
-function softcap(value, cap, power = 0.5) {
-    value = new Decimal(value);
-    cap = new Decimal(cap);
-    if (value.lte(cap)) return value;
-    return cap.mul(value.div(cap).pow(power));
-}
 addLayer("p", {
     name: "Prehistory", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "P", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -19,16 +13,14 @@ addLayer("p", {
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.5, // Prestige currency exponent
-   gainMult() { // Calculate the multiplier for main currency from bonuses
-    let mult = new Decimal(1)
-    if (hasUpgrade("p", 21)) mult = mult.add(upgradeEffect("p",11)/5);
-    if (hasUpgrade("p", 12)) mult = mult.mul(upgradeEffect("p",12));
-    if (hasUpgrade("p", 23)) mult = mult.mul(upgradeEffect("p",23));
-
-    // Apply softcap at 10,000
-    mult = softcap(mult, 10000, 0.5);
-    return mult
-},
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+	    if (hasUpgrade("p", 21)) mult = mult.add(upgradeEffect("p",11)/5);
+	    if (hasUpgrade("p", 12)) mult = mult.mul(upgradeEffect("p",12));
+	    if (hasUpgrade("p", 23)) mult = mult.mul(upgradeEffect("p",23));
+	    
+        return mult
+    },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
@@ -158,3 +150,4 @@ addLayer("p", {
 	     
 	
 })
+
