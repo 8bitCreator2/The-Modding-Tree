@@ -94,7 +94,7 @@ addLayer("n", {
       description: "Normal Energy boosts itself",
       cost: new Decimal(300),
       effect(){ 
-	      let eff = player.m.points.add(1).pow(0.185)
+	      let eff = player.n.points.add(1).pow(0.185)
 	      return eff
 	      },
 	effectDisplay() { return "x" + format(upgradeEffect("n", 23))   },
