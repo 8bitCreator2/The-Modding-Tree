@@ -15,6 +15,9 @@ addLayer("n", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+	    if (hasUpgrade("n", 13)) mult = mult.mul(1.5);
+	    if (hasUpgrade("n", 22)) mult = mult.mul(upgradeEffect("n", 22));
+	    if (hasUpgrade("n", 13)) mult = mult.mul(upgradeEffect("n", 23));
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -55,6 +58,48 @@ addLayer("n", {
       cost: new Decimal(25),
       unlocked() {
         return hasUpgrade("n", 12);
+      },
+     
+    },
+	    21: {
+      title: "Energy Amplifier III",
+      description: "Energy boosts itself",
+      cost: new Decimal(50),
+      effect(){ 
+	      let eff = player.points.add(1).pow(0.15)
+	      return eff
+	      },
+	effectDisplay() { return "x" + format(upgradeEffect("n", 21))   },
+      unlocked() {
+        return hasUpgrade("n", 13);
+      },
+     
+    },
+	     22: {
+      title: "Normal Energy Boost",
+      description: "Energy boosts Normal Energy",
+      cost: new Decimal(125),
+      effect(){ 
+	      let eff = player.points.add(1).pow(0.165)
+	      return eff
+	      },
+	effectDisplay() { return "x" + format(upgradeEffect("n", 22))   },
+      unlocked() {
+        return hasUpgrade("n", 21);
+      },
+     
+    },
+	      23: {
+      title: "Normal Energy Amplifier I",
+      description: "Normal Energy boosts itself",
+      cost: new Decimal(300),
+      effect(){ 
+	      let eff = player.m.points.add(1).pow(0.185)
+	      return eff
+	      },
+	effectDisplay() { return "x" + format(upgradeEffect("n", 23))   },
+      unlocked() {
+        return hasUpgrade("n", 22);
       },
      
     },
