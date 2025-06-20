@@ -37,7 +37,7 @@ addLayer("n", {
     }, 
 	      12: {
       title: "Energy Amplifier II",
-      description: "Energyis being boosted by normal energy",
+      description: "Energy is being boosted by normal energy",
       cost: new Decimal(5),
       effect(){ 
 	      let eff = player.n.points.add(1).pow(0.4)
@@ -46,6 +46,15 @@ addLayer("n", {
 	effectDisplay() { return "x" + format(upgradeEffect("n", 12))   },
       unlocked() {
         return hasUpgrade("n", 11);
+      },
+     
+    },
+	     13: {
+      title: "More normal energy",
+      description: "1.5x normal energy",
+      cost: new Decimal(25),
+      unlocked() {
+        return hasUpgrade("n", 12);
       },
      
     },
