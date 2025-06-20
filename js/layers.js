@@ -28,10 +28,24 @@ addLayer("n", {
      upgrades: {
     11: {
       title: "Energy Amplifier I",
-      description: "2x Energy",
+      description: "3x Energy",
       cost: new Decimal(1),
       unlocked() {
         return true;
+      },
+     
+    }, 
+	      12: {
+      title: "Energy Amplifier II",
+      description: "Energyis being boosted by normal energy",
+      cost: new Decimal(5),
+      effect(){ 
+	      let eff = player.n.points.add(1).pow(0.4)
+	      return eff
+	      },
+	effectDisplay() { return "x" + format(upgradeEffect("n", 12))   },
+      unlocked() {
+        return hasUpgrade("n", 11);
       },
      
     },
