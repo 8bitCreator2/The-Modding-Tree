@@ -29,23 +29,7 @@ addLayer("n", {
 		1: {
 		title: "Energetic Power",
 		description:"3x Energy",
-		cost: new Decimal(1),
-		},
-		2: { 
-		title: "Energetic Power II",
-		description: "2x Normal Energy",
-		cost: new Decimal(5),
-			},
-		3: { 
-		title: "Energetic Power II",
-		description: "Normal energy boosts Energy",
-		cost: new Decimal(5),
-		effect() { 
-			let eff = player.n.points.add(1).pow(0.35)
-			 return eff
-			},
-			effectDisplay() { return format(upgradeEffect("n", 3))
-		},
-			},
-		},
-})
+		cost: new Decimal(1),  },
+		 },
+	 })
+		
