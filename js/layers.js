@@ -18,6 +18,8 @@ addLayer("n", {
 	    if (hasUpgrade("n", 13)) mult = mult.mul(1.5);
 	    if (hasUpgrade("n", 22)) mult = mult.mul(upgradeEffect("n", 22));
 	    if (hasUpgrade("n", 13)) mult = mult.mul(upgradeEffect("n", 23));
+	    if (hasUpgrade("n", 31)) mult = mult.mul(2.5)
+	    if (hasUpgrade("n", 33)) mult = mult.mul(3)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -40,7 +42,7 @@ addLayer("n", {
     }, 
 	      12: {
       title: "Energy Amplifier II",
-      description: "Energy is being boosted by normal energy",
+      description: "Energy is being boosted by energetic Points ",
       cost: new Decimal(5),
       effect(){ 
 	      let eff = player.n.points.add(1).pow(0.4)
@@ -53,8 +55,8 @@ addLayer("n", {
      
     },
 	     13: {
-      title: "More normal energy",
-      description: "1.5x normal energy",
+      title: "More Energetic",
+      description: "1.5x energetic points",
       cost: new Decimal(25),
       unlocked() {
         return hasUpgrade("n", 12);
@@ -76,8 +78,8 @@ addLayer("n", {
      
     },
 	     22: {
-      title: "Normal Energy Boost",
-      description: "Energy boosts Normal Energy",
+      title: "Energetic Boost",
+      description: "Energy boosts Energetic Points",
       cost: new Decimal(125),
       effect(){ 
 	      let eff = player.points.add(1).pow(0.165)
@@ -90,8 +92,8 @@ addLayer("n", {
      
     },
 	      23: {
-      title: "Normal Energy Amplifier I",
-      description: "Normal Energy boosts itself",
+      title: "Energetic Amplifier I",
+      description: "Energetic points boosts itself",
       cost: new Decimal(300),
       effect(){ 
 	      let eff = player.n.points.add(1).pow(0.185)
@@ -100,6 +102,33 @@ addLayer("n", {
 	effectDisplay() { return "x" + format(upgradeEffect("n", 23))   },
       unlocked() {
         return hasUpgrade("n", 22);
+      },
+     
+    },
+	     31: {
+      title: "Energetic Amplifier II",
+      description: "2.5x Energetic points",
+      cost: new Decimal(1000),
+      unlocked() {
+        return hasUpgrade("n", 23);
+      },
+     
+    },
+	     32: {
+      title: "Energy Amplifier IV",
+      description: "5x Energy",
+      cost: new Decimal(1000),
+      unlocked() {
+        return hasUpgrade("n", 31);
+      },
+     
+    },
+	     33: {
+      title: "Energy Condensation",
+      description: "2x Energy 3x Energetic Points (Unlock a new layer)",
+      cost: new Decimal(10000),
+      unlocked() {
+        return hasUpgrade("n", 32);
       },
      
     },
