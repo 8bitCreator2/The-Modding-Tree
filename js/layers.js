@@ -188,8 +188,11 @@ addLayer("n", {
 			effectDescription: " Unlocks passive generation",
 			done() { return player.n.points.gte(1e10) 
 				},
+			unlocked() {
+			 return  hasMilestone("t", 1);
 			},
 		},
-	})
+	},
+})
 	
 		
