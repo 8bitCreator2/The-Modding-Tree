@@ -117,7 +117,7 @@ addLayer("n", {
 	     32: {
       title: "Energy Amplifier IV",
       description: "5x Energy",
-      cost: new Decimal(1000),
+      cost: new Decimal(2500),
       unlocked() {
         return hasUpgrade("n", 31);
       },
@@ -126,7 +126,7 @@ addLayer("n", {
 	     33: {
       title: "Energy Condensation",
       description: "2x Energy 3x Energetic Points (Unlock a new layer)",
-      cost: new Decimal(10000),
+      cost: new Decimal(50000),
       unlocked() {
         return hasUpgrade("n", 32);
       },
