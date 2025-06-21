@@ -186,7 +186,7 @@ addLayer("n", {
 		1: {
 			requirementDescription: "1e10 Energetic Points",
 			effectDescription: " Unlocks passive generation",
-			done() { return player.t.points.gte(1e10) 
+			done() { return player.n.points.gte(1e10) 
 				},
 			},
 		},
