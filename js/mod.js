@@ -49,6 +49,7 @@ function getPointGen() {
 	if (hasUpgrade("n", 33)) gain = gain.mul(2);
 	if (hasUpgrade("t", 11)) gain = gain.mul(5);
 	if (hasUpgrade("t", 12)) gain = gain.mul(3);
+	if (hasMilestone("t", 1)) gain = gain.mul(2);
 	return gain
 }
 
