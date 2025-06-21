@@ -20,6 +20,8 @@ addLayer("n", {
 	    if (hasUpgrade("n", 23)) mult = mult.mul(upgradeEffect("n", 23));
 	    if (hasUpgrade("n", 31)) mult = mult.mul(2.5)
 	    if (hasUpgrade("n", 33)) mult = mult.mul(3)
+	    if (hasUpgrade("t", 11)) mult = mult.mul(3)
+	    if (hasUpgrade("t", 12)) mult = mult.mul(1.5)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
