@@ -17,7 +17,7 @@ addLayer("n", {
         mult = new Decimal(1)
 	    if (hasUpgrade("n", 13)) mult = mult.mul(1.5);
 	    if (hasUpgrade("n", 22)) mult = mult.mul(upgradeEffect("n", 22));
-	    if (hasUpgrade("n", 13)) mult = mult.mul(upgradeEffect("n", 23));
+	    if (hasUpgrade("n", 23)) mult = mult.mul(upgradeEffect("n", 23));
 	    if (hasUpgrade("n", 31)) mult = mult.mul(2.5)
 	    if (hasUpgrade("n", 33)) mult = mult.mul(3)
         return mult
