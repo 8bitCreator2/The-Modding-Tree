@@ -27,4 +27,38 @@ addLayer("t", {
     layerShown(){let shown = false
                 if (hasUpgrade("n", 33) || player.t.unlocked) shown = true 
 		return shown },
+	upgrades: {
+    11: {
+      title: "THERMAL POWERR",
+      description: "5x energy 3x Energetic points",
+      cost: new Decimal(1),
+      unlocked() {
+        return player.t.unlocked;
+      },
+	     },
+		12: {
+      title: "THERMAL POWERR II",
+      description: "3x energy 1.5x Energetic points",
+      cost: new Decimal(1),
+      unlocked() {
+        return player.t.unlocked;
+      },
+	     },
+		13: {
+      title: "thermal Expansion",
+      description: "2x Thermal points (unlock milestones)",
+      cost: new Decimal(1),
+      unlocked() {
+        return player.t.unlocked;
+      },
+	     },
+		 },
+	milestones: {
+		1: {
+			requirementDescription: "5 Thermal Points",
+			effectDescription: " 2x Energy (unlock a row of energetic upgrades and unlock energetic milestones)",
+			done() { return player.t.points.gte(5) 
+				},
+			},
+		},
 })
