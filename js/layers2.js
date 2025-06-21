@@ -39,17 +39,17 @@ addLayer("t", {
 		12: {
       title: "THERMAL POWERR II",
       description: "3x energy 1.5x Energetic points",
-      cost: new Decimal(1),
+      cost: new Decimal(2),
       unlocked() {
-        return player.t.unlocked;
+        return hasUpgrade("t", 11);
       },
 	     },
 		13: {
       title: "thermal Expansion",
       description: "2x Thermal points (unlock milestones)",
-      cost: new Decimal(1),
+      cost: new Decimal(4),
       unlocked() {
-        return player.t.unlocked;
+        return hasUpgrade("t", 12);
       },
 	     },
 		 },
