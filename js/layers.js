@@ -31,6 +31,11 @@ addLayer("n", {
     hotkeys: [
         {key: "p", description: "P: Reset for prestige points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
+	passiveGeneration() { 
+		let passive = 0 
+		if (hasMilestone("n", 1)) passive = passive.add(1);
+		return passive 
+		 },
     layerShown(){return true},
      upgrades: {
     11: {
@@ -134,6 +139,56 @@ addLayer("n", {
       },
      
     },
+	     41: {
+      title: "Thermal Energy",
+      description: "Energy Boost thermal Points",
+      cost: new Decimal(1e10),
+      unlocked() {
+        return hasUpgrade("n", 33) && hasMilestone("t", 1);
+      },
+		     effect() {
+			     let eff = player.points.add(1).pow(0.05)
+			     return eff
+			      },
+		     effectDisplay() { "x" + format(upgradeEffect("n", 41)) },
+     
+    },
+	     42: {
+      title: "Energy Amplifier II 2.0 ",
+      description: "Energy is boosted by energetic points but in this case way more reduced",
+      cost: new Decimal(1e11),
+      unlocked() {
+        return hasUpgrade("n", 41) && hasMilestone("t", 1);
+      },
+		     effect() {
+			     let eff = player.n.points.add(1).pow(0.175)
+			     return eff
+			      },
+		     effectDisplay() { "x" + format(upgradeEffect("n", 42)) },
+     
+    },
+	     43: {
+      title: "Thermal Energy II",
+      description: "Energetic Points boost thermal Energy",
+      cost: new Decimal(5.5e11),
+      unlocked() {
+        return hasUpgrade("n", 42) && hasMilestone("t", 1);
+      },
+		     effect() {
+			     let eff = player.n.points.add(1).pow(0.175)
+			     return eff
+			      },
+		     effectDisplay() { "x" + format(upgradeEffect("n", 43)) },
+     
+    },
+		},
+	milestones: {
+		1: {
+			requirementDescription: "1e10 Energetic Points",
+			effectDescription: " Unlocks passive generation",
+			done() { return player.t.points.gte(1e10) 
+				},
+			},
 		},
 	})
 	
