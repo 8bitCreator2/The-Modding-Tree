@@ -12,7 +12,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
+	num: "0.2",
 	name: "Literally nothing",
 }
 
@@ -20,6 +20,10 @@ let changelog = `<h1>Changelog:</h1><br>
 	<h3>v0.1</h3><br>
 		- Added Normal Energy layer.<br>
 		- Added Energy.`
+         `<h3>v0.2</h3><br>
+		- Added Thermal layer.<br>`
+		
+
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
