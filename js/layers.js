@@ -32,7 +32,7 @@ addLayer("n", {
         {key: "p", description: "P: Reset for prestige points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
 	passiveGeneration() { 
-		let passive = 0 
+		let passive = new Decimal(0) 
 		if (hasMilestone("n", 1)) passive = passive.add(1);
 		return passive 
 		 },
