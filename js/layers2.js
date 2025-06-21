@@ -16,6 +16,8 @@ addLayer("t", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
 	if (hasUpgrade("t", 13)) mult = mult.mul(2);
+	if (hasUpgrade("t", 41)) mult = mult.mul(upgradeEffect("n", 41);
+	if (hasUpgrade("t", 43)) mult = mult.mul(upgradeEffect("n", 43);
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
