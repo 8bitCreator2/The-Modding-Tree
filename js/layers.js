@@ -45,7 +45,7 @@ addLayer("n", {
       description: "Energy is being boosted by energetic Points ",
       cost: new Decimal(5),
       effect(){ 
-	      let eff = player.n.points.add(1).pow(0.4)
+	      let eff = player.n.points.add(1).pow(0.375)
 	      return eff
 	      },
 	effectDisplay() { return "x" + format(upgradeEffect("n", 12))   },
