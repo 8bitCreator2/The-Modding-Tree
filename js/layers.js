@@ -175,7 +175,7 @@ addLayer("n", {
         return hasUpgrade("n", 42) && hasMilestone("t", 1);
       },
 		     effect() {
-			     let eff = player.n.points.add(1).pow(0.175)
+			     let eff = player.n.points.add(1).pow(0.125)
 			     return eff
 			      },
 		     effectDisplay() { "x" + format(upgradeEffect("n", 43)) },
