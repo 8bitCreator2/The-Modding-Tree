@@ -47,7 +47,7 @@ addLayer("t", {
 	     },
 		13: {
       title: "thermal Expansion",
-      description: "2x Thermal points (unlock milestones)",
+      description: "2x Thermal points ",
       cost: new Decimal(4),
       unlocked() {
         return hasUpgrade("t", 12);
