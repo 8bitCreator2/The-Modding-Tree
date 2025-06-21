@@ -25,5 +25,5 @@ addLayer("t", {
         {key: "t", description: "T: Reset for prestige points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){let shown = false
-                if (hasUpgrade("n", 33) || player.t.unlocked)} shown = true
+                if (hasUpgrade("n", 33) || player.t.unlocked) shown = true },
 })
