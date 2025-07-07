@@ -7,7 +7,7 @@ addLayer("s", {
 		points: new Decimal(0),
 	        stars: new Decimal(0),
     }},
-    color: "#4BDC13",
+    color: "#F8ECC9",
     requires: new Decimal(10), // Can be a function that takes requirement increases into account
     resource: "Stardust", // Name of prestige currency
     baseResource: "Matter", // Name of resource prestige is based on
@@ -16,6 +16,7 @@ addLayer("s", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+	if (hasUpgrade("s", 11) mult = mult.mul(upgradeEffect("s", 11))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -25,5 +26,16 @@ addLayer("s", {
     hotkeys: [
         {key: "p", description: "P: Reset for prestige points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){return true}
+    layerShown(){return true},
+	upgrades: {
+    11: {
+        title: "Stardust Creation",
+        description: "Stardust is boosted",
+        cost: new Decimal(1),
+        effect() {
+            let eff = new Decimal(3)
+        },
+        effectDisplay() { return format(upgradeEffect("s", 11))+"x" },
+        unlocked() { return true }, 
+    
 })
