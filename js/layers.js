@@ -34,6 +34,7 @@ addLayer("s", {
         cost: new Decimal(1),
         effect() {
             let eff = new Decimal(3)
+            return eff 
         },
         effectDisplay() { return format(upgradeEffect("s", 11))+"x" },
         unlocked() { return true }, 
