@@ -38,6 +38,18 @@ addLayer("s", {
         },
         effectDisplay() { return format(upgradeEffect("s", 11))+"x" },
         unlocked() { return true }, 
-    }
+		
+    },
+		   12: {
+        title: "Matter Cannot Be Created",
+        description: "Matter gain is boosted",
+        cost: new Decimal(15),
+        effect() {
+            let eff = new Decimal(5)
+            return eff 
+        },
+        effectDisplay() { return format(upgradeEffect("s", 12))+"x" },
+        unlocked() { return true }, 
 }
+	}
 })
