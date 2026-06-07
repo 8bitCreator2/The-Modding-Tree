@@ -1,0 +1,36 @@
+body {
+	color: var(--color);
+	overflow: hidden;
+	--background: #f5f0e8;
+	--color: #2d2a24;
+	--points: #b8860b;
+	background: var(--background)
+}
+
+h1, h2, h3, b, input {
+	display: inline;
+	font-family: "Inconsolata", "Lucida Console", "Courier New", monospace
+}
+
+.locked {
+	background-color: #e8d0d0;
+	cursor: not-allowed;
+	opacity: 0.6;
+}
+
+.can {
+	cursor: pointer;
+}
+
+.can:hover {
+	transform: scale(1.1, 1.1);
+}
+
+.bought {
+	cursor: default;
+}
+
+#points {
+	color: var(--points);
+	text-shadow: 0 0 8px rgba(184, 134, 11, 0.3);
+}
