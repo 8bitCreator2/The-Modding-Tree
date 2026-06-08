@@ -219,3 +219,239 @@
 	border-radius: 8px;
 	border: 1px solid rgba(0, 0, 0, 0.06);
 }
+
+.starlayer .milestone {
+	background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+	border: 1px solid rgba(168, 85, 247, 0.15);
+	border-radius: 10px;
+	color: #8b7eb0;
+	height: auto;
+	min-height: 70px;
+	padding: 12px 14px;
+	transition: all 0.4s ease;
+	position: relative;
+}
+.starlayer .milestone h3 {
+	color: #a78bfa;
+	font-size: 13px;
+	letter-spacing: 0.3px;
+}
+.starlayer .milestoneDone {
+	background: linear-gradient(135deg, #065f46 0%, #0d9488 100%);
+	border: 1px solid rgba(13, 148, 136, 0.4);
+	border-radius: 10px;
+	color: #ccfbf1;
+	height: auto;
+	min-height: 70px;
+	padding: 12px 14px;
+	transition: all 0.4s ease;
+	box-shadow: 0 0 15px rgba(13, 148, 136, 0.2);
+}
+.starlayer .milestoneDone h3 {
+	color: #5eead4;
+	font-size: 13px;
+	letter-spacing: 0.3px;
+}
+
+.s .milestone {
+	background: linear-gradient(135deg, #1a0f0a 0%, #2a1a10 100%);
+	border: 1px solid rgba(255, 179, 71, 0.15);
+	border-radius: 10px;
+	color: #c4a87a;
+	height: auto;
+	min-height: 70px;
+	padding: 12px 14px;
+	transition: all 0.4s ease;
+	position: relative;
+}
+.s .milestone h3 {
+	color: #e8d48b;
+	font-size: 13px;
+	letter-spacing: 0.3px;
+}
+.s .milestoneDone {
+	background: linear-gradient(135deg, #7c4a1a 0%, #b8860b 100%);
+	border: 1px solid rgba(255, 179, 71, 0.4);
+	border-radius: 10px;
+	color: #ffd700;
+	height: auto;
+	min-height: 70px;
+	padding: 12px 14px;
+	transition: all 0.4s ease;
+	box-shadow: 0 0 15px rgba(184, 134, 11, 0.2);
+}
+.s .milestoneDone h3 {
+	color: #fff8dc;
+	font-size: 13px;
+	letter-spacing: 0.3px;
+}
+
+.s .upg {
+	background: linear-gradient(135deg, #e8e0d0 0%, #d8d0c0 100%);
+	border-color: rgba(255, 255, 255, 0.2);
+	color: #6a5a4a;
+}
+.s .upg.can {
+	background: linear-gradient(135deg, #F8ECC9 0%, #e8d48b 100%);
+	border-color: rgba(255, 255, 255, 0.2);
+	box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+	color: #4a3728;
+}
+.s .upg.locked {
+	background: linear-gradient(135deg, #4a3a2a 0%, #3a2a1a 100%);
+	border-color: rgba(160, 100, 60, 0.2);
+	color: #8a7a6a;
+	opacity: 0.6;
+}
+.s .upg.bought {
+	background: linear-gradient(135deg, #2a5a2a 0%, #1a4a1a 100%);
+	border-color: rgba(100, 160, 100, 0.3);
+	color: #8fbc8f;
+}
+
+
+#points {
+	color: #b8860b;
+	text-shadow: 0 0 12px rgba(184, 134, 11, 0.5), 0 0 24px rgba(184, 134, 11, 0.2);
+}
+
+.s .main-display .points {
+	color: #F8ECC9;
+	text-shadow: 0 0 12px rgba(248, 236, 201, 0.5), 0 0 24px rgba(232, 212, 139, 0.2);
+}
+.starlayer .main-display .points {
+	color: #c084fc;
+	text-shadow: 0 0 12px rgba(192, 132, 252, 0.5), 0 0 24px rgba(192, 132, 252, 0.2);
+}
+
+.s .prestige-button {
+	background: linear-gradient(135deg, #F8ECC9 0%, #e8d48b 100%);
+	border: 2px solid rgba(255, 255, 255, 0.2);
+	border-radius: 12px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+	color: #4a3728;
+	padding: 12px 24px;
+	font-weight: bold;
+	font-size: 15px;
+	letter-spacing: 0.5px;
+	transition: all 0.3s ease;
+	position: relative;
+	overflow: hidden;
+}
+.s .prestige-button.locked {
+	background: linear-gradient(135deg, #4a3a2a 0%, #3a2a1a 100%);
+	border-color: rgba(160, 100, 60, 0.2);
+	color: #8a7a6a;
+	text-shadow: none;
+	box-shadow: none;
+	cursor: not-allowed;
+	opacity: 0.5;
+}
+.s .prestige-button.can {
+	background: linear-gradient(135deg, #F8ECC9 0%, #e8d48b 100%);
+	animation: sPrestigePulse 2s ease-in-out infinite;
+}
+.s .prestige-button.can:hover {
+	transform: scale(1.05);
+	box-shadow: 0 6px 20px rgba(184, 134, 11, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+	animation: none;
+}
+.starlayer .prestige-button {
+	background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #6366f1 100%);
+	border: 2px solid rgba(168, 85, 247, 0.4);
+	border-radius: 12px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+	color: #fff;
+	padding: 12px 24px;
+	font-weight: bold;
+	font-size: 15px;
+	letter-spacing: 0.5px;
+	text-shadow: 0 0 8px rgba(168, 85, 247, 0.6);
+	transition: all 0.3s ease;
+	position: relative;
+	overflow: hidden;
+}
+.starlayer .prestige-button.locked {
+	background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+	border-color: rgba(99, 102, 241, 0.15);
+	color: #6b7280;
+	text-shadow: none;
+	box-shadow: none;
+	cursor: not-allowed;
+	opacity: 0.5;
+}
+.starlayer .prestige-button.can {
+	animation: starPrestigePulse 2s ease-in-out infinite;
+}
+.starlayer .prestige-button.can:hover {
+	transform: scale(1.05);
+	box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+	animation: none;
+}
+
+#clickable-s-43.can {
+	border-color: rgba(255, 136, 0, 0.6) !important;
+	box-shadow: 0 0 25px rgba(255, 136, 0, 0.3), 0 0 15px rgba(255, 136, 0, 0.15), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+	transition: all 0.3s ease;
+}
+
+.s .tabButton {
+	background: linear-gradient(135deg, #2a1a0a 0%, #3a2a1a 100%);
+	border: 1px solid rgba(255, 179, 71, 0.2);
+	color: #e8d48b;
+	font-size: 16px;
+	padding: 6px 18px;
+	border-radius: 8px;
+	transition: all 0.3s ease;
+}
+.s .tabButton:hover {
+	background: linear-gradient(135deg, #3a2a1a 0%, #4a3a2a 100%);
+	border-color: rgba(255, 179, 71, 0.4);
+	box-shadow: 0 0 15px rgba(184, 134, 11, 0.2);
+}
+.s .tabButton.active {
+	background: linear-gradient(135deg, #4a3a1a 0%, #5a4a2a 100%);
+	border-color: #e8d48b;
+	box-shadow: 0 0 20px rgba(184, 134, 11, 0.3);
+}
+
+.starlayer .tabButton {
+	background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+	border: 1px solid rgba(168, 85, 247, 0.2);
+	color: #a78bfa;
+	font-size: 16px;
+	padding: 6px 18px;
+	border-radius: 8px;
+	transition: all 0.3s ease;
+}
+.starlayer .tabButton:hover {
+	background: linear-gradient(135deg, #312e81 0%, #4338ca 100%);
+	border-color: rgba(168, 85, 247, 0.4);
+	box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+}
+.starlayer .tabButton.active {
+	background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%);
+	border-color: #a78bfa;
+	box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+}
+
+@keyframes sPrestigePulse {
+	0%, 100% { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1); }
+	50% { box-shadow: 0 4px 25px rgba(184, 134, 11, 0.5), 0 0 40px rgba(184, 134, 11, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15); }
+}
+@keyframes starPrestigePulse {
+	0%, 100% { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1); }
+	50% { box-shadow: 0 4px 25px rgba(168, 85, 247, 0.5), 0 0 40px rgba(168, 85, 247, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15); }
+}
+
+.s .buyable {
+	background: linear-gradient(135deg, #F8ECC9 0%, #e8d48b 100%);
+	border: 2px solid rgba(255, 255, 255, 0.2);
+	border-radius: 12px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+	color: #4a3728;
+	padding: 15px;
+	font-family: 'Segoe UI', sans-serif;
+	backdrop-filter: blur(5px);
+}
+

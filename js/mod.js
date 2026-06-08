@@ -52,7 +52,18 @@ function getPointGen() {
 	if (hasUpgrade("s", 33)) gain = gain.times(upgradeEffect("s", 33))
 	if (hasUpgrade("s", 35)) gain = gain.times(upgradeEffect("s", 35))
 	if (hasUpgrade("s", 36)) gain = gain.times(upgradeEffect("s", 36))
+	if (hasUpgrade("s", 42)) gain = gain.times(upgradeEffect("s", 42))
+	if (hasUpgrade("s", 45)) gain = gain.times(upgradeEffect("s", 45))
+	if (hasUpgrade("s", 46)) gain = gain.times(upgradeEffect("s", 46))
 	if (hasUpgrade("starlayer", 11)) gain = gain.times(upgradeEffect("starlayer", 11))
+	if (player.s.novaShards.gt(0)) gain = gain.times(player.s.novaShards.add(1).pow(0.1))
+	let nebBuy12 = getBuyableAmount("starlayer", 12)
+	if (nebBuy12.gt(0)) gain = gain.times(nebBuy12.add(1).pow(0.5))
+	if (player.s.compressions.gt(0)) {
+		let base = hasUpgrade("starlayer", 21) ? new Decimal(3).mul(upgradeEffect("starlayer", 21)) : new Decimal(3)
+		let compMult = Decimal.pow(base, player.s.compressions)
+		gain = gain.times(compMult)
+	}
 	return gain
 }
 
