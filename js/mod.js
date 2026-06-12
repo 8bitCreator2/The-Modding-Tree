@@ -2,7 +2,7 @@ let modInfo = {
 	name: "The Star Tree",
 	author: "nobody",
 	pointsName: "Matter",
-	modFiles: ["layers.js", "tree.js"],
+	modFiles: ["layers/s.js", "layers/darks.js", "layers/starlayer.js", "layers/stellartree.js", "layers/darkmatter.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -56,14 +56,23 @@ function getPointGen() {
 	if (hasUpgrade("s", 45)) gain = gain.times(upgradeEffect("s", 45))
 	if (hasUpgrade("s", 46)) gain = gain.times(upgradeEffect("s", 46))
 	if (hasUpgrade("starlayer", 11)) gain = gain.times(upgradeEffect("starlayer", 11))
-	if (player.s.novaShards.gt(0)) gain = gain.times(player.s.novaShards.add(1).pow(0.1))
+	if (player.s.novaShards.gt(0)) {
+		let novaGain = player.s.novaShards.add(1).pow(0.1)
+		if (hasUpgrade("stellartree", 52)) novaGain = novaGain.times(upgradeEffect("stellartree", 52))
+		gain = gain.times(novaGain)
+	}
 	let nebBuy12 = getBuyableAmount("starlayer", 12)
-	if (nebBuy12.gt(0)) gain = gain.times(nebBuy12.add(1).pow(0.5))
+	if (nebBuy12.gt(0)) gain = gain.times(nebBuy12.add(1).pow(0.5 * (hasUpgrade("stellartree", 51) ? upgradeEffect("stellartree", 51) : 1) * (player.stellartree && hasUpgrade("stellartree", 56) ? upgradeEffect("stellartree", 56) : 1)))
 	if (player.s.compressions.gt(0)) {
 		let base = hasUpgrade("starlayer", 21) ? new Decimal(3).mul(upgradeEffect("starlayer", 21)) : new Decimal(3)
 		let compMult = Decimal.pow(base, player.s.compressions)
 		gain = gain.times(compMult)
 	}
+	if (player.darkmatter && player.darkmatter.points && player.darkmatter.points.gt(0)) {
+		gain = gain.times(player.darkmatter.points.add(1).pow(0.05))
+	}
+	if (hasUpgrade("darks", 11)) gain = gain.times(upgradeEffect("darks", 11))
+	if (hasUpgrade("darks", 12)) gain = gain.times(upgradeEffect("darks", 12))
 	return gain
 }
 

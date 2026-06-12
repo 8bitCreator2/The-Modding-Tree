@@ -553,6 +553,30 @@ function loadVue() {
 	`
 	})
 
+	Vue.component('layer-nav', {
+		props: ['layer', 'data'],
+		computed: {
+			layers() {
+				let rows = layoutInfo.treeLayout || TREE_LAYERS
+				let list = []
+				for (let row of rows)
+					for (let id of row) list.push(id)
+				return list
+			}
+		},
+		template: `
+		<div class="layer-nav">
+			<button v-for="id in layers" v-if="tmp[id] && tmp[id].layerShown && tmp[id].layerShown !== 'ghost'"
+				v-bind:class="['layer-nav-btn', player[id] && player[id].unlocked ? '' : 'locked']"
+				v-bind:style="{'--btn-color': tmp[id].color || '#888'}"
+				v-on:click="player[id] && player[id].unlocked ? showTab(id) : null">
+				<span class="layer-nav-symbol" v-bind:style="{'color': tmp[id].color || '#888'}">{{ tmp[id].symbol || '' }}</span>
+				<span class="layer-nav-name">{{ tmp[id].name || id }}</span>
+				<span v-if="tmp[id].notify" class="layer-nav-dot"></span>
+			</button>
+		</div>
+		`
+	})
 
 	// Updates the value in player[layer][data]
 	Vue.component('text-input', {

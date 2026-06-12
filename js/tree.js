@@ -4,8 +4,8 @@ var layoutInfo = {
 	showTree: true,
 
     treeLayout: [
-        ["s"],
-        ["starlayer"],
+        ["s", "darks"],
+        ["starlayer", "stellartree", "darkmatter"],
     ]
 }
 
@@ -18,7 +18,9 @@ addNode("blank", {
 
 
 addLayer("tree-tab", {
-    tabFormat: [["tree", function() {return (layoutInfo.treeLayout ? layoutInfo.treeLayout : TREE_LAYERS)}]],
+    tabFormat: [
+        "layer-nav"
+    ],
     previousTab: "",
     leftTab: true,
 })

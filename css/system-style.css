@@ -111,11 +111,87 @@ td {
 	height: 50px !important;
 }
 
+
+
 .canvas {
 	top: 0;
 	left: 0;
 	position: absolute;
 	z-index: -999;
+	display: none;
+}
+
+.layer-nav {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	padding: 20px 10px;
+}
+
+.layer-nav-btn {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 180px;
+	padding: 14px 18px;
+	border: 2px solid var(--btn-color, #888);
+	border-radius: 12px;
+	background: rgba(0,0,0,0.3);
+	color: #e0e0e0;
+	font-size: 14px;
+	font-family: inherit;
+	font-weight: bold;
+	cursor: pointer;
+	transition: all 0.25s ease;
+	outline: none;
+	text-align: left;
+}
+
+.layer-nav-btn:hover {
+	background: rgba(255,255,255,0.08);
+	transform: translateX(4px);
+	box-shadow: 0 0 20px color-mix(in srgb, var(--btn-color) 30%, transparent);
+	border-color: color-mix(in srgb, var(--btn-color) 70%, white);
+}
+
+.layer-nav-btn:focus-visible {
+	outline: 3px solid var(--btn-color, #888);
+	outline-offset: 3px;
+}
+
+.layer-nav-btn.locked {
+	opacity: 0.35;
+	filter: grayscale(0.8);
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+.layer-nav-symbol {
+	font-size: 22px;
+	min-width: 30px;
+	text-align: center;
+	color: var(--btn-color, #888);
+}
+
+.layer-nav-name {
+	flex: 1;
+	letter-spacing: 0.5px;
+}
+
+.layer-nav-dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--btn-color, #888);
+	box-shadow: 0 0 8px var(--btn-color, #888);
+	animation: layer-nav-pulse 1.5s ease-in-out infinite;
+	flex-shrink: 0;
+}
+
+@keyframes layer-nav-pulse {
+	0%, 100% { opacity: 0.4; transform: scale(0.8); }
+	50% { opacity: 1; transform: scale(1.1); }
 }
 
 .left {
