@@ -1,109 +1,84 @@
 let modInfo = {
-	name: "The Star Tree",
-	author: "nobody",
-	pointsName: "Matter",
-	modFiles: ["layers/s.js", "layers/darks.js", "layers/starlayer.js", "layers/stellartree.js", "layers/darkmatter.js", "tree.js"],
+    name: "The Historic Tree",
+    author: "you",
+    pointsName: "Knowledge",
+    modFiles: ["layers/paleolithic.js", "tree.js"],
 
-	discordName: "",
-	discordLink: "",
-	initialStartPoints: new Decimal (10), // Used for hard resets and new players
-	offlineLimit: 1,  // In hours
+    discordName: "",
+    discordLink: "",
+    initialStartPoints: new Decimal(10),
+    offlineLimit: 1,
 }
 
-// Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "Literally nothing",
+    num: "0.0",
+    name: "Dawn of Humanity",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.0</h3><br>
-		- Added things.<br>
-		- Added stuff.`
+    <h3>v0.0</h3><br>
+        - Paleolithic era begins.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
-// If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
-// (The ones here are examples, all official functions are already taken care of)
 var doNotCallTheseFunctionsEveryTick = ["blowUpEverything"]
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
 }
 
-// Determines if it should show points/sec
 function canGenPoints(){
-	return true
+    return true
 }
 
-// Calculate points/sec!
 function getPointGen() {
-	if(!canGenPoints())
-		return new Decimal(0)
+    if(!canGenPoints())
+        return new Decimal(0)
 
-	let gain = new Decimal(1)
-	if (hasMilestone("starlayer", 0)) gain = gain.times(2)
-	if (hasMilestone("starlayer", 1)) gain = gain.times(1.5)
-	if (hasUpgrade("s", 12)) gain = gain.times(upgradeEffect("s", 12))
-	if (hasUpgrade("s", 13)) gain = gain.times(upgradeEffect("s", 13))
-	if (hasUpgrade("s", 21)) gain = gain.times(upgradeEffect("s", 21))
-	if (hasUpgrade("s", 23)) gain = gain.times(upgradeEffect("s", 23))
-	if (hasUpgrade("s", 31)) gain = gain.times(upgradeEffect("s", 31))
-	if (hasUpgrade("s", 33)) gain = gain.times(upgradeEffect("s", 33))
-	if (hasUpgrade("s", 35)) gain = gain.times(upgradeEffect("s", 35))
-	if (hasUpgrade("s", 36)) gain = gain.times(upgradeEffect("s", 36))
-	if (hasUpgrade("s", 42)) gain = gain.times(upgradeEffect("s", 42))
-	if (hasUpgrade("s", 45)) gain = gain.times(upgradeEffect("s", 45))
-	if (hasUpgrade("s", 46)) gain = gain.times(upgradeEffect("s", 46))
-	if (hasUpgrade("starlayer", 11)) gain = gain.times(upgradeEffect("starlayer", 11))
-	if (player.s.novaShards.gt(0)) {
-		let novaGain = player.s.novaShards.add(1).pow(0.1)
-		if (hasUpgrade("stellartree", 52)) novaGain = novaGain.times(upgradeEffect("stellartree", 52))
-		gain = gain.times(novaGain)
-	}
-	let nebBuy12 = getBuyableAmount("starlayer", 12)
-	if (nebBuy12.gt(0)) gain = gain.times(nebBuy12.add(1).pow(0.5 * (hasUpgrade("stellartree", 51) ? upgradeEffect("stellartree", 51) : 1) * (player.stellartree && hasUpgrade("stellartree", 56) ? upgradeEffect("stellartree", 56) : 1)))
-	if (player.s.compressions.gt(0)) {
-		let base = hasUpgrade("starlayer", 21) ? new Decimal(3).mul(upgradeEffect("starlayer", 21)) : new Decimal(3)
-		let compMult = Decimal.pow(base, player.s.compressions)
-		gain = gain.times(compMult)
-	}
-	if (player.darkmatter && player.darkmatter.points && player.darkmatter.points.gt(0)) {
-		gain = gain.times(player.darkmatter.points.add(1).pow(0.05))
-	}
-	if (hasUpgrade("darks", 11)) gain = gain.times(upgradeEffect("darks", 11))
-	if (hasUpgrade("darks", 12)) gain = gain.times(upgradeEffect("darks", 12))
-	return gain
+    let gain = new Decimal(1)
+    if (hasUpgrade("paleolithic", 12)) gain = gain.times(upgradeEffect("paleolithic", 12))
+    if (hasUpgrade("paleolithic", 13)) gain = gain.times(upgradeEffect("paleolithic", 13))
+    if (hasUpgrade("paleolithic", 51)) gain = gain.times(upgradeEffect("paleolithic", 51))
+    if (hasUpgrade("paleolithic", 23)) gain = gain.times(upgradeEffect("paleolithic", 23))
+    if (hasUpgrade("paleolithic", 52)) gain = gain.times(upgradeEffect("paleolithic", 52))
+    if (hasUpgrade("paleolithic", 33)) gain = gain.times(upgradeEffect("paleolithic", 33))
+    if (hasUpgrade("paleolithic", 35)) gain = gain.times(upgradeEffect("paleolithic", 35))
+    if (hasUpgrade("paleolithic", 41)) gain = gain.times(upgradeEffect("paleolithic", 41))
+    if (hasUpgrade("paleolithic", 43)) gain = gain.times(upgradeEffect("paleolithic", 43))
+    if (hasUpgrade("paleolithic", 45)) gain = gain.times(upgradeEffect("paleolithic", 45))
+    if (hasMilestone("paleolithic", 1)) gain = gain.times(2)
+    if (hasMilestone("paleolithic", 3)) gain = gain.times(1.5)
+    if (hasMilestone("paleolithic", 4)) gain = gain.times(1.5)
+    if (hasMilestone("paleolithic", 6)) gain = gain.times(2)
+    if (hasMilestone("paleolithic", 7)) gain = gain.times(2)
+    if (hasMilestone("paleolithic", 9)) gain = gain.times(2)
+    if (hasMilestone("paleolithic", 10)) gain = gain.times(2)
+    if (hasMilestone("paleolithic", 12)) gain = gain.times(2)
+    if (hasMilestone("paleolithic", 13)) gain = gain.times(2)
+    if (hasMilestone("paleolithic", 15)) gain = gain.times(2)
+    if (hasMilestone("paleolithic", 16)) gain = gain.times(3)
+    return gain
 }
 
-// You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
+    tribalWisdom: new Decimal(0),
+    totalTribalWisdom: new Decimal(0),
 }}
 
-// Display extra things at the top of the page
 var displayThings = [
 ]
 
-// Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+    return player.points.gte(new Decimal("e1e100"))
 }
 
-
-
-// Less important things beyond this point!
-
-// Style for the background, can be a function
 var backgroundStyle = {
 
 }
 
-// You can change this if you have things that can be messed up by long tick lengths
 function maxTickLength() {
-	return(3600) // Default is 1 hour which is just arbitrarily large
+    return(3600)
 }
 
-// Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
-// you can cap their current resources with this.
 function fixOldSave(oldVersion){
 }

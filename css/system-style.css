@@ -1,8 +1,7 @@
 * {
 	transition-duration: 0.3s;
 	text-align: center;
-	font-family: "Inconsolata", monospace;
-	font-weight: bold;
+	font-family: "Inconsolata", "Lucida Console", "Courier New", monospace;
 	table-align: center;
 	margin: auto;
 	-webkit-text-size-adjust: none;
