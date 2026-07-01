@@ -141,6 +141,49 @@
     margin-bottom: -2px;
 }
 
+.btn {
+	padding: 8px 16px;
+	border: 1px solid rgba(255,255,255,0.15);
+	border-radius: 6px;
+	background: #2a2e4a;
+	color: #d4c5a9;
+	cursor: pointer;
+	font-family: "Inconsolata", "Lucida Console", "Courier New", monospace;
+	font-size: 11px;
+	transition: all 0.2s ease;
+	box-sizing: border-box;
+}
+.btn:hover {
+	filter: brightness(1.2);
+	transform: scale(1.02);
+}
+.btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	transform: none;
+	filter: none;
+}
+
+.section-header {
+	color: #14b8a6;
+	font-weight: bold;
+	font-size: 13px;
+	border-bottom: 1px solid #2a2e4a;
+	padding-bottom: 4px;
+	margin-bottom: 8px;
+}
+
+.table_center {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 8px;
+}
+
+.tier-row {
+	margin-bottom: 8px;
+}
+
 .tile {
 	height: 80px;
 	width: 80px;

@@ -1,25 +1,24 @@
 let modInfo = {
-    name: "The Historic Tree",
-    author: "you",
-    pointsName: "Knowledge",
-    modFiles: ["layers/paleolithic.js", "tree.js"],
-
+    name: "Bit Incremental",
+    author: "MrRedShark77 + TMT Fusion",
+    pointsName: "bits",
+    modFiles: ["bitinc/UPGS.js", "bitinc/CHALS.js", "bitinc/PERKS.js", "bitinc/ACHS.js", "bitinc/AUTOS.js", "bitinc/FORMS.js", "tree.js", "layers/bits.js", "layers/reboot.js", "layers/upgrade.js", "layers/infinity.js", "layers/kernel.js", "layers/settings.js"],
     discordName: "",
     discordLink: "",
-    initialStartPoints: new Decimal(10),
+    initialStartPoints: new Decimal(1),
     offlineLimit: 1,
 }
 
 let VERSION = {
-    num: "0.0",
-    name: "Dawn of Humanity",
+    num: "1.01",
+    name: "Fusion",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-    <h3>v0.0</h3><br>
-        - Paleolithic era begins.`
+    <h3>v1.0</h3><br>
+        - Fusion of Bit Incremental into The Modding Tree framework.`
 
-let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
+let winText = `Congratulations! You reached the end of Bit Incremental!`
 
 var doNotCallTheseFunctionsEveryTick = ["blowUpEverything"]
 
@@ -32,53 +31,36 @@ function canGenPoints(){
 }
 
 function getPointGen() {
-    if(!canGenPoints())
-        return new Decimal(0)
-
-    let gain = new Decimal(1)
-    if (hasUpgrade("paleolithic", 12)) gain = gain.times(upgradeEffect("paleolithic", 12))
-    if (hasUpgrade("paleolithic", 13)) gain = gain.times(upgradeEffect("paleolithic", 13))
-    if (hasUpgrade("paleolithic", 51)) gain = gain.times(upgradeEffect("paleolithic", 51))
-    if (hasUpgrade("paleolithic", 23)) gain = gain.times(upgradeEffect("paleolithic", 23))
-    if (hasUpgrade("paleolithic", 52)) gain = gain.times(upgradeEffect("paleolithic", 52))
-    if (hasUpgrade("paleolithic", 33)) gain = gain.times(upgradeEffect("paleolithic", 33))
-    if (hasUpgrade("paleolithic", 35)) gain = gain.times(upgradeEffect("paleolithic", 35))
-    if (hasUpgrade("paleolithic", 41)) gain = gain.times(upgradeEffect("paleolithic", 41))
-    if (hasUpgrade("paleolithic", 43)) gain = gain.times(upgradeEffect("paleolithic", 43))
-    if (hasUpgrade("paleolithic", 45)) gain = gain.times(upgradeEffect("paleolithic", 45))
-    if (hasMilestone("paleolithic", 1)) gain = gain.times(2)
-    if (hasMilestone("paleolithic", 3)) gain = gain.times(1.5)
-    if (hasMilestone("paleolithic", 4)) gain = gain.times(1.5)
-    if (hasMilestone("paleolithic", 6)) gain = gain.times(2)
-    if (hasMilestone("paleolithic", 7)) gain = gain.times(2)
-    if (hasMilestone("paleolithic", 9)) gain = gain.times(2)
-    if (hasMilestone("paleolithic", 10)) gain = gain.times(2)
-    if (hasMilestone("paleolithic", 12)) gain = gain.times(2)
-    if (hasMilestone("paleolithic", 13)) gain = gain.times(2)
-    if (hasMilestone("paleolithic", 15)) gain = gain.times(2)
-    if (hasMilestone("paleolithic", 16)) gain = gain.times(3)
-    return gain
+    return new Decimal(0)
 }
 
 function addedPlayerData() { return {
-    tribalWisdom: new Decimal(0),
-    totalTribalWisdom: new Decimal(0),
+    language: "en",
+    bits: null,
+    reboot: null,
+    upgrade: null,
+    infinity: null,
+    kernel: null,
 }}
 
-var displayThings = [
-]
+var displayThings = []
 
 function isEndgame() {
-    return player.points.gte(new Decimal("e1e100"))
+    return false
 }
 
-var backgroundStyle = {
-
-}
+var backgroundStyle = {}
 
 function maxTickLength() {
     return(3600)
 }
 
+function lang(text) { return text }
+
 function fixOldSave(oldVersion){
+    if (oldVersion < 1.01) {
+        if (player.reboot) player.reboot.unlocked = true
+        if (player.upgrade) player.upgrade.unlocked = true
+    }
 }
+

@@ -1,16 +1,16 @@
 .treeNode {
-	height: 100px;
-	width: 100px;
+	height: 130px;
+	width: 130px;
 	border: var(--hqProperty1);
 	border-color: rgba(0, 0, 0, 0.1);
 	border-radius: 50%;
 	box-shadow: var(--hqProperty2a), var(--hqProperty2b);
-	font-size: 40px;
+	font-size: 50px;
 	font-family: "Inconsolata", "Lucida Console", "Courier New", monospace;
 	color: rgba(0, 0, 0, 0.5);
 	text-shadow: var(--hqProperty3);
 	padding: 0;
-	margin: 0 10px 0 10px;
+	margin: 0 15px 0 15px;
 }
 
 .nodeLabel {
@@ -19,13 +19,13 @@
 }
 
 .treeButton {
-	height: 100px;
-	width: 100px;
+	height: 130px;
+	width: 130px;
 	border: var(--hqProperty1);
 	border-color: rgba(0, 0, 0, 0.1);
 	border-radius: 33%;
 	box-shadow: var(--hqProperty2a), var(--hqProperty2b);
-	font-size: 40px;
+	font-size: 50px;
 	font-family: "Inconsolata", "Lucida Console", "Courier New", monospace;
 	color: rgba(0, 0, 0, 0.5);
 	text-shadow: var(--hqProperty3);
@@ -33,9 +33,9 @@
 }
 
 .smallNode {
-	height: 60px;
-	width: 60px;
-	font-size: 30px;
+	height: 70px;
+	width: 70px;
+	font-size: 34px;
 }
 
 .resetNotify {

@@ -2,24 +2,19 @@ var layoutInfo = {
     startTab: "none",
     startNavTab: "tree-tab",
     showTree: true,
-
     treeLayout: [
-        ["paleolithic"],
+        ["bits"],
+        ["reboot"],
+        ["upgrade"],
+        ["infinity"],
+        ["kernel"],
     ]
 }
 
-
-// A "ghost" layer which offsets other layers in the tree
-addNode("blank", {
-    layerShown: "ghost",
-},
-)
-
+addNode("blank", { layerShown: "ghost" })
 
 addLayer("tree-tab", {
-    tabFormat: [
-        "layer-nav"
-    ],
+    tabFormat: ["layer-nav"],
     previousTab: "",
     leftTab: true,
 })

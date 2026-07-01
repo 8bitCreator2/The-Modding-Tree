@@ -6,7 +6,7 @@ var systemComponents = {
 				<div v-for="tab in Object.keys(data)">
 					<button v-if="data[tab].unlocked == undefined || data[tab].unlocked" v-bind:class="{tabButton: true, notify: subtabShouldNotify(layer, name, tab), resetNotify: subtabResetNotify(layer, name, tab)}"
 					v-bind:style="[{'border-color': tmp[layer].color}, (subtabShouldNotify(layer, name, tab) ? {'box-shadow': 'var(--hqProperty2a), 0 0 20px '  + (data[tab].glowColor || defaultGlow)} : {}), tmp[layer].componentStyles['tab-button'], data[tab].buttonStyle]"
-						v-on:click="function(){player.subtabs[layer][name] = tab; updateTabFormats(); needCanvasUpdate = true;}">{{tab}}</button>
+						v-on:click="function(){player.subtabs[layer][name] = tab; updateTabFormats(); needCanvasUpdate = true;}">{{lang(tab)}}</button>
 				</div>
 			</div>
 		`
@@ -52,11 +52,11 @@ var systemComponents = {
       v-if="tmp[layer].tooltip != ''"
 			:text="(tmp[layer].isLayer) ? (
 				player[layer].unlocked ? (tmp[layer].tooltip ? tmp[layer].tooltip : formatWhole(player[layer].points) + ' ' + tmp[layer].resource)
-				: (tmp[layer].tooltipLocked ? tmp[layer].tooltipLocked : 'Reach ' + formatWhole(tmp[layer].requires) + ' ' + tmp[layer].baseResource + ' to unlock (You have ' + formatWhole(tmp[layer].baseAmount) + ' ' + tmp[layer].baseResource + ')')
+				: (tmp[layer].tooltipLocked ? tmp[layer].tooltipLocked : lang('Reach ') + formatWhole(tmp[layer].requires) + ' ' + tmp[layer].baseResource + lang(' to unlock (') + lang('You have') + ' ' + formatWhole(tmp[layer].baseAmount) + ' ' + tmp[layer].baseResource + ')')
 			)
 			: (
-				tmp[layer].canClick ? (tmp[layer].tooltip ? tmp[layer].tooltip : 'I am a button!')
-				: (tmp[layer].tooltipLocked ? tmp[layer].tooltipLocked : 'I am a button!')
+				tmp[layer].canClick ? (tmp[layer].tooltip ? tmp[layer].tooltip : lang('I am a button!'))
+				: (tmp[layer].tooltipLocked ? tmp[layer].tooltipLocked : lang('I am a button!'))
 			)"></tooltip>
 			<node-mark :layer='layer' :data='tmp[layer].marked'></node-mark></span>
 		</button>
@@ -112,9 +112,9 @@ var systemComponents = {
 			<br>Offline Time: {{formatTime(player.offTime.remain)}}<br>
 		</span>
 		<br>
-		<span v-if="player.points.lt('1e1000')"  class="overlayThing">You have </span>
+		<span v-if="player.points.lt('1e1000')"  class="overlayThing">{{lang("You have")}} </span>
 		<h2  class="overlayThing" id="points">{{format(player.points)}}</h2>
-		<span v-if="player.points.lt('1e1e6')"  class="overlayThing"> {{modInfo.pointsName}}</span>
+		<span v-if="player.points.lt('1e1e6')"  class="overlayThing"> {{lang(modInfo.pointsName)}}</span>
 		<br>
 		<span v-if="canGenPoints()"  class="overlayThing">({{tmp.other.oompsMag != 0 ? format(tmp.other.oomps) + " OOM" + (tmp.other.oompsMag < 0 ? "^OOM" : tmp.other.oompsMag > 1 ? "^" + tmp.other.oompsMag : "") + "s" : formatSmall(getPointGen())}}/sec)</span>
 		<div v-for="thing in tmp.displayThings" class="overlayThing"><span v-if="thing" v-html="thing"></span></div>
